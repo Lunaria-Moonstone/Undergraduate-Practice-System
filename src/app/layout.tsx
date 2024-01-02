@@ -1,10 +1,5 @@
-import type { Metadata } from 'next'
 import { useEffect } from 'react'
 
-export const metadata: Metadata = {
-  title: 'Graduate Practice Service System',
-  description: '',
-}
 
 export default function RootLayout({
   children,
@@ -13,7 +8,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ch-hans">
-      <head></head>
+      <head>
+        <title>高校实习服务系统</title>
+      </head>
       <body>{children}</body>
     </html>
   )
