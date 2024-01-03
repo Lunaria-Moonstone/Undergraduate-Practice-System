@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import './global.css';
+import '@/global/global-style.css';
 
 export default function RootLayout({
   children,

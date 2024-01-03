@@ -1,0 +1,15 @@
+@charset "utf-8";
+
+@import "../../global/global-variable.css";
+
+.nav-area {
+  position: fixed;
+  width: var(--desktop-navbar-width);
+  height: 100vh;
+
+  background-color: #DDDDDD;
+}
+
+.dashboard-body {
+  padding-left: var(--desktop-navbar-width);
+}

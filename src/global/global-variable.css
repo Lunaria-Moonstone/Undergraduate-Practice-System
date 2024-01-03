@@ -1,0 +1,6 @@
+@charset "utf-8";
+
+:root {
+  --standard-padding-width: 8px;
+  --desktop-navbar-width: 20vw;
+}
