@@ -2,14 +2,57 @@
 
 @import "./global-variable.css";
 
+/* 
+标准数据操作面板样式
+*/
 .dashboard-base-panel {
   padding: var(--standard-padding-width) var(--standard-padding-width);
 }
 
 .dashboard-base-panel .dashboard-model-title {
+  /* width: auto; */
   padding-block-start: 30px;
+  /* padding-inline: var(--standard-padding-width); */
 }
 
 .dashboard-base-panel .dashboard-model-title h2 {
   font-weight: bold;
+}
+
+.dashboard-base-panel .dashboard-model-buttons > * {
+  margin-inline-end: var(--standard-padding-width);
+}
+
+.dashboard-base-panel .dashboard-model-table {
+  margin-block-start: var(--standard-padding-width);
+  overflow: hidden;
+  /* overflow: scroll; */
+  /* overflow-x: hidden; */
+}
+
+.dashboard-base-panel .dashboard-model-table .dashboard-model-table-body {
+  overflow: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.dashboard-base-panel .dashboard-model-table .dashboard-model-table-body ::-webkit-scrollbar {
+  display: none;
+}
+
+.dashboard-base-panel .dashboard-model-table td {
+  min-width: 130px;
+  width: auto;
+}
+
+.dashboard-base-panel .dashboard-model-table .table-inline-buttons > * { 
+  margin-inline-end: 6px;
+}
+
+.dashboard-base-panel .dashboard-model-table .dashboard-model-table-pagination {
+  margin-block-start: var(--standard-padding-width);
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
