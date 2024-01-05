@@ -10,7 +10,7 @@ export default {
       const items: NavItems = [
         { label: '首页', href: '/dashboard' },
         { label: '学生信息管理', href: '/dashboard/admin-student' },
-        { label: '教师信息管理', href: 'www.baidu.com' },
+        { label: '教师信息管理', href: '/dashboard/admin-teacher' },
         { label: '企业信息管理', href: 'www.baidu.com' },
       ];
       switch(path) {
@@ -19,6 +19,9 @@ export default {
         break;
         case 'admin-student':
         items[1]['active'] = true;
+        break;
+        case 'admin-teacher':
+        items[2]['active'] = true;
         break;
       }
       return items;
