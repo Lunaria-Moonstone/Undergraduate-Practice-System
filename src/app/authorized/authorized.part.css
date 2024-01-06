@@ -1,0 +1,24 @@
+@charset "utf-8";
+
+.signbox-background {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--main-color-lightgray);
+}
+
+.signbox-area {
+  position: absolute;
+  /* background-color: white;
+  width: 500px;
+  height: 300px; */
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  /* border-radius: 3%; */
+}
+
+.signbox {
+  width: 500px;
+  height: 300px;
+  background-color: white;
+}

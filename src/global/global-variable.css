@@ -1,6 +1,9 @@
 @charset "utf-8";
 
 :root {
+
+  --main-color-lightgray: #DDDDDD;
+
   --standard-padding-width: 8px;
   --desktop-navbar-width: 20vw;
 }

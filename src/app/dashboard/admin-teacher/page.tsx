@@ -6,6 +6,7 @@ import { ReactNode } from "react";
 import server from './admin-teacher.api';
 import Modal from "@/components/modal/modal.component";
 import Form from "@/components/form/form.component";
+import { formInput } from "@/utils/input";
 
 export default function Page() {
   const teachers: Teachers = server.fetchTeacher();
@@ -31,6 +32,11 @@ export default function Page() {
     { label: '教师邮箱', type: 'input' },
   ];
 
+  const saveAdd = () => {
+    let form_value = formInput(document.getElementById('add-form') as HTMLElement);
+    console.log(form_value);
+  }
+
   return (
     <>
       <div className="dashboard-base-panel">
@@ -45,7 +51,7 @@ export default function Page() {
           <Modal btn_name='添加' btn_class='btn btn-success' modal_id='add-modal' modal_title='添加学生信息' modal_btns={
             <>
               <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-              <button type="button" className="btn btn-success" >添加</button>
+              <button type="button" className="btn btn-success" onClick={saveAdd}>添加</button>
             </>
           }>
             <Form form_items={add_form_items} form_id="add-form" />
