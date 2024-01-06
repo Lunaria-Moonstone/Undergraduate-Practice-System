@@ -1,6 +1,6 @@
 'use client'
 
-import { Teachers } from "@/global/type";
+import { FormItems, Teachers } from "@/global/type";
 import { ReactNode } from "react";
 
 import server from './admin-teacher.api';
@@ -17,33 +17,39 @@ export default function Page() {
         <td>{x.number}</td>
         <td>{x.phone}</td>
         <td>{x.mail}</td>
-        <td>
+        <td className='table-inline-buttons' style={{ width: '300px', minWidth: '300px' }}>
           <a className='link-danger text-decoration-none'>删除</a>
           <a className='link-warning text-decoration-none'>修改</a>
         </td>
       </tr>
     )
-  })
+  });
+  const add_form_items: FormItems = [
+    { label: '教师姓名', type: 'input' },
+    { label: '教师工号', type: 'input' },
+    { label: '教师联系电话', type: 'input' },
+    { label: '教师邮箱', type: 'input' },
+  ];
 
   return (
     <>
       <div className="dashboard-base-panel">
         {/* 抬头 */}
         <div className="dashboard-model-title">
-          <h2></h2>
+          <h2>教师信息管理</h2>
         </div>
         <hr />
         {/* 功能按钮区域 */}
         <div className="dashboard-model-buttons">
           {/* <button className="btn btn-primary">新增</button> */}
-          {/* <Modal btn_name='添加' btn_class='btn btn-success' modal_id='add-modal' modal_title='添加学生信息' modal_btns={
+          <Modal btn_name='添加' btn_class='btn btn-success' modal_id='add-modal' modal_title='添加学生信息' modal_btns={
             <>
               <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-              <button type="button" className="btn btn-success" onClick={saveAdd}>添加</button>
+              <button type="button" className="btn btn-success" >添加</button>
             </>
           }>
-            <Form form_items={} form_id="add-form" />
-          </Modal> */}
+            <Form form_items={add_form_items} form_id="add-form" />
+          </Modal>
           <button className="btn btn-danger">删除</button>
           <button className="btn btn-secondary">导入</button>
           <button className="btn btn-secondary">导出</button>
