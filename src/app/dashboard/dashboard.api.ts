@@ -23,6 +23,24 @@ export default {
         case 'admin-teacher':
         items[2]['active'] = true;
         break;
+        case 'admin-company':
+        items[3]['active'] = true;
+        break;
+      }
+      return items;
+    } 
+    else if (role === 1) {
+      const items: NavItems = [
+        { label: '首页', href: '/dashboard' },
+        { label: '个人信息设置', href: '/dashboard/student-info' },
+      ];
+      switch(path) {
+        case 'dashboard':
+        items[0]['active'] = true;
+        break;
+        case 'student-info':
+        items[1]['active'] = true;
+        break;
       }
       return items;
     } else { 

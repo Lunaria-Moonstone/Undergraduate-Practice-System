@@ -10,6 +10,7 @@ export interface NavItem {
 export interface FormItem {
   label: string // 表单项标签
   type: 'input' | 'textarea' | 'select' | 'checked' // 表单项类型
+  isPassword?: boolean // 是否密码
   selectOpt?: { label: string, value: string | number }[] // 选择类型值
   checkedDefault?: boolean // 选中类型默认是否选中
 }
@@ -20,6 +21,14 @@ export type FormItems = Array<FormItem>;
 /**
  * 数据整理类型
  */
+export interface Profile {
+  id: string // 编号
+  name: string // 登录名
+  password: string // 密码
+  role: number // 身份 0-管理员 1-学生 2-老师 3-企业
+  role_id: string // 对应身份编号
+}
+
 export interface Student {
   id: string // 编号
   name: string // 姓名

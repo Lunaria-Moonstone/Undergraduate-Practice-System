@@ -22,7 +22,7 @@ export default function Form(props: any) {
       return (
         <div className="mb-3" key={index}>
           <label className="form-label">{x.label}</label>
-          <input className="form-control" placeholder={x.label} />
+          <input className="form-control" placeholder={x.label} type={ x.isPassword ? 'password' : 'text' }/>
         </div>
       );
     else if (x.type === 'textarea')
