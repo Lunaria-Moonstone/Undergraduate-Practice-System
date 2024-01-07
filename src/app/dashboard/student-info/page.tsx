@@ -9,6 +9,7 @@ export default function Page() {
           <h2>个人信息设置</h2>
         </div>
         <hr />
+
         <nav>
           <div className="nav nav-tabs" id="nav-tab" role="tablist">
             <button className="nav-link active" id="profile-msg-tab" data-bs-toggle="tab" data-bs-target="#profile-msg" type="button" role="tab" aria-controls="profile-msg" aria-selected="true">名片信息</button>
@@ -58,6 +59,7 @@ export default function Page() {
               <button className="btn btn-primary btn-block">确认修改</button>
             </div>
           </div>
+
           <div className="tab-pane fade" id="account-msg" role="tabpanel" aria-labelledby="account-msg-tab" >
             <form id="form-account" style={{ marginBlockStart: 'var(--standard-padding-width)' }}>
               <div className="mb-3">
@@ -82,7 +84,6 @@ export default function Page() {
             </div>
           </div>
         </div>
-
       </div>
     </>
   )

@@ -33,6 +33,7 @@ export default {
       const items: NavItems = [
         { label: '首页', href: '/dashboard' },
         { label: '个人信息设置', href: '/dashboard/student-info' },
+        { label: '个人材料上传', href: '/dashboard/student-annex' },
       ];
       switch(path) {
         case 'dashboard':
@@ -40,6 +41,9 @@ export default {
         break;
         case 'student-info':
         items[1]['active'] = true;
+        break;
+        case 'student-annex':
+        items[2]['active'] = true;
         break;
       }
       return items;
