@@ -17,9 +17,21 @@ export default function Page() {
           </div>
         </nav>
         <div className="tab-content" id="nav-tabContent">
-          <div className="tab-pane fade show active" id="resume" role="tabpanel" aria-labelledby="resume-tab" >1
+          <div className="tab-pane fade show active" id="resume" role="tabpanel" aria-labelledby="resume-tab" >
+            <div className="card" style={{ width: '100%' }}>
+              <img src="..." className="card-img-top" alt="..." />
+              <div className="card-body">
+                <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              </div>
+            </div>
           </div>
-          <div className="tab-pane fade" id="practice-document" role="tabpanel" aria-labelledby="practice-document-tab" >2
+          <div className="tab-pane fade" id="practice-document" role="tabpanel" aria-labelledby="practice-document-tab" >
+            <div className="card" style={{ width: '100%' }}>
+              <img src="..." className="card-img-top" alt="..." />
+              <div className="card-body">
+                <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
