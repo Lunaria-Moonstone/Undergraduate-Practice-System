@@ -61,6 +61,14 @@ export interface Company {
   license: string // 营业执照
 }
 
+export interface StudentPracticeExperience {
+  id: string // 编号
+  company_id: string // 企业编号
+  start: string // 就职时间
+  end: string // 离职时间
+}
+
 export type Students = Array<Student>;
 export type Teachers = Array<Teacher>;
 export type Companies = Array<Company>;
+export type StudentPracticeExperiencies = Array<StudentPracticeExperience>;

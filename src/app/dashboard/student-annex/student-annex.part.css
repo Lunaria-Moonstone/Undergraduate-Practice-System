@@ -5,3 +5,7 @@
 /* .student-annex-body {
   margin-block-start: var('--standard-padding-width');
 } */
+
+.student-annex-card-body {
+  margin-block-start: var(--standard-padding-width);
+}

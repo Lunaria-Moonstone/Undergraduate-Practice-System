@@ -1,6 +1,9 @@
+import server from './student-annex.api';
 import "./student-annex.part.css";
 
 export default function Page() {
+
+  const { resume, practice_document } = server.fetchAnnex()
 
   return (
     <>
@@ -16,20 +19,22 @@ export default function Page() {
             <button className="nav-link" id="practice-document-tab" data-bs-toggle="tab" data-bs-target="#practice-document" type="button" role="tab" aria-controls="account-msg" aria-selected="false">实习材料</button>
           </div>
         </nav>
-        <div className="tab-content" id="nav-tabContent">
+        <div className="tab-content student-annex-card-body" id="nav-tabContent">
           <div className="tab-pane fade show active" id="resume" role="tabpanel" aria-labelledby="resume-tab" >
             <div className="card" style={{ width: '100%' }}>
-              <img src="..." className="card-img-top" alt="..." />
+              <img src={resume} className="card-img-top" alt="..." />
               <div className="card-body">
-                <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <p className="card-text">本页面材料具有法律效力</p>
+                <a className="btn btn-primary btn-sm">上传新材料</a>
               </div>
             </div>
           </div>
           <div className="tab-pane fade" id="practice-document" role="tabpanel" aria-labelledby="practice-document-tab" >
             <div className="card" style={{ width: '100%' }}>
-              <img src="..." className="card-img-top" alt="..." />
+              <img src={practice_document} className="card-img-top" alt="..." />
               <div className="card-body">
-                <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <p className="card-text">本页面材料具有法律效力</p>
+                <a className="btn btn-primary btn-sm">上传新材料</a>
               </div>
             </div>
           </div>
