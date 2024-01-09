@@ -1,14 +1,30 @@
+'use client'
+
+import { ChangeEvent, ChangeEventHandler } from 'react';
 import './table.component.css';
 
 export default function Table(props: any) {
 
-  const { 
+  let checked_list: (string | null | undefined)[] = [];
+
+  const {
     table_head, table_body
   }: {
     table_head: Array<string>,
     table_body: Array<Array<string | number | undefined>>,
   } = props;
+  const { table_id }: { table_id: string } = props;
   const { line_action }: { line_action: React.ReactNode } = props;
+  const { checkbox }: { checkbox: boolean } = props;
+
+  function checkChange(event: ChangeEvent<HTMLInputElement>) {
+    // console.log(event.target.parentElement?.parentElement?.getElementsByTagName('td')[1])
+    const checked_id = event.target.parentElement?.parentElement?.getElementsByTagName('td')[1].textContent;
+    if (event.target.checked) 
+      checked_list.push(checked_id);
+    else
+      checked_list.splice(checked_list.indexOf(checked_id), 1);
+  }
 
   const table_head_node: React.ReactNode = table_head.map((x, index) => {
     return (
@@ -21,16 +37,41 @@ export default function Table(props: any) {
         <td key={sub_index}>{y}</td>
       );
     });
-    
-    return (
-      <tr key={index}>
-        {t_line}
+    let action = <></>;
+    let cbox = <></>
+    if (line_action) {
+      action = (
         <td className="table-inline-buttons" style={{ width: '300px', minWidth: '300px' }}>
           {line_action}
         </td>
+      );
+    }
+    if (checkbox) {
+      cbox = (
+        <td style={{ width: '20px' }}>
+          <input className="form-check-input table-checkbox" type="checkbox" onChange={checkChange}  />
+        </td>
+      );
+    }
+    return (
+      <tr key={index}>
+        {cbox}
+        {t_line}
+        {action}
       </tr>
     );
   });
+
+  const changeAllCheck = () => {
+    const checked = (document.getElementById(table_id + '-main-checkbox') as HTMLInputElement).checked;
+    const checks = document.getElementsByClassName('table-checkbox');
+    for (let check of checks as HTMLCollectionOf<HTMLInputElement>) {
+      check.checked = checked;
+      if (checked) checked_list.push(check.parentElement?.parentElement?.getElementsByTagName('td')[1].textContent);
+    }
+    if (!checked) checked_list = [];
+    // console.log(checked_list)
+  }
 
   return (
     <>
@@ -39,6 +80,7 @@ export default function Table(props: any) {
           <table className="table table-striped">
             <thead className="table-dark">
               <tr>
+                {checkbox === undefined ? <></> : <th style={{ width: '20px' }}><input className="form-check-input" type="checkbox" id={table_id + '-main-checkbox'} onChange={() => changeAllCheck()}/></th>}
                 {table_head_node}
                 {line_action === undefined ? <></> : <th>操作</th>}
               </tr>

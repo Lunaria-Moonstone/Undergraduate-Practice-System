@@ -1,3 +1,4 @@
+import Table from '@/components/table/table.component';
 import server from './student-annex.api';
 import "./student-annex.part.css";
 
@@ -14,7 +15,12 @@ export default function Page() {
       <a className='link-secondary text-decoration-none'>预览</a>
     </>
   )
-  const history_resume_table_body: Array<Array<string | number | undefined>> = Array(history_resume.values());
+  const history_resume_table_body: Array<Array<string | number | undefined>> = history_resume.map(x => {
+    return [x.id, x.created];
+  });
+  const history_practice_document_table_body: Array<Array<string | number | undefined>> = history_practice_document.map(x => {
+    return [x.id, x.created];
+  });
 
   return (
     <>
@@ -44,7 +50,7 @@ export default function Page() {
               </div>
             </div>
             <div>
-
+              <Table table_head={history_resume_table_head} table_body={history_resume_table_body} line_action={line_action} /> 
             </div>
           </div>
           <div className="tab-pane fade" id="practice-document" role="tabpanel" aria-labelledby="practice-document-tab" >
@@ -52,8 +58,15 @@ export default function Page() {
               <img src={practice_document} className="card-img-top" alt="..." />
               <div className="card-body">
                 <p className="card-text">本页面材料具有法律效力</p>
-                <a className="btn btn-primary btn-sm">上传新材料</a>
+                <div className="student-annex-card-body-buttons">
+                  <a className="btn btn-primary btn-sm">上传新材料</a>
+                  <a className="btn btn-secondary btn-sm">详细</a>
+                  <a className="btn btn-danger btn-sm">删除</a>
+                </div>
               </div>
+            </div>
+            <div>
+              <Table table_head={history_practice_document_table_head} table_body={history_practice_document_table_body} line_action={line_action} />
             </div>
           </div>
         </div>

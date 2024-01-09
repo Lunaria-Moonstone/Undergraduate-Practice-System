@@ -35,6 +35,8 @@ export default {
         { label: '个人信息设置', href: '/dashboard/student-info' },
         { label: '个人材料上传', href: '/dashboard/student-annex' },
         { label: '实习经历一览', href: '/dashboard/student-experience' },
+        { label: '岗位简历投递', href: '/dashboard/student-job' },
+        { label: '简历投递进度', href: '/dashboard/student-job-audit'},
       ];
       switch(path) {
         case 'dashboard':
@@ -49,6 +51,12 @@ export default {
         case 'student-experience':
         items[3]['active'] = true;
         break;  
+        case 'student-job':
+        items[4]['active'] = true;
+        break;
+        case 'student-job-audit':
+        items[5]['active'] = true;
+        break;
       }
       return items;
     } else { 

@@ -75,8 +75,17 @@ export interface AnnexHistory {
   created: string // 文件上传时间
 }
 
+export interface Job {
+  id: string // 编号
+  company_id: string // 企业名称
+  name: string // 岗位名称
+  salary: string // 薪资
+  descript: string // 描述
+}
+
 export type Students = Array<Student>;
 export type Teachers = Array<Teacher>;
 export type Companies = Array<Company>;
 export type StudentPracticeExperiencies = Array<StudentPracticeExperience>;
 export type AnnexHistories = Array<AnnexHistory>;
+export type Jobs = Array<Job>;
