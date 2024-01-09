@@ -37,10 +37,25 @@ export default function Page() {
         </div>
         <div className="dashboard-model-buttons">
           {/* <button className="btn btn-success">添加</button> */}
-          <Modal btn_name='添加' btn_class='btn btn-success' modal_id='add-modal' modal_title='添加实习经历'>
-            <div className="mb-3">
-              <label className="form-label">企业名称</label>
-              <Select opts={company_opts} placeholder="企业名称" component_id="company-search" />
+          <Modal btn_name='添加' btn_class='btn btn-success' modal_id='add-modal' modal_title='添加实习经历' modal_btns={
+            <>
+              <button type="button" className="btn btn-primary">保存</button>
+              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+            </>
+          }>
+            <div>
+              <div className="mb-3">
+                <label className="form-label">企业名称</label>
+                <Select opts={company_opts} placeholder="企业名称" component_id="company-search" />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">入职时间</label>
+                <input className="form-control" type="date" defaultValue="1999-01-01" />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">离职时间</label>
+                <input className="form-control" type="date" defaultValue="1999-01-01" />
+              </div>
             </div>
           </Modal>
           <button className="btn btn-danger">删除</button>

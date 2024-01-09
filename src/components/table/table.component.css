@@ -1,0 +1,33 @@
+@charset "utf-8";
+
+.model-table {
+  margin-block-start: var(--standard-padding-width);
+  overflow: hidden;
+}
+
+.model-table-body {
+  overflow: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.model-table-body ::-webkit-scrollbar {
+  display: none;
+}
+
+.model-table td {
+  min-width: 130px;
+  width: auto;
+}
+
+.model-table .table-inline-buttons {
+  margin-inline-end: 6px;
+}
+
+.model-table-pagination {
+  margin-block-start: var(--standard-padding-width);
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}

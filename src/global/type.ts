@@ -68,7 +68,15 @@ export interface StudentPracticeExperience {
   end: string // 离职时间
 }
 
+export interface AnnexHistory {
+  id: string // 编号
+  type: 'resume' | 'practive-document' // 类型
+  base64code: string // 文件base64编码
+  created: string // 文件上传时间
+}
+
 export type Students = Array<Student>;
 export type Teachers = Array<Teacher>;
 export type Companies = Array<Company>;
 export type StudentPracticeExperiencies = Array<StudentPracticeExperience>;
+export type AnnexHistories = Array<AnnexHistory>;

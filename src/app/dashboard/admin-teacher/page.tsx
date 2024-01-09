@@ -10,6 +10,7 @@ import { formInput } from "@/utils/input";
 
 export default function Page() {
   const teachers: Teachers = server.fetchTeacher();
+  const table_head: Array<string> = ['编号', '教师姓名', '工号', '联系方式', '操作']
   const table_body: ReactNode = teachers.map((x, index) => {
     return (
       <tr key={index}>
