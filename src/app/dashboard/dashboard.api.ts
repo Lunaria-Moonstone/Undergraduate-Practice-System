@@ -31,7 +31,7 @@ export default {
     } 
     else if (role === 1) {
       const items: NavItems = [
-        { label: '首页', href: '/dashboard' },
+        { label: '个人中心', href: '/dashboard/student-home' },
         { label: '个人信息设置', href: '/dashboard/student-info' },
         { label: '个人材料上传', href: '/dashboard/student-annex' },
         { label: '实习经历一览', href: '/dashboard/student-experience' },
@@ -39,7 +39,7 @@ export default {
         { label: '简历投递进度', href: '/dashboard/student-job-audit'},
       ];
       switch(path) {
-        case 'dashboard':
+        case 'student-home':
         items[0]['active'] = true;
         break;
         case 'student-info':

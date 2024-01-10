@@ -7,16 +7,23 @@
 */
 .dashboard-base-panel {
   padding: var(--standard-padding-width) var(--standard-padding-width);
+  display: flex;
+  flex-direction: column;
 }
 
 .dashboard-base-panel .dashboard-model-title {
   /* width: auto; */
   padding-block-start: 30px;
   /* padding-inline: var(--standard-padding-width); */
+  /* height: 60px; */
 }
 
 .dashboard-base-panel .dashboard-model-title h2 {
   font-weight: bold;
+}
+
+.dashboard-model-body {
+  flex: 1;
 }
 
 .dashboard-base-panel .dashboard-model-buttons > * {

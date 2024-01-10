@@ -83,9 +83,19 @@ export interface Job {
   descript: string // 描述
 }
 
+export interface JobAudit {
+  id: string // 编号
+  student_id: string // 学生编号
+  company_id: string // 企业编号
+  job_id: string // 岗位编号
+  progress: 'unread' | 'reading' | 'invaild' | 'complete' // 状态
+  feedback?: string // 企业反馈
+}
+
 export type Students = Array<Student>;
 export type Teachers = Array<Teacher>;
 export type Companies = Array<Company>;
 export type StudentPracticeExperiencies = Array<StudentPracticeExperience>;
 export type AnnexHistories = Array<AnnexHistory>;
 export type Jobs = Array<Job>;
+export type JobAudits = Array<JobAudit>;
