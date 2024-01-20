@@ -87,9 +87,6 @@ export default function Page() {
               <div className="tab-pane fade" id="announcement" role="tabpanel" aria-labelledby="announcement-tab" style={{ width: '100%', height: '100%' }}>
                 <div className="card" style={{ height: '100%', borderTop: '0', borderTopLeftRadius: '0', borderTopRightRadius: '0' }}>
                 <div className="card-body notification-cards">
-                    {/* <div className="card-title">
-                      通知
-                    </div> */}
                     <div className="card">
                       <div className="card-body">
                         <h5 className="card-title">
