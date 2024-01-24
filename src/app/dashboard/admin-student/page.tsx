@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 
 import { Students, FormItems } from '@/global/type';
 import server from './admin-student.api';
@@ -10,6 +10,8 @@ import Modal from '@/components/modal/modal.component';
 import Form from '@/components/form/form.component';
 
 export default function Page() {
+
+  const [addModalShown, setAddModalShown] = useState(false);
 
   const students: Students = server.fetchStudent();
   const table_body: ReactNode = students.map((x, index) => {
@@ -39,12 +41,14 @@ export default function Page() {
   const add_form_items: FormItems = [
     { label: '学生姓名', type: 'input' },
     { label: '学生学号', type: 'input' },
-    { label: '年级', type: 'select', selectOpt: [
-      { label: '2020级', value: '2020' },
-      { label: '2021级', value: '2021' },
-      { label: '2022级', value: '2022' },
-      { label: '2023级', value: '2023' },
-    ] },
+    {
+      label: '年级', type: 'select', selectOpt: [
+        { label: '2020级', value: '2020' },
+        { label: '2021级', value: '2021' },
+        { label: '2022级', value: '2022' },
+        { label: '2023级', value: '2023' },
+      ]
+    },
   ]
 
   const saveAdd = () => {
@@ -62,15 +66,7 @@ export default function Page() {
         <hr />
         {/* 功能按钮区域 */}
         <div className="dashboard-model-buttons">
-          {/* <button className="btn btn-primary">新增</button> */}
-          <Modal btn_name='添加' btn_class='btn btn-success' modal_id='add-modal' modal_title='添加学生信息' modal_btns={
-            <>
-              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-              <button type="button" className="btn btn-success" onClick={saveAdd}>添加</button>
-            </>
-          }>
-            <Form form_items={add_form_items} form_id="add-form"/>
-          </Modal>
+          <button className="btn btn-primary" onClick={() => setAddModalShown(true)}>新增</button>
           <button className="btn btn-danger">删除</button>
           <button className="btn btn-secondary">导入</button>
           <button className="btn btn-secondary">导出</button>
@@ -121,6 +117,15 @@ export default function Page() {
           </div>
         </div>
       </div>
+
+      <Modal shown={addModalShown} id='add-modal' modal_title='添加学生信息' close_function={() => setAddModalShown(false)} modal_btns={
+        <>
+          <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+          <button type="button" className="btn btn-success" onClick={saveAdd}>添加</button>
+        </>
+      }>
+        <Form form_items={add_form_items} form_id="add-form" />
+      </Modal>
     </>
   )
 }

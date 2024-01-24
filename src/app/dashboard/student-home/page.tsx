@@ -1,8 +1,39 @@
+'use client';
+
+import { useState } from 'react';
+
+import { Notifications } from '@/global/type';
+import server from './student-home.api';
+import Modal from '@/components/modal/modal.component';
 import './student-home.part.css';
 
 export default function Page() {
+
+  const [infoModalShown, setInfoModalShown] = useState(false);
+
+  const notifition_items: Notifications = server.fetchNotifications();
+  const notifications_body: React.ReactNode = notifition_items.map((x, index) => {
+    return (
+      <div className="card" key={index}>
+        <div className="card-body">
+          <h5 className="card-title">
+            {x.title}
+          </h5>
+          <p className='card-text'>
+            {x.simple_descript}
+          </p>
+          <div className="notification-inline-btns">
+            <a className='btn btn-primary btn-sm' onClick={() => setInfoModalShown(true)}>详细</a>
+            <a className='btn btn-secondary btn-sm'>忽略</a>
+          </div>
+        </div>
+      </div>
+    );
+  });
+
   return (
     <>
+
       <div className="dashboard-base-panel" style={{ height: '100vh' }}>
         <div className="dashboard-model-title">
           <h2>个人中心</h2>
@@ -50,43 +81,13 @@ export default function Page() {
               <div className="tab-pane fade show active" id="notification" role="tabpanel" aria-labelledby="notification-tab" style={{ width: '100%', height: '100%' }}>
                 <div className="card" style={{ height: '100%', borderTop: '0', borderTopLeftRadius: '0', borderTopRightRadius: '0' }}>
                   <div className="card-body notification-cards">
-                    {/* <div className="card-title">
-                      通知
-                    </div> */}
-                    <div className="card">
-                      <div className="card-body">
-                        <h5 className="card-title">
-                          新的投递进度
-                        </h5>
-                        <p className='card-text'>
-                          您在国家安全局投递的简历有新进展！
-                        </p>
-                        <div className="notification-inline-btns">
-                          <a className='btn btn-primary btn-sm'>详细</a>
-                          <a className='btn btn-secondary btn-sm'>忽略</a>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="card">
-                      <div className="card-body">
-                        <h5 className="card-title">
-                          新的投递进度
-                        </h5>
-                        <p className='card-text'>
-                          您在国家安全局投递的简历有新进展！
-                        </p>
-                        <div className="notification-inline-btns">
-                          <a className='btn btn-primary btn-sm'>详细</a>
-                          <a className='btn btn-secondary btn-sm'>忽略</a>
-                        </div>
-                      </div>
-                    </div>
+                    { notifications_body }
                   </div>
                 </div>
               </div>
               <div className="tab-pane fade" id="announcement" role="tabpanel" aria-labelledby="announcement-tab" style={{ width: '100%', height: '100%' }}>
                 <div className="card" style={{ height: '100%', borderTop: '0', borderTopLeftRadius: '0', borderTopRightRadius: '0' }}>
-                <div className="card-body notification-cards">
+                  <div className="card-body notification-cards">
                     <div className="card">
                       <div className="card-body">
                         <h5 className="card-title">
@@ -104,6 +105,14 @@ export default function Page() {
           </div>
         </div>
       </div>
+
+      <Modal shown={infoModalShown} close_function={() => setInfoModalShown(false)} modal_title='通知详细' modal_btns={
+        <>
+          <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+        </>
+      }>
+        ...
+      </Modal>
     </>
   );
 }

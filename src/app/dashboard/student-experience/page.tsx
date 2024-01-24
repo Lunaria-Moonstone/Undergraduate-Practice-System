@@ -1,10 +1,14 @@
+'use client';
+
 import { StudentPracticeExperiencies } from '@/global/type';
 import server from './student-experience.api'
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import Modal from '@/components/modal/modal.component';
 import Select from '@/components/select-with-search/select-with-search.component';
 
 export default function Page() {
+
+  const [addModalShown, setAddModalShown] = useState(false);
 
   const experiencies: StudentPracticeExperiencies = server.fetchExperience();
   const table_body: ReactNode = experiencies.map((x, index) => {
@@ -36,28 +40,7 @@ export default function Page() {
           <hr />
         </div>
         <div className="dashboard-model-buttons">
-          {/* <button className="btn btn-success">添加</button> */}
-          <Modal btn_name='添加' btn_class='btn btn-success' modal_id='add-modal' modal_title='添加实习经历' modal_btns={
-            <>
-              <button type="button" className="btn btn-primary">保存</button>
-              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-            </>
-          }>
-            <div>
-              <div className="mb-3">
-                <label className="form-label">企业名称</label>
-                <Select opts={company_opts} placeholder="企业名称" component_id="company-search" />
-              </div>
-              <div className="mb-3">
-                <label className="form-label">入职时间</label>
-                <input className="form-control" type="date" defaultValue="1999-01-01" />
-              </div>
-              <div className="mb-3">
-                <label className="form-label">离职时间</label>
-                <input className="form-control" type="date" defaultValue="1999-01-01" />
-              </div>
-            </div>
-          </Modal>
+          <button className="btn btn-success" onClick={() => setAddModalShown(true)}>添加</button>
           <button className="btn btn-danger">删除</button>
           <button className="btn btn-secondary">导入</button>
           <button className="btn btn-secondary">导出</button>
@@ -100,6 +83,28 @@ export default function Page() {
           </div>
         </div>
       </div>
+
+      <Modal shown={addModalShown} id='add-modal' modal_title='添加实习经历' close_function={() => setAddModalShown(false)} modal_btns={
+        <>
+          <button type="button" className="btn btn-primary">保存</button>
+          <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+        </>
+      }>
+        <div>
+          <div className="mb-3">
+            <label className="form-label">企业名称</label>
+            <Select opts={company_opts} placeholder="企业名称" component_id="company-search" />
+          </div>
+          <div className="mb-3">
+            <label className="form-label">入职时间</label>
+            <input className="form-control" type="date" defaultValue="1999-01-01" />
+          </div>
+          <div className="mb-3">
+            <label className="form-label">离职时间</label>
+            <input className="form-control" type="date" defaultValue="1999-01-01" />
+          </div>
+        </div>
+      </Modal>
     </>
   )
 }

@@ -92,6 +92,20 @@ export interface JobAudit {
   feedback?: string // 企业反馈
 }
 
+export interface Notification {
+  id: string // 编号
+  title: string // 标题
+  simple_descript: string // 简易描述
+  descript: string // 描述
+}
+
+export interface Announcement {
+  id: string // 编号
+  title: string
+  descript: string
+  created: string
+}
+
 export type Students = Array<Student>;
 export type Teachers = Array<Teacher>;
 export type Companies = Array<Company>;
@@ -99,3 +113,4 @@ export type StudentPracticeExperiencies = Array<StudentPracticeExperience>;
 export type AnnexHistories = Array<AnnexHistory>;
 export type Jobs = Array<Job>;
 export type JobAudits = Array<JobAudit>;
+export type Notifications = Array<Notification>;

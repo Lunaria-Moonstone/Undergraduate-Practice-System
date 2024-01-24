@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 
 import server from './admin-company.api';
 import { FormItems } from '@/global/type';
@@ -9,6 +9,9 @@ import Modal from '@/components/modal/modal.component';
 import Form from '@/components/form/form.component';
 
 export default function Page() {
+
+  const [addModalShown, setAddModalShown] = useState(false);
+
   const companies = server.fetchCompanies();
   const table_body: ReactNode = companies.map((x, index) => {
     return (
@@ -36,7 +39,7 @@ export default function Page() {
 
   return (
     <>
-    <div className="dashboard-base-panel">
+      <div className="dashboard-base-panel">
         {/* 抬头 */}
         <div className="dashboard-model-title">
           <h2>企业信息管理</h2>
@@ -44,15 +47,7 @@ export default function Page() {
         <hr />
         {/* 功能按钮区域 */}
         <div className="dashboard-model-buttons">
-          {/* <button className="btn btn-primary">新增</button> */}
-          <Modal btn_name='添加' btn_class='btn btn-success' modal_id='add-modal' modal_title='添加学生信息' modal_btns={
-            <>
-              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-              <button type="button" className="btn btn-success" onClick={saveAdd}>添加</button>
-            </>
-          }>
-            <Form form_items={add_form_items} form_id="add-form" />
-          </Modal>
+          <button className="btn btn-primary" onClick={() => setAddModalShown(true)}>新增</button>
           <button className="btn btn-danger">删除</button>
           <button className="btn btn-secondary">导入</button>
           <button className="btn btn-secondary">导出</button>
@@ -96,6 +91,15 @@ export default function Page() {
           </div>
         </div>
       </div>
+
+      <Modal shown={addModalShown} id='add-modal' modal_title='添加学生信息' close_function={() => setAddModalShown(false)} modal_btns={
+        <>
+          <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+          <button type="button" className="btn btn-success" onClick={saveAdd}>添加</button>
+        </>
+      }>
+        <Form form_items={add_form_items} form_id="add-form" />
+      </Modal>
     </>
   )
 }
