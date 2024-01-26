@@ -1,0 +1,18 @@
+@charset "utf-8";
+
+.teacher-info-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.teacher-info-panel div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.teacher-info-panel span {
+  font-weight: bold;
+}

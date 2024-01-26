@@ -59,6 +59,21 @@ export default {
         break;
       }
       return items;
+    } else if (role === 2) {
+      const items: NavItems = [
+        { label: '个人中心', href: '/dashboard/teacher-home' },
+        { label: '名下学生信息', href: '/dashboard/teacher-student' },
+      
+      ];
+      switch(path) {
+        case 'teacher-home':
+        items[0]['active'] = true;
+        break;
+        case 'teacher-student':
+        items[1]['active'] = true;
+        break;
+      }
+      return items;
     } else { 
       return [
     

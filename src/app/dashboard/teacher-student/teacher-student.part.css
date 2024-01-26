@@ -1,0 +1,42 @@
+@charset "utf-8";
+
+@import "../../../global/global-variable.css";
+
+.student-info-panel {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.student-info-panel .student-name {
+  font-size: large;
+  font-weight: bolder;
+}
+
+.student-info-panel .student-number {
+  font-size: smaller;
+  color: gray;
+}
+
+.student-info-panel .student-base-info {
+  margin-block-start: var(--standard-padding-width);
+  display: flex;
+  flex-direction: column;
+  gap: var(--standard-padding-width);
+}
+
+.student-info-panel .student-base-info div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.student-info-panel .student-base-info div div:first-child {
+  font-weight: bold;
+}
+
+.practice-score-area div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--standard-padding-width);
+}

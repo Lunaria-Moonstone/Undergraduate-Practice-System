@@ -24,6 +24,10 @@
   margin-inline-end: 6px;
 }
 
+.table-inline-buttons a {
+  cursor: pointer;
+}
+
 .model-table-pagination {
   margin-block-start: var(--standard-padding-width);
 

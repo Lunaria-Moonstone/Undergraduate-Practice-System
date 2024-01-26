@@ -40,11 +40,18 @@ export default class Modal extends Component<ModalProps> {
   }
 
   componentDidUpdate(prevProps: Readonly<ModalProps>, prevState: Readonly<{}>, snapshot?: any): void {
-    const modal = new BootstrapModal('#' + this.id);
     if (this.props.shown !== prevProps.shown) {
+      // const modal = new BootstrapModal('#' + this.id);
+      const modal = BootstrapModal.getOrCreateInstance("#" + this.id);
       if (this.props.shown) modal.show();
+      else modal.hide();
     }
   }
+
+  // hide() {
+  //   const modal = BootstrapModal.getOrCreateInstance("#" + this.id);
+  //   modal.hide();
+  // }
 
   render() {
     
@@ -60,6 +67,7 @@ export default class Modal extends Component<ModalProps> {
                 {this.children}
               </div>
               <div className="modal-footer">
+                {/* <button onClick={() => this.hide()}>close</button> */}
                 {this.modal_btns}
               </div>
             </div>

@@ -95,15 +95,16 @@ export interface JobAudit {
 export interface Notification {
   id: string // 编号
   title: string // 标题
-  simple_descript: string // 简易描述
-  descript: string // 描述
+  simple_descript?: string // 简易描述
+  descript?: string // 描述
+  created?: string
 }
 
 export interface Announcement {
   id: string // 编号
   title: string
   descript: string
-  created: string
+  created?: string
 }
 
 export type Students = Array<Student>;
@@ -114,3 +115,4 @@ export type AnnexHistories = Array<AnnexHistory>;
 export type Jobs = Array<Job>;
 export type JobAudits = Array<JobAudit>;
 export type Notifications = Array<Notification>;
+export type Announcements = Array<Announcement>;
