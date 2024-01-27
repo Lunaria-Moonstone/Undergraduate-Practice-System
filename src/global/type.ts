@@ -9,7 +9,7 @@ export interface NavItem {
 
 export interface FormItem {
   label: string // 表单项标签
-  type: 'input' | 'textarea' | 'select' | 'checked' // 表单项类型
+  type: 'input' | 'textarea' | 'select' | 'checked' | 'file' // 表单项类型
   isPassword?: boolean // 是否密码
   selectOpt?: { label: string, value: string | number }[] // 选择类型值
   checkedDefault?: boolean // 选中类型默认是否选中

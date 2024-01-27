@@ -25,6 +25,8 @@ export default function Page() {
       <div className="inner-form">
         <Form form_items={form_items} form_id="form" />
         <div style={{width: '100%'}} className="d-grid gap-2"><button className="btn btn-primary btn-block" onClick={submitForm}>登录</button></div>
+        <hr style={{marginBlockEnd: 0, marginBlockStart: 'var(--standard-padding-width)'}} />
+        <div style={{width: "100%", display: "flex", justifyContent: "center"}}>新企业入驻？<a href="/authorized/company-signup" className="link-primary text-decoration-none">点击此处</a></div>
       </div>
     </>
   )

@@ -49,6 +49,13 @@ export default function Form(props: any) {
           <input className="form-check-input" type="checkbox" />
         </div>
       )
+    else if (x.type === 'file')
+      return (
+        <div className='mb-3' key={index}>
+          <label className='form-label'>{x.label}</label>
+          <input className='form-control' type="file" />
+        </div>
+      )
     return (
       <div key={index}></div>
     )

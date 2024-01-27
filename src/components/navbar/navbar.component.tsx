@@ -29,7 +29,7 @@ export default function Navbar(props: any) {
         {/* 导航栏用户信息区域 */}
         <div className="userinfo-line">
           <a className="link-secondary text-decoration-none" href="#">LAIN</a>
-          <a className="link-secondary text-decoration-none" href="#">登出</a>
+          <a className="link-secondary text-decoration-none" href="/authorized/signin">登出</a>
         </div>
       </div>
     </>

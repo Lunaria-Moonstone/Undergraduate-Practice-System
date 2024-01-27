@@ -12,6 +12,7 @@ export default {
         { label: '学生信息管理', href: '/dashboard/admin-student' },
         { label: '教师信息管理', href: '/dashboard/admin-teacher' },
         { label: '企业信息管理', href: '/dashboard/admin-company' },
+        { label: '个人信息设置', href: '/dashboard/admin-info'},
       ];
       switch(path) {
         case 'dashboard': 
@@ -26,6 +27,8 @@ export default {
         case 'admin-company':
         items[3]['active'] = true;
         break;
+        case 'admin-info':
+        items[4]['active'] = true;
       }
       return items;
     } 
@@ -63,7 +66,7 @@ export default {
       const items: NavItems = [
         { label: '个人中心', href: '/dashboard/teacher-home' },
         { label: '名下学生信息', href: '/dashboard/teacher-student' },
-      
+        { label: '个人信息设置', href: '/dashboard/teacher-info' },
       ];
       switch(path) {
         case 'teacher-home':

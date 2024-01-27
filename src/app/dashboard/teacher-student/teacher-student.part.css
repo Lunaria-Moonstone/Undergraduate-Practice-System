@@ -35,7 +35,7 @@
   font-weight: bold;
 }
 
-.practice-score-area div {
+.practice-score-area div  {
   display: flex;
   justify-content: space-between;
   gap: var(--standard-padding-width);
