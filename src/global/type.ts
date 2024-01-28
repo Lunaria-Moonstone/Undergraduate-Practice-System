@@ -1,3 +1,5 @@
+import { ChangeEvent } from "react"
+
 /**
  * 页面样式渲染类型
  */
@@ -13,6 +15,8 @@ export interface FormItem {
   isPassword?: boolean // 是否密码
   selectOpt?: { label: string, value: string | number }[] // 选择类型值
   checkedDefault?: boolean // 选中类型默认是否选中
+  fileTypeRestricted?: string[] // 文件类型限制
+  fileTackleFunction?: (event: ChangeEvent<HTMLInputElement>) => void // 文件抓取函数
 }
 
 export type NavItems = Array<NavItem>;

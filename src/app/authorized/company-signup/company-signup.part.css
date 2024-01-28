@@ -3,7 +3,7 @@
 @import "../../../global/global-variable.css";
 
 .inner-form {
-  padding: 0 var(--standard-padding-width);
+  padding: calc(2 * var(--standard-padding-width)) var(--standard-padding-width);
   height: 100%;
   
   display: flex;

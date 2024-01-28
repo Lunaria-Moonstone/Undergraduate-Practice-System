@@ -77,10 +77,28 @@ export default {
         break;
       }
       return items;
-    } else { 
+    } else if (role === 3) {
+      const items: NavItems = [
+        { label: '企业中心', href: '/dashboard/company-home' },
+        { label: '招聘岗位设置', href: '/dashboard/company-job' },
+        { label: '应聘人员一览', href: '/dashboard/company-student' },
+      ];
+      switch(path) {
+        case 'company-home':
+        items[0]['active'] = true;
+        break;
+        case 'company-job':
+        items[1]['active'] = true;
+        break;
+        case 'company-student':
+        items[2]['active'] = true;
+        break;
+      }
+      return items;
+    } else {
       return [
-    
-      ]
+
+      ];
     }
   }
 }

@@ -1,0 +1,33 @@
+@charset "utf-8";
+
+@import "../../../global/global-variable.css";
+
+.company-info-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.company-info-panel div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.company-info-panel span {
+  font-weight: bold;
+}
+
+.notification-cards > * {
+  margin-block-end: var(--standard-padding-width);
+}
+
+.notification-inline-btns {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.notification-inline-btns > * {
+  margin-inline-start: var(--standard-padding-width);
+}

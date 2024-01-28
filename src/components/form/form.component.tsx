@@ -22,7 +22,7 @@ export default function Form(props: any) {
       return (
         <div className="mb-3" key={index}>
           <label className="form-label">{x.label}</label>
-          <input className="form-control" placeholder={x.label} type={ x.isPassword ? 'password' : 'text' }/>
+          <input className="form-control" placeholder={x.label} type={x.isPassword ? 'password' : 'text'} />
         </div>
       );
     else if (x.type === 'textarea')
@@ -53,7 +53,11 @@ export default function Form(props: any) {
       return (
         <div className='mb-3' key={index}>
           <label className='form-label'>{x.label}</label>
-          <input className='form-control' type="file" />
+          <input
+            className='form-control' type="file"
+            onChange={x.fileTackleFunction ? x.fileTackleFunction : (event) => { }}
+            accept={x.fileTypeRestricted ? x.fileTypeRestricted.join(' ') : ''}
+          />
         </div>
       )
     return (

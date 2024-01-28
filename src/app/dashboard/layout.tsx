@@ -11,7 +11,7 @@ import './dashboard.part.css';
 
 export default function Layout({ children, }: any) {
   const path = usePathname() as string;
-  const role: number = 2;
+  const role: number = 3;
   const nav_items: NavItems = server.fetchNavItems(role, path);
   
   return (

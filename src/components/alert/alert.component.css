@@ -1,0 +1,10 @@
+@charset "utf-8";
+
+#alert-div {
+  position: absolute;
+  z-index: 999;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  transition: .5s;
+}
