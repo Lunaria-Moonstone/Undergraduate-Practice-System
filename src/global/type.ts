@@ -94,6 +94,7 @@ export interface JobAudit {
   job_id: string // 岗位编号
   progress: 'unread' | 'reading' | 'invaild' | 'complete' // 状态
   feedback?: string // 企业反馈
+  created?: string
 }
 
 export interface Notification {
@@ -111,6 +112,11 @@ export interface Announcement {
   created?: string
 }
 
+export interface StudentWithJob extends JobAudit {
+  student_name: string
+  job_name: string
+}
+
 export type Students = Array<Student>;
 export type Teachers = Array<Teacher>;
 export type Companies = Array<Company>;
@@ -120,3 +126,4 @@ export type Jobs = Array<Job>;
 export type JobAudits = Array<JobAudit>;
 export type Notifications = Array<Notification>;
 export type Announcements = Array<Announcement>;
+export type StudentsWithJob = Array<StudentWithJob>;

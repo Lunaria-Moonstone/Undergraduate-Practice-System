@@ -1,10 +1,20 @@
 'use client';
 
+import { Jobs } from "@/global/type";
 import { useState } from "react";
+
+import server from './company-job.api';
+import Table from "@/components/table/table.component";
 
 export default function Page() {
   
   const [addModalShown, setAddModalShown] = useState(false);
+
+  const jobs: Jobs = server.fetchJob();
+  const table_head: Array<string> = ['编号', '岗位名称', '薪资', ];
+  const table_body: Array<Array<string | number | undefined>> = jobs.map(x => {
+    return [x.id, x.name, x.salary];
+  });
 
   return (
     <>
@@ -22,44 +32,11 @@ export default function Page() {
           <button className="btn btn-secondary">导出</button>
         </div>
         {/* 数据表格区域 */}
-        <div className="dashboard-model-table">
-          <div className="dashboard-model-table-body">
-            <table className="table table-striped">
-              <thead className="table-dark">
-                <tr>
-                  <th>编号</th>
-                  <th>教师姓名</th>
-                  <th>工号</th>
-                  <th>联系电话</th>
-                  <th>联系邮箱</th>
-                  <th>操作</th>
-                </tr>
-              </thead>
-              <tbody>
-                {/* {table_body} */}
-              </tbody>
-            </table>
-          </div>
-          <div className="dashboard-model-table-pagination">
-            <nav aria-label="Page navigation example">
-              <ul className="pagination">
-                <li className="page-item">
-                  <a className="page-link" href="#" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                  </a>
-                </li>
-                <li className="page-item"><a className="page-link" href="#">1</a></li>
-                <li className="page-item"><a className="page-link" href="#">2</a></li>
-                <li className="page-item"><a className="page-link" href="#">3</a></li>
-                <li className="page-item">
-                  <a className="page-link" href="#" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </div>
-        </div>
+        <Table table_head={table_head} table_body={table_body} line_action={
+          <>
+            <a className="link-secondary text-decoration-none">详细</a>
+          </>
+        }/>
       </div>
     </>
   )
