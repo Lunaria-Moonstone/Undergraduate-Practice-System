@@ -82,6 +82,7 @@ export default {
         { label: '企业中心', href: '/dashboard/company-home' },
         { label: '招聘岗位设置', href: '/dashboard/company-job' },
         { label: '应聘人员一览', href: '/dashboard/company-student' },
+        { label: '企业信息设置', href: '/dashboard/company-info' },
       ];
       switch(path) {
         case 'company-home':
@@ -92,6 +93,9 @@ export default {
         break;
         case 'company-student':
         items[2]['active'] = true;
+        break;
+        case 'company-info':
+        items[3]['active'] = true;
         break;
       }
       return items;

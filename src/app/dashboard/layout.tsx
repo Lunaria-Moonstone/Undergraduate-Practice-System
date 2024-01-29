@@ -8,10 +8,14 @@ import { NavItems } from "@/global/type";
 import server from './dashboard.api';
 
 import './dashboard.part.css';
+import { createContext, useState } from "react";
+
+export const myContext = createContext<{ [key: string]: Function }>({});
 
 export default function Layout({ children, }: any) {
+  
   const path = usePathname() as string;
-  const role: number = 3;
+  const [role, setRole] = useState(0);
   const nav_items: NavItems = server.fetchNavItems(role, path);
   
   return (
@@ -20,7 +24,9 @@ export default function Layout({ children, }: any) {
         <Navbar nav_items={nav_items} />
       </div>
       <div className="dashboard-body">
-      {children}
+        <myContext.Provider value={{changeRole: setRole}}>
+          {children}
+        </myContext.Provider>
       </div>
     </>
   )

@@ -1,0 +1,19 @@
+@charset "utf-8";
+
+@import "../../../global/global-variable.css";
+
+.student-info .title{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.student-info .title .title-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.student-info .feedback {
+  margin-block-start: var(--standard-padding-width);
+}

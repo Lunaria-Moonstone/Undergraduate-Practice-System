@@ -94,6 +94,7 @@ export interface JobAudit {
   job_id: string // 岗位编号
   progress: 'unread' | 'reading' | 'invaild' | 'complete' // 状态
   feedback?: string // 企业反馈
+  resume?: string // 简历
   created?: string
 }
 

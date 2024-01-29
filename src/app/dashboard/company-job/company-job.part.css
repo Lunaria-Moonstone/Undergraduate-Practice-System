@@ -1,0 +1,28 @@
+@charset "utf-8";
+
+@import "../../../global/global-variable.css";
+
+.job-info .title {
+  font-weight: bolder;
+  font-size: large;
+}
+
+.job-info .info {
+  margin-block-start: var(--standard-padding-width);
+  display: flex;
+  flex-direction: column;
+}
+
+.job-info .info div:first-child {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.job-info .info div:first-child div:first-child {
+  font-weight: bold;
+}
+
+.job-info .info div:last-child div:first-child {
+  font-weight: bold;
+}
