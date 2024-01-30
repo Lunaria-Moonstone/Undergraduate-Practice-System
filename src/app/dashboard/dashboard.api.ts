@@ -8,14 +8,14 @@ export default {
     path = path.slice(path.lastIndexOf('/') + 1);
     if (role == 0) {
       const items: NavItems = [
-        { label: '首页', href: '/dashboard' },
+        { label: '管理员首页', href: '/dashboard/admin-home' },
         { label: '学生信息管理', href: '/dashboard/admin-student' },
         { label: '教师信息管理', href: '/dashboard/admin-teacher' },
         { label: '企业信息管理', href: '/dashboard/admin-company' },
         { label: '个人信息设置', href: '/dashboard/admin-info'},
       ];
       switch(path) {
-        case 'dashboard': 
+        case 'admin-home': 
         items[0]['active'] = true;
         break;
         case 'admin-student':

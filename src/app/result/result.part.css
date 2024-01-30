@@ -1,0 +1,22 @@
+@charset "utf-8";
+
+/* @import "" */
+
+.resultbox-background {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--main-color-lightgray);
+}
+
+.resultbox-area {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+}
+
+.resultbox {
+  width: 500px;
+  height: auto;
+  background-color: white;
+}

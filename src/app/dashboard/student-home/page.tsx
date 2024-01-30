@@ -6,6 +6,7 @@ import { Announcements, Notification, Notifications } from '@/global/type';
 import server from './student-home.api';
 import Modal from '@/components/modal/modal.component';
 import './student-home.part.css';
+import Layout from '../layout';
 
 export default function Page() {
 
