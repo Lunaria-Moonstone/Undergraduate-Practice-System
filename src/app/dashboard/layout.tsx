@@ -10,7 +10,6 @@ import server from './dashboard.api';
 import './dashboard.part.css';
 import { Component, Context, ReactNode, createContext, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { DashboardLayoutContext } from "@/utils/context";
 
 export default function Layouts({ children }: any) {
 
@@ -25,9 +24,7 @@ export default function Layouts({ children }: any) {
         <Navbar nav_items={nav_items} />
       </div>
       <div className="dashboard-body">
-        <DashboardLayoutContext.Provider value={(idx: number) => setRole(idx)}>
-          {children}
-        </DashboardLayoutContext.Provider>
+        {children}
       </div>
     </>
   )

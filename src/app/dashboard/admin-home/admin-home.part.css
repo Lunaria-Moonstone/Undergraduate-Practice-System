@@ -1,0 +1,24 @@
+@charset "utf-8";
+
+.admin-info-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.admin-info-panel div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-info-panel span {
+  font-weight: bold;
+}
+
+.card-inline-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--standard-padding-width);
+}

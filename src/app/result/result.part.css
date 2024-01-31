@@ -20,3 +20,11 @@
   height: auto;
   background-color: white;
 }
+
+.inner-box {
+  padding: 20% var(--standard-padding-width);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--standard-padding-width);
+}

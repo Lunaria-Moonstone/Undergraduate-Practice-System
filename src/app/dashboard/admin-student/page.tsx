@@ -58,12 +58,12 @@ export default function Page() {
         {/* 功能按钮区域 */}
         <div className="dashboard-model-buttons">
           <button className="btn btn-primary" onClick={() => setAddModalShown(true)}>新增</button>
-          <button className="btn btn-danger">删除</button>
+          <button className="btn btn-danger" onClick={() => setDeleteModalShown(true)}>删除</button>
           <button className="btn btn-secondary">导入</button>
-          <button className="btn btn-secondary">导出</button>
+          <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button>
         </div>
         {/* 数据表格区域 */}
-        <Table table_head={table_head} table_body={table_body} line_action={
+        <Table table_head={table_head} table_body={table_body} checkbox={true} line_action={
           <>
             <a className='link-danger text-decoration-none'>删除</a>
             <a className='link-warning text-decoration-none'>修改</a>
@@ -75,8 +75,8 @@ export default function Page() {
 
       <Modal shown={addModalShown} id='add-modal' modal_title='添加学生信息' close_function={() => setAddModalShown(false)} modal_btns={
         <>
-          <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-          <button type="button" className="btn btn-success" onClick={saveAdd}>添加</button>
+          <button type="button" className="btn btn-primary">确认</button>
+          <button type="button" className="btn btn-secondary" onClick={() => setAddModalShown(false)}>关闭</button>
         </>
       }>
         <Form form_items={add_form_items} form_id="add-form" />

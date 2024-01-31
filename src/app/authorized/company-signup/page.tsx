@@ -51,7 +51,8 @@ export default function Page() {
     let form_value_without_file = formInput(the_form).slice(0, -1);
     let form_file_base64 = ArrayBuffer2Base64(await lisence.arrayBuffer());
 
-    router.push('/authorized/signin');
+    // router.push('/authorized/signin');
+    router.replace('/result/success');
   }
 
   return (

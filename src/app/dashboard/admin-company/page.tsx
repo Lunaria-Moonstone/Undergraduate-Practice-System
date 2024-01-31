@@ -58,8 +58,8 @@ export default function Page() {
 
       <Modal shown={addModalShown} id='add-modal' modal_title='添加学生信息' close_function={() => setAddModalShown(false)} modal_btns={
         <>
-          <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-          <button type="button" className="btn btn-success" onClick={saveAdd}>添加</button>
+          <button type="button" className="btn btn-primary">确认</button>
+          <button type="button" className="btn btn-secondary" onClick={() => setAddModalShown(false)}>关闭</button>
         </>
       }>
         <Form form_items={add_form_items} form_id="add-form" />

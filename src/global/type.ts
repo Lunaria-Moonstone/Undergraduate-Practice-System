@@ -23,6 +23,11 @@ export type NavItems = Array<NavItem>;
 export type FormItems = Array<FormItem>;
 
 /**
+ * 后台处理类型
+ */
+export type GlobalStateVariableType = string | number | boolean | null | undefined;
+
+/**
  * 数据整理类型
  */
 export interface Profile {
