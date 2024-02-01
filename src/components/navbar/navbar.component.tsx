@@ -6,12 +6,14 @@ import { ReactNode } from "react";
 import { NavItems } from "@/global/type";
 
 import './navbar.component.css';
+import { useRouter } from "next/navigation";
 
 export default function Navbar(props: any) {
+  const router = useRouter();
   const { nav_items }: { nav_items: NavItems } = props
   const item_btns: ReactNode = nav_items.map((x, index) => {
-    if (x.active) return (<a type="button" className="list-group-item list-group-item-action active" href={x.href} key={index} >{x.label}</a>)
-    return (<a type="button" className="list-group-item list-group-item-action" key={index} href={x.href}>{x.label}</a>)
+    if (x.active) return (<a type="button" className="list-group-item list-group-item-action active" onClick={() => router.push(x.href)} key={index} >{x.label}</a>)
+    return (<a type="button" className="list-group-item list-group-item-action" key={index} onClick={() => router.push(x.href)}>{x.label}</a>)
   })
 
   return (

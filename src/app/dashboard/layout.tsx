@@ -8,15 +8,16 @@ import { NavItems } from "@/global/type";
 import server from './dashboard.api';
 
 import './dashboard.part.css';
-import { Component, Context, ReactNode, createContext, useState } from "react";
+import { Component, Context, ReactNode, createContext, useContext, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
+import { GlobalStateContext } from "@/utils/context";
 
 export default function Layouts({ children }: any) {
 
   // const params = useSearchParams();
   const path = usePathname() as string;
-  const [role, setRole] = useState(0);
-  const nav_items: NavItems = server.fetchNavItems(role, path);
+  const roleState = useContext(GlobalStateContext);
+  const nav_items: NavItems = server.fetchNavItems(roleState['role'][0] as number, path);
 
   return (
     <>

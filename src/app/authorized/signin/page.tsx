@@ -3,17 +3,20 @@
 import { useRouter } from "next/navigation";
 
 import Form from "@/components/form/form.component";
-import { FormItems } from "@/global/type";
+import { FormItems, GlobalStateVariableType } from "@/global/type";
 import { formInput } from "@/utils/input";
 import server from './signin.api';
 
 import './signin.part.css';
-import { DashboardLayoutContext } from "@/utils/context";
-import { useState } from "react";
+
+import { useContext, useState } from "react";
 import Alert from "@/components/alert/alert.component";
+import { GlobalStateContext } from "@/utils/context";
 
 export default function Page() {
   const router = useRouter();
+  const roleState = useContext(GlobalStateContext);
+  const roleSetter = roleState['role'][1] as (idx: GlobalStateVariableType) => void;
 
   const [alertShown, setAlertShown] = useState<boolean>(false);
   const [alertMessage, setAlertMessage] = useState<string>('');
@@ -44,12 +47,28 @@ export default function Page() {
       return;
     }
     const role = server.authorize(form_value[0] as string, form_value[1] as string);
-    if (role === -1) {
-      alert("用户名不存在或密码错误", "danger");
-      return;
+    // router.push(`/dashboard?role=${role}`);
+    switch (role) {
+      case -1:
+        alert("用户名不存在或密码错误", "danger");
+        return;
+      case 0: 
+        roleSetter(0);
+        router.push(`/dashboard/admin-home`);
+        break;
+      case 1: 
+        roleSetter(1);
+        router.push(`/dashboard/student-home`);
+        break;
+      case 2:
+        roleSetter(2);
+        router.push(`/dashboard/teacher-home`);
+        break;
+      case 3:
+        roleSetter(3);
+        router.push(`/dashboard/company-home`);
+        break;
     }
-
-    router.push(`/dashboard?role=${role}`);
   }
   return (
     <>
