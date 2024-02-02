@@ -1,8 +1,16 @@
+'use client';
+
 import Table from '@/components/table/table.component';
 import server from './student-annex.api';
 import "./student-annex.part.css";
+import { useState } from 'react';
+import Modal from '@/components/modal/modal.component';
 
 export default function Page() {
+
+  const [addModalShown, setAddModalShown] = useState(false);
+  const [delModalShown, setDelModalShown] = useState(false);
+  const [infoModalShown, setInfoModalShown] = useState(false);
 
   const { resume, practice_document } = server.fetchAnnex()
   const [history_resume, history_practice_document] = server.fetchAnnexHistory();
@@ -11,8 +19,8 @@ export default function Page() {
   const history_practice_document_table_head = ['编号', '时间']
   const line_action: React.ReactNode = (
     <>
-      <a className='link-danger text-decoration-none'>删除</a>
-      <a className='link-secondary text-decoration-none'>预览</a>
+      <a className='link-danger text-decoration-none' onClick={() => setDelModalShown(true)}>删除</a>
+      <a className='link-secondary text-decoration-none' onClick={() => setInfoModalShown(true)}>预览</a>
     </>
   )
   const history_resume_table_body: Array<Array<string | number | undefined>> = history_resume.map(x => {
@@ -43,14 +51,13 @@ export default function Page() {
               <div className="card-body">
                 <p className="card-text">本页面材料具有法律效力</p>
                 <div className="student-annex-card-body-buttons">
-                  <a className="btn btn-primary btn-sm">上传新材料</a>
-                  <a className="btn btn-secondary btn-sm">详细</a>
+                  <a className="btn btn-primary btn-sm" onClick={() => setAddModalShown(true)}>上传新简历</a>
                   <a className="btn btn-danger btn-sm">删除</a>
                 </div>
               </div>
             </div>
             <div>
-              <Table table_head={history_resume_table_head} table_body={history_resume_table_body} line_action={line_action} /> 
+              <Table table_head={history_resume_table_head} table_body={history_resume_table_body} line_action={line_action} />
             </div>
           </div>
           <div className="tab-pane fade" id="practice-document" role="tabpanel" aria-labelledby="practice-document-tab" >
@@ -59,8 +66,8 @@ export default function Page() {
               <div className="card-body">
                 <p className="card-text">本页面材料具有法律效力</p>
                 <div className="student-annex-card-body-buttons">
-                  <a className="btn btn-primary btn-sm">上传新材料</a>
-                  <a className="btn btn-secondary btn-sm">详细</a>
+                  <a className="btn btn-primary btn-sm" onClick={() => setAddModalShown(true)}>上传新材料</a>
+                  {/* <a className="btn btn-secondary btn-sm">详细</a> */}
                   <a className="btn btn-danger btn-sm">删除</a>
                 </div>
               </div>
@@ -71,6 +78,35 @@ export default function Page() {
           </div>
         </div>
       </div>
+
+      <Modal id="modal-add" shown={addModalShown} close_function={() => setAddModalShown(false)} modal_title='上传材料' modal_btns={
+        <>
+          <button className='btn btn-primary'>确认</button>
+          <button className='btn btn-secondary' onClick={() => setAddModalShown(false)}>关闭</button>
+        </>
+      }>
+        ...
+      </Modal>
+
+      <Modal id="modal-info" shown={infoModalShown} close_function={() => setInfoModalShown(false)} modal_title='详细' modal_btns={
+        <>
+          <button className='btn btn-secondary' onClick={() => setInfoModalShown(false) }>关闭</button>
+        </>
+      }>
+        {/* <div className='card'>
+          <img className='card-img-top' src={resume} />
+        </div> */}
+        hello
+      </Modal>
+
+      <Modal id="modal-del" shown={delModalShown} close_function={() => setDelModalShown(false)} modal_title='确认删除' modal_btns={
+        <>
+          <button className='btn btn-danger'>确认</button>
+          <button className='btn btn-secondary' onClick={() => setDelModalShown(false)}>关闭</button>
+        </>
+      }>
+        删除内容后无法恢复，是否继续
+      </Modal>
     </>
   )
 }

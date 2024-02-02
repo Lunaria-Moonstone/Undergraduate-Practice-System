@@ -9,7 +9,8 @@ import server from './signin.api';
 
 import './signin.part.css';
 
-import { useContext, useState } from "react";
+
+import { useContext, useEffect, useState } from "react";
 import Alert from "@/components/alert/alert.component";
 import { GlobalStateContext } from "@/utils/context";
 
@@ -70,6 +71,17 @@ export default function Page() {
         break;
     }
   }
+  const enterDown = (e: KeyboardEvent) => {
+    if (e.code === 'Enter') {
+      submitForm();
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener("keydown", enterDown, false);
+    return () => document.removeEventListener("keydown", enterDown, false);
+  });
+
   return (
     <>
       <div className="inner-form">
