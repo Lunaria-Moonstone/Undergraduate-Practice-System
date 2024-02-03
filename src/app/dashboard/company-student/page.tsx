@@ -29,7 +29,7 @@ export default function Page() {
           <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button>
         </div>
         {/* 数据表格区域 */}
-        <Table table_head={table_head} table_body={table_body} checkbox={true} line_action={
+        <Table table_id="table" table_head={table_head} table_body={table_body} checkbox={true} line_action={
           <>
             <a className="link-secondary text-decoration-none" onClick={() => setInfoModalShown(true)}>详细</a>
           </>

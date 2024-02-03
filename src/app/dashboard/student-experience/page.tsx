@@ -5,25 +5,19 @@ import server from './student-experience.api'
 import { ReactNode, useState } from 'react';
 import Modal from '@/components/modal/modal.component';
 import Select from '@/components/select-with-search/select-with-search.component';
+import Table from '@/components/table/table.component';
 
 export default function Page() {
 
   const [addModalShown, setAddModalShown] = useState(false);
+  const [delModalShown, setDelModalShown] = useState(false);
+  const [exportModalShown, setExportModalShown] = useState(false);
+  const [infoModalShown, setInfoModalShown] = useState(false);
 
   const experiencies: StudentPracticeExperiencies = server.fetchExperience();
-  const table_body: ReactNode = experiencies.map((x, index) => {
-    return (
-      <tr key={index}>
-        <td style={{ display: 'none' }}>{x.id}</td>
-        <td>{x.company_id}</td>
-        <td>{x.start}</td>
-        <td>{x.end}</td>
-        <td className='table-inline-buttons' style={{ width: '300px', minWidth: '300px' }}>
-          <a className='link-danger text-decoration-none'>删除</a>
-          <a className='link-warning text-decoration-none'>修改</a>
-        </td>
-      </tr>
-    )
+  const table_head: Array<string> = ['企业名称', '就职时间', '离职时间'];
+  const table_body: Array<Array<string | number | undefined>> = experiencies.map(x => {
+    return [x.company_id, x.start, x.end];
   });
   const company_opts: { label: string, value: string | number }[] = server.fetchCompanies().map(x => {
     return {
@@ -41,50 +35,19 @@ export default function Page() {
         </div>
         <div className="dashboard-model-buttons">
           <button className="btn btn-success" onClick={() => setAddModalShown(true)}>添加</button>
-          <button className="btn btn-danger">删除</button>
+          <button className="btn btn-danger" onClick={() => setDelModalShown(true)}>删除</button>
           <button className="btn btn-secondary">导入</button>
-          <button className="btn btn-secondary">导出</button>
+          <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button>
         </div>
-        <div className="dashboard-model-table">
-          <div className="dashboard-model-table-body">
-            <table className="table table-striped">
-              <thead className="table-dark">
-                <tr>
-                  <th style={{ display: 'none' }}>编号</th>
-                  <th>企业名称</th>
-                  <th>就职时间</th>
-                  <th>离职时间</th>
-                  <th>操作</th>
-                </tr>
-              </thead>
-              <tbody>
-                {table_body}
-              </tbody>
-            </table>
-          </div>
-          <div className="dashboard-model-table-pagination">
-            <nav aria-label="Page navigation example">
-              <ul className="pagination">
-                <li className="page-item">
-                  <a className="page-link" href="#" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                  </a>
-                </li>
-                <li className="page-item"><a className="page-link" href="#">1</a></li>
-                <li className="page-item"><a className="page-link" href="#">2</a></li>
-                <li className="page-item"><a className="page-link" href="#">3</a></li>
-                <li className="page-item">
-                  <a className="page-link" href="#" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </div>
-        </div>
+        <Table table_id='table' table_head={table_head} table_body={table_body} checkbox={true} line_action={
+          <>
+            <a className='link-danger text-decoration-none' onClick={() => setDelModalShown(true)}>删除</a>
+            <a className='link-secondary text-decoration-none' onClick={() => setInfoModalShown(true)}>详细</a>
+          </>
+        } />
       </div>
 
-      <Modal shown={addModalShown} id='add-modal' modal_title='添加实习经历' close_function={() => setAddModalShown(false)} modal_btns={
+      <Modal shown={addModalShown} id='modal-add' modal_title='添加实习经历' close_function={() => setAddModalShown(false)} modal_btns={
         <>
           <button type="button" className="btn btn-primary">保存</button>
           <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
@@ -104,6 +67,32 @@ export default function Page() {
             <input className="form-control" type="date" defaultValue="1999-01-01" />
           </div>
         </div>
+      </Modal>
+
+      <Modal shown={delModalShown} id='modal-del' modal_title='确认删除' close_function={() => setDelModalShown(false)} modal_btns={
+        <>
+          <button className="btn btn-danger">确认</button>
+          <button className="btn btn-secondary" onClick={() => setDelModalShown(false)}>取消</button>
+        </>
+      }>
+        删除内容后无法恢复，是否继续
+      </Modal>
+
+      <Modal shown={infoModalShown} id="modal-info" modal_title='详细' close_function={() => setInfoModalShown(false)} modal_btns={
+        <>
+          <button className='btn btn-secondary' onClick={() => setInfoModalShown(false)}>关闭</button>
+        </>
+      }>
+        ...
+      </Modal>
+
+      <Modal shown={exportModalShown} id="modal-export" modal_title='导出数据' close_function={() => setExportModalShown(false)} modal_btns={
+        <>
+          <button className='btn btn-primary'>确定</button>
+          <button className='btn btn-secondary' onClick={() => setExportModalShown(false)}>关闭</button>
+        </>
+      }>
+        是否将选定内容导出至外部
       </Modal>
     </>
   )

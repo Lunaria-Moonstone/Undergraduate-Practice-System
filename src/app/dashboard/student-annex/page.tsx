@@ -52,12 +52,12 @@ export default function Page() {
                 <p className="card-text">本页面材料具有法律效力</p>
                 <div className="student-annex-card-body-buttons">
                   <a className="btn btn-primary btn-sm" onClick={() => setAddModalShown(true)}>上传新简历</a>
-                  <a className="btn btn-danger btn-sm">删除</a>
+                  <a className="btn btn-danger btn-sm" onClick={() => setDelModalShown(true)}>删除</a>
                 </div>
               </div>
             </div>
             <div>
-              <Table table_head={history_resume_table_head} table_body={history_resume_table_body} line_action={line_action} />
+              <Table table_id='table' table_head={history_resume_table_head} table_body={history_resume_table_body} line_action={line_action} />
             </div>
           </div>
           <div className="tab-pane fade" id="practice-document" role="tabpanel" aria-labelledby="practice-document-tab" >
@@ -67,13 +67,12 @@ export default function Page() {
                 <p className="card-text">本页面材料具有法律效力</p>
                 <div className="student-annex-card-body-buttons">
                   <a className="btn btn-primary btn-sm" onClick={() => setAddModalShown(true)}>上传新材料</a>
-                  {/* <a className="btn btn-secondary btn-sm">详细</a> */}
-                  <a className="btn btn-danger btn-sm">删除</a>
+                  <a className="btn btn-danger btn-sm" onClick={() => setDelModalShown(true)}>删除</a>
                 </div>
               </div>
             </div>
             <div>
-              <Table table_head={history_practice_document_table_head} table_body={history_practice_document_table_body} line_action={line_action} />
+              <Table table_id='table' table_head={history_practice_document_table_head} table_body={history_practice_document_table_body} line_action={line_action} />
             </div>
           </div>
         </div>
@@ -93,10 +92,9 @@ export default function Page() {
           <button className='btn btn-secondary' onClick={() => setInfoModalShown(false) }>关闭</button>
         </>
       }>
-        {/* <div className='card'>
+        <div className='card'>
           <img className='card-img-top' src={resume} />
-        </div> */}
-        hello
+        </div>
       </Modal>
 
       <Modal id="modal-del" shown={delModalShown} close_function={() => setDelModalShown(false)} modal_title='确认删除' modal_btns={

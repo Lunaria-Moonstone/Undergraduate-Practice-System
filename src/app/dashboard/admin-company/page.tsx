@@ -48,7 +48,7 @@ export default function Page() {
           <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button>
         </div>
         {/* 数据表格区域 */}
-        <Table table_head={table_head} table_body={table_body} checkbox={true} line_action={
+        <Table table_id='table' table_head={table_head} table_body={table_body} checkbox={true} line_action={
           <>
             <a className='link-danger text-decoration-none'>删除</a>
             <a className='link-warning text-decoration-none'>修改</a>

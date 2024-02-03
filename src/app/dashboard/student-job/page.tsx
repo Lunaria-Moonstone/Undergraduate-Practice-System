@@ -1,11 +1,21 @@
+'use client';
+
+import Modal from '@/components/modal/modal.component';
 import server from './student-job.api';
 import Table from "@/components/table/table.component";
+import { useState } from 'react';
+import Form from '@/components/form/form.component';
 
 export default function Page() {
+
+  const [submitModalShown, setSubmitModalShown] = useState(false);
+  const [infoModalShown, setInfoModalShown] = useState(false);
+
   const table_head = ['编号', '公司名称', '岗位名称', '薪资'];
   const table_body = server.fetchJobs().map(x => {
     return [x.id, x.company_id, x.name, x.salary];
   });
+
 
   return (
     <>
@@ -15,17 +25,39 @@ export default function Page() {
           <hr /> 
         </div>
         <div className="dashboard-model-buttons">
-          <button className="btn btn-primary">批量投递</button>
+          <button className="btn btn-primary" onClick={() => setSubmitModalShown(true)}>批量投递</button>
         </div>
         <div>
           <Table table_head={table_head} table_body={table_body} checkbox={true} table_id="m-table" line_action={
             <>
               <a className="link-secondary text-decoration-none">详细</a>
-              <a className="link-primary text-decoration-none">投递</a>
+              <a className="link-primary text-decoration-none" onClick={() => setSubmitModalShown(true)}>投递</a>
             </>
           } />
         </div>
       </div>
+
+      <Modal id="modal-submit" shown={submitModalShown} close_function={() => setSubmitModalShown(false)} modal_title='岗位投递' modal_btns={
+        <>
+          <button className='btn btn-primary'>确认</button>
+          <button className='btn btn-secondary' onClick={() => setSubmitModalShown(false)}>取消</button>
+        </>
+      }>
+        是否确定向该投递求职意向
+      </Modal>
+
+      <Modal id="modal-info" shown={infoModalShown} close_function={() => setInfoModalShown(false)} modal_title='投递信息' modal_btns={
+        <>
+          <button className='btn btn-secondary' onClick={() => setInfoModalShown(false)}>关闭</button>
+        </>
+      }>
+        <div className='job-info'>
+          <div>
+            <div>岗位</div>
+            <div>保安</div>
+          </div>
+        </div>
+      </Modal>
     </>
-  )
+  );
 }
