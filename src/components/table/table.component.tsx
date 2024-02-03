@@ -17,7 +17,7 @@ interface TableState {
 export default class Table extends Component<TableProps> {
   table_id: string;
   table_head: Array<string>;
-  table_body: Array<Array<string>>;
+  table_body: Array<Array<string | number | undefined>>;
   line_action: React.ReactNode | undefined;
   checkbox: boolean | undefined;
 
@@ -31,7 +31,7 @@ export default class Table extends Component<TableProps> {
     this.table_id = props.table_id;
     this.table_head = props.table_head;
     this.table_body = props.table_body;
-    this.line_action = props.line_actions;
+    this.line_action = props.line_action;
     this.checkbox = props.checkbox;
 
     this.checked_list = [];
@@ -59,7 +59,7 @@ export default class Table extends Component<TableProps> {
       if (this.checkbox) {
         cbox = (
           <td style={{ width: '20px' }}>
-            <input className="form-check-input table-checkbox" type="checkbox" onChange={checkChange}  />
+            <input className="form-check-input table-checkbox" type="checkbox" onChange={this.checkChange}  />
           </td>
         );
       }

@@ -1,6 +1,13 @@
+'use client';
+
 import '@/global/global-variable.css';
+import { useRouter } from 'next/navigation';
 
 export default function Page() {
+  const router = useRouter();
+  const submitChange = () => {
+    router.push('/result/success');
+  }
   return (
     <>
       <div className="dashboard-base-panel">
@@ -56,7 +63,7 @@ export default function Page() {
               </div>
             </form>
             <div style={{ width: '100%' }} className="d-grid gap-2">
-              <button className="btn btn-primary btn-block">确认修改</button>
+              <button className="btn btn-primary btn-block" onClick={submitChange}>确认修改</button>
             </div>
           </div>
 
@@ -80,7 +87,7 @@ export default function Page() {
               </div>
             </form>
             <div style={{ width: '100%' }} className="d-grid gap-2">
-              <button className="btn btn-primary btn-block">确认修改</button>
+              <button className="btn btn-primary btn-block" onClick={submitChange}>确认修改</button>
             </div>
           </div>
         </div>

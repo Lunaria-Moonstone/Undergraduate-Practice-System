@@ -30,7 +30,7 @@ export default function Page() {
         <div>
           <Table table_head={table_head} table_body={table_body} checkbox={true} table_id="m-table" line_action={
             <>
-              <a className="link-secondary text-decoration-none">详细</a>
+              <a className="link-secondary text-decoration-none" onClick={() => setInfoModalShown(true)}>详细</a>
               <a className="link-primary text-decoration-none" onClick={() => setSubmitModalShown(true)}>投递</a>
             </>
           } />

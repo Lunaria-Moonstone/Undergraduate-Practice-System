@@ -7,6 +7,8 @@ import Modal from '@/components/modal/modal.component';
 import Select from '@/components/select-with-search/select-with-search.component';
 import Table from '@/components/table/table.component';
 
+import './student-experience.part.css';
+
 export default function Page() {
 
   const [addModalShown, setAddModalShown] = useState(false);
@@ -83,7 +85,20 @@ export default function Page() {
           <button className='btn btn-secondary' onClick={() => setInfoModalShown(false)}>关闭</button>
         </>
       }>
-        ...
+        <div className='experience-info'>
+          <div>
+            <div>企业名称</div>
+            <div>国家安全局</div>
+          </div>
+          <div>
+            <div>入职时间</div>
+            <div>2023-07-10</div>
+          </div>
+          <div>
+            <div>离职时间</div>
+            <div>2024-02-01</div>
+          </div>
+        </div>
       </Modal>
 
       <Modal shown={exportModalShown} id="modal-export" modal_title='导出数据' close_function={() => setExportModalShown(false)} modal_btns={

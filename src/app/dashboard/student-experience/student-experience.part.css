@@ -1,0 +1,19 @@
+@charset "utf-8";
+
+@import "../../../global/global-variable.css";
+
+.experience-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--standard-padding-width);
+}
+
+.experience-info > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.experience-info > div div:first-child {
+  font-weight: bold;
+}
