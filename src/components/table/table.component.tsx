@@ -36,11 +36,20 @@ export default class Table extends Component<TableProps> {
 
     this.checked_list = [];
 
+    this.makeTableHead();
+    this.makeTableBody();
+    
+  }
+
+  makeTableHead() {
     this.table_head_node = this.table_head.map((x, index) => {
       return (
         <th key={index}>{x}</th>
       );
     });
+  }
+
+  makeTableBody() {
     this.table_body_node = this.table_body.map((x, index) => {
       const t_line: React.ReactNode = x.map((y, sub_index) => {
         return (
@@ -71,6 +80,12 @@ export default class Table extends Component<TableProps> {
         </tr>
       );
     });
+  }
+
+  componentDidUpdate(prevProps: Readonly<TableProps>, prevState: Readonly<{}>, snapshot?: any): void {
+    if (this.table_body != this.props.table_body) {
+      this.makeTableBody();
+    }
   }
 
   checkChange(event: ChangeEvent<HTMLInputElement>) {

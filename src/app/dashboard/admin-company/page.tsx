@@ -1,9 +1,9 @@
 'use client'
 
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
 import server from './admin-company.api';
-import { FormItems } from '@/global/type';
+import { Companies, FormItems } from '@/global/type';
 import { formInput } from '@/utils/input';
 import Modal from '@/components/modal/modal.component';
 import Form from '@/components/form/form.component';
@@ -15,13 +15,16 @@ export default function Page() {
   const [deleteModalShown, setDeleteModalShown] = useState(false);
   const [exportModalShown, setExportModalShown] = useState(false);
 
-  const companies = server.fetchCompanies();
-  const table_head: Array<string> = ['编号', '企业名称', '联系电话', '联系邮箱'];
-  const table_body: Array<Array<string | number | undefined>> = companies.map(x => {
-    return [
-      x.id, x.name, x.phone, x.mail
-    ];
-  });
+  const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
+  const [table_head, setTableHead] = useState<Array<string>>(['编号', '企业名称', '联系电话', '联系邮箱']);
+
+  useEffect(() => {
+    server.fetchCompanies()
+    .then(res => {
+      setTableBody(res.map(x => [x.id, x.name, x.phone, x.mail]));
+    });
+  }, []);
+  
   const add_form_items: FormItems = [
     { label: '企业名称', type: 'input' },
     { label: '联系电话', type: 'input' },
@@ -44,7 +47,7 @@ export default function Page() {
         <div className="dashboard-model-buttons">
           <button className="btn btn-primary" onClick={() => setAddModalShown(true)}>新增</button>
           <button className="btn btn-danger" onClick={() => setDeleteModalShown(true)}>删除</button>
-          <button className="btn btn-secondary">导入</button>
+          <button className="btn btn-secondary" onClick={() => console.log(table_body)}>导入</button>
           <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button>
         </div>
         {/* 数据表格区域 */}

@@ -1,3 +1,5 @@
+
+
 CREATE TABLE `company` (
   `id` char(36) NOT NULL,
   `name` varchar(10) DEFAULT NULL COMMENT '姓名',
