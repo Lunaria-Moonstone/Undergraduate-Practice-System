@@ -12,6 +12,7 @@ import Table from '@/components/table/table.component';
 export default function Page() {
 
   const [addModalShown, setAddModalShown] = useState(false);
+  const [editModalShown, setEditModalShown] = useState(false);
   const [deleteModalShown, setDeleteModalShown] = useState(false);
   const [exportModalShown, setExportModalShown] = useState(false);
 
@@ -30,9 +31,17 @@ export default function Page() {
     { label: '联系电话', type: 'input' },
     { label: '联系邮箱', type: 'input' },
   ];
+  const edit_form_items: FormItems = [
+    { label: '企业名称', type: 'input' },
+    { label: '联系电话', type: 'input' },
+    { label: '联系邮箱', type: 'input' },
+  ];
   const saveAdd = () => {
     let form_value = formInput(document.getElementById('add-form') as HTMLElement);
     console.log(form_value);
+  }
+  const saveEdit = () => {
+
   }
 
   return (
@@ -53,8 +62,8 @@ export default function Page() {
         {/* 数据表格区域 */}
         <Table table_id='table' table_head={table_head} table_body={table_body} checkbox={true} line_action={
           <>
-            <a className='link-danger text-decoration-none'>删除</a>
-            <a className='link-warning text-decoration-none'>修改</a>
+            <a className='link-danger text-decoration-none' onClick={() => setDeleteModalShown(true)}>删除</a>
+            <a className='link-warning text-decoration-none' onClick={() => setEditModalShown(true)}>修改</a>
           </>
         } />
       </div>
@@ -66,6 +75,16 @@ export default function Page() {
         </>
       }>
         <Form form_items={add_form_items} form_id="add-form" />
+      </Modal>
+
+      {/* 修改模态框 */}
+      <Modal id="modal-edit" shown={editModalShown} close_function={() => setEditModalShown(false)} modal_title='修改公司信息' modal_btns={
+        <>
+          <button className='btn btn-primary' >确定</button>
+          <button className='btn btn-secondary' onClick={() => setEditModalShown(false)}>取消</button>
+        </>
+      }>
+        <Form form_items={edit_form_items} form_id="edit-form" />
       </Modal>
 
       {/* 删除确认 */}
