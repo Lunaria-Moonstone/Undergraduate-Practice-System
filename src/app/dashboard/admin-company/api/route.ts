@@ -25,4 +25,22 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   let result: unknown;
+  let param = request.body;
+
+  let request_body = await (await new Response(param)).blob();
+  let { name, phone, mail } = JSON.parse(await request_body.text()); // fetch company name, phone and mail message
+  
+
+  return new Response('success!', {
+    status: 200,
+    headers: { 'Set-Cookie': 'token=hi' }
+  })
+}
+
+export async function DELETE(request: Request) {
+
+}
+
+export async function PUT(request: Request) {
+
 }
