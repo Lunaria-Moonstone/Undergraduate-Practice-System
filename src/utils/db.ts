@@ -1,5 +1,4 @@
 import mysql from 'serverless-mysql';
-import { isNumberObject } from 'util/types';
 
 const db = mysql({
   config: {
@@ -76,6 +75,156 @@ export async function insert({
   return results;
 }
 
+export async function drop({
+  table, where
+}: {
+  table: string
+  where?: { [key: string]: number | string }
+}) {
+  let results = {};
+  let sql = sqlFactory({
+    table,
+    where,
+    field: '*',
+    method: 'delete',
+  });
+  try {
+    const exec_res = await db.query(sql, []);
+    await db.end();
+    results = { ok: true, results: exec_res };
+  } catch (error: unknown) {
+    results = { ok: false, error: error};
+  }
+  return results;
+}
+
+export async function selectSafty({
+  field, table, where, order, group, limit,
+}: {
+  field: '*' | Array<string>,
+  table: string,
+  where?: { [key: string]: string | number },
+  order?: { [key: string]: { desc?: boolean }},
+  group?: Array<string>,
+  limit?: number,
+}) {
+  let results = {};
+  let sql = sqlFactorySafty({
+    field,
+    table,
+    where: where ? Object.keys(where) : undefined,
+    order,
+    group,
+    limit,
+    method: 'select',
+  });
+  try {
+    const exec_res = await db.query(sql, Object.values(where ?? []));
+    await db.end();
+    results = { ok: true, results: exec_res }
+  } catch (error:unknown) {
+    results = { ok: false, error: error }
+  }
+  return results;
+}
+
+export async function insertSafty({
+  field, table, insert_values_num
+}: {
+  field: { [key: string]: string | number },
+  table: string,
+  insert_values_num: number
+}) {
+  let results = {};
+  let sql = sqlFactorySafty({
+    field: Object.keys(field),
+    table, 
+    insert_values_num,
+    method: 'insert',
+  });
+  try {
+    const exec_res = await db.query(sql, Object.values(field));
+    await db.end();
+    results = { ok: true, results: exec_res };
+  } catch (error: unknown) {
+    results = { ok: false, error };
+  }
+  return results;
+}
+
+export async function dropSafty({
+  table, where, 
+}: {
+  table: string,
+  where?: { [key: string]: string | number }
+}) {
+  console.log(Object.keys(where as { [key: string]: string | number }))
+  let results = {};
+  let sql = sqlFactorySafty({
+    table,
+    where: where ? Object.keys(where) : [],
+    field: '*',
+    method: 'delete',
+  });
+  try {
+    const exec_res = await db.query(sql, Object.values(where ?? {}));
+    await db.end();
+    results = { ok: true, results: exec_res };
+  } catch (error) {
+    results = { ok: false, error: error };
+  }
+  return results;
+}
+
+export async function update({
+  field, table, where,  
+}: {
+  field: { [key: string]: string | number },
+  table: string,
+  where?: { [key: string]: string | number },
+}) {
+  let results = {};
+  let sql = sqlFactory({
+    table,
+    field: Object.keys(field),
+    where: where,
+    method: 'update',
+  });
+  try {
+    const exec_res = await db.query(sql, []);
+    await db.end();
+    results = { ok: true, results: exec_res };
+  } catch (error: unknown) {
+    results = { ok: false, results: error };
+  }
+  return results;
+}
+
+export async function updateSafty({
+  field, table, where
+}: {
+  field: { [key: string]: string | number },
+  table: string,
+  where?: { [key: string]: string | number },  
+}) {
+  let results = {};
+  let sql = sqlFactorySafty({
+    table,
+    field: Object.keys(field),
+    update_values_num: Object.keys(field).length,
+    where : where ? Object.keys(where) : [],
+    method: 'update',
+  });
+  try {
+    const exec_res = await db.query(sql, new Array().concat(Object.values(field), where ? Object.values(where) : []));
+    await db.end();
+    results = { ok: true, results: exec_res };
+  } catch (error: unknown) {
+    results = { ok: false, error };
+  }
+  return results;
+}
+
 function sqlFactory({
   method, field, table, where, insert_value, update_value, order, group, limit
 }: {
@@ -105,7 +254,7 @@ function sqlFactory({
         \`${ table }\`
       WHERE
         1 = 1 
-        ${ !where ? '' : ' AND ' + Object.keys(where).map(x => {
+        ${ !where ? '' : ( Object.keys(where).length !== 0 ? ' AND ': '') + Object.keys(where).map(x => {
           return x + '=' + (typeof where[x] === 'number' ? where[x] : '\'' + where[x] + '\'');
         }).join(' AND ') }
       
@@ -122,7 +271,7 @@ function sqlFactory({
         ${table}
       WHERE 
         1 = 1
-        ${ !where ? '' : ' AND ' + Object.keys(where).map(x => {
+        ${ !where ? '' : ( Object.keys(where).length !== 0 ? ' AND ' : '' ) + Object.keys(where).map(x => {
           return x + '=' + (typeof where[x] === 'number' ? where[x] : '\'' + where + '\'');
         }).join(' AND ') }
       `;
@@ -140,7 +289,7 @@ function sqlFactory({
       break;
     case 'update':
       sql = `
-      UPDATE FROM
+      UPDATE 
         ${table}
       SET 
         ${ field === '*' || update_value === undefined ? '' : field.map(x => x + '=' + ( typeof update_value[x] === 'number' ? update_value[x] : '\'' + update_value[x] + '\'')).join(',') }
@@ -156,12 +305,13 @@ function sqlFactory({
 }
 
 function sqlFactorySafty({
-  method, field, table, where, insert_values_num, update_values_num, order, group, limit
+  method, field, table, where, insert_values_num, insert_lines, update_values_num, order, group, limit
 }: {
   method: 'insert' | 'select' | 'delete' | 'update',
   field: '*' | Array<string>,
   table: string,
   insert_values_num?: number,
+  insert_lines?: number,
   update_values_num?: number,
   where?: Array<string>,
   order?: { [key: string]: { desc?: boolean } }, 
@@ -184,11 +334,10 @@ function sqlFactorySafty({
         \`${ table }\`
       WHERE
         1 = 1 
-        ${ !where ? '' : ' AND ' + Object.keys(where).map(x => {
+        ${ !where || Object.keys(where).length === 0  ? '' : ' AND ' + where.map(x => {
           return x + '=?';
         }).join(' AND ') }
-      
-        ${ !order ? '' : 'ORDER BY ' + Object.keys(order).map(x => {
+        ${ !order || Object.keys(order).length === 0 ? '' : 'ORDER BY ' + Object.keys(order).map(x => {
           return ' ' + x + (order[x]['desc'] ? ' DESC ' : ' ');
         }) }
         ${ !group ? '' : 'GROUP BY ' + group.join(' ')}
@@ -201,7 +350,7 @@ function sqlFactorySafty({
         ${table}
       WHERE 
         1 = 1
-        ${ !where ? '' : ' AND ' + Object.keys(where).map(x => {
+        ${ !where ? '' : ( where.length !== 0 ? ' AND ' : '') + where.map(x => {
           return x + '=?';
         }).join(' AND ') }
       `;
@@ -210,22 +359,23 @@ function sqlFactorySafty({
       sql = `
       INSERT INTO 
         ${table} ${ field === '*' ? '' : '(' + field.join(',') + ')' } 
-      ${ insert_values_num !== undefined && insert_values_num > 1 ? 'VALUES' : 'VALUE' }
-        ${ insert_values_num ? new Array<string>(insert_values_num).map(x => {
-            return ' ?'
-          }).join(',') : ''
+      ${ insert_lines !== undefined && insert_lines > 1 ? 'VALUES' : 'VALUE' }
+        ${
+          insert_lines
+          ? (new Array<string>(insert_lines ?? 1)).fill('(' + (new Array<string>(insert_values_num ?? 1)).fill(' ?').join(',') + ')').join(',')
+          : '(' + (new Array<string>(insert_values_num ?? 1)).fill(' ?').join(',') + ')'
         }
       `;
       break;
     case 'update':
       sql = `
-      UPDATE FROM
-        ${table}
+      UPDATE 
+        ${table} 
       SET 
         ${ field === '*' || update_values_num === undefined ? '' : field.map(x => x + '=?').join(',') }
       WHERE
         1 = 1
-        ${ !where ? '' : ' AND ' + Object.keys(where).map(x => {
+        ${ !where ? '' : ' AND ' + where.map(x => {
           return x + '=?';
         }).join(' AND ') }
       `;
