@@ -84,6 +84,7 @@ export default class Table extends Component<TableProps> {
 
   componentDidUpdate(prevProps: Readonly<TableProps>, prevState: Readonly<{}>, snapshot?: any): void {
     if (this.table_body != this.props.table_body) {
+      this.table_body = this.props.table_body;
       this.makeTableBody();
     }
   }

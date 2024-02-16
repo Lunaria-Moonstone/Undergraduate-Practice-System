@@ -8,7 +8,6 @@ export default {
       url: '/dashboard/admin-company/api/',
       method: 'get',
     })).data['results'] as Companies;
-    console.log(companies);
     return companies;
   },
   async addCompany(data: { name: string, phone: string, mail: string }): Promise<boolean> {

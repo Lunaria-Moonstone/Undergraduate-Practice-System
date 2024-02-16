@@ -4,7 +4,7 @@ import { ReactNode, useEffect, useState } from 'react';
 
 import server from './admin-company.api';
 import { Companies, FormItems } from '@/global/type';
-import { PhoneCheck, formInput } from '@/utils/input';
+import { MailCheck, PhoneCheck, formInput } from '@/utils/input';
 import Modal from '@/components/modal/modal.component';
 import Form from '@/components/form/form.component';
 import Table from '@/components/table/table.component';
@@ -30,11 +30,13 @@ export default function Page() {
     { label: '企业名称', type: 'input' },
     { label: '联系电话', type: 'input' },
     { label: '联系邮箱', type: 'input' },
+    { label: '营业执照', type: 'file', fileTypeRestricted: [ '.pdf' ] },
   ];
   const edit_form_items: FormItems = [
     { label: '企业名称', type: 'input' },
     { label: '联系电话', type: 'input' },
     { label: '联系邮箱', type: 'input' },
+    { label: '营业执照', type: 'file', fileTypeRestricted: [ '.pdf' ] },
   ];
   const saveAdd = () => {
     let form_value = formInput(document.getElementById('add-form') as HTMLElement);
@@ -43,8 +45,13 @@ export default function Page() {
       console.error('必填信息不能为空');
       return ;
     }
-    if (PhoneCheck(data.phone)) {
+    if (!PhoneCheck(data.phone)) {
       console.error('手机号码格式错误');
+      return;
+    }
+    if (!MailCheck(data.mail)) {
+      console.error('邮箱格式错误');
+      return ;
     }
   }
   const saveEdit = () => {
@@ -76,7 +83,7 @@ export default function Page() {
       </div>
 
       {/* 添加模态框 */}
-      <Modal shown={addModalShown} id='add-modal' modal_title='添加学生信息' close_function={() => setAddModalShown(false)} modal_btns={
+      <Modal shown={addModalShown} id='add-modal' modal_title='添加企业' close_function={() => setAddModalShown(false)} modal_btns={
         <>
           <button type="button" className="btn btn-primary" onClick={() => saveAdd()}>确认</button>
           <button type="button" className="btn btn-secondary" onClick={() => setAddModalShown(false)}>关闭</button>

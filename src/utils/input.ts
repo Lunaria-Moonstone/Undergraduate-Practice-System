@@ -1,3 +1,4 @@
+// 表单输入项提取
 export function formInput(form_ele: HTMLElement): Array<string | number | boolean | undefined> {
   let form_value: Array<string | number | boolean | undefined> = [];
   for (let child of form_ele.children as HTMLCollection) {
@@ -13,6 +14,7 @@ export function formInput(form_ele: HTMLElement): Array<string | number | boolea
   return form_value;
 }
 
+// 字节数组转Base64编码
 export function ArrayBuffer2Base64(buffer: ArrayBuffer): string {
   let binary = '';
   let bytes = new Uint8Array(buffer);
@@ -22,10 +24,12 @@ export function ArrayBuffer2Base64(buffer: ArrayBuffer): string {
   return window.btoa(binary);
 }
 
+// 手机号规范检测
 export function PhoneCheck(phone: string) {
   return (new RegExp(/^[+]{0,1}[0-9]{1,15}$/)).test(phone);
 }
 
+// 邮箱规范检测
 export function MailCheck(mail: string) {
   return (new RegExp(/^[a-zA-Z0-9.-]{1,16}@[a-zA-Z0-9.-]{1,16}$/)).test(mail);
 }
