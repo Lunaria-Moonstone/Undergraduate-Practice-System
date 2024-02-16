@@ -2,23 +2,24 @@ import { RouterFactory } from "@/utils/factory";
 import { nanoid } from "nanoid";
 import { NextRequest, NextResponse } from "next/server";
 
-const router = new RouterFactory('teacher');
+const router = new RouterFactory('job');
 
 export async function GET() {
-  return await router.GET('*', );
+  return await router.GET('*', { company_id: '8qdq3MN5Lw0id1PU_yct3' },)
 }
 
 export async function POST(request: NextRequest) {
   let request_body = await (new Response(request.body)).blob();
   let id = nanoid();
-  let { name, number, phone, mail } = JSON.parse((await request_body.text()));
-  return await router.POST({ id, name, number, phone, mail });
+  let company_id = "8qdq3MN5Lw0id1PU_yct3";
+  let { name, salary, descript } = JSON.parse((await request_body.text()));
+  return await router.POST({ id, company_id, name, salary, descript });
 }
 
 export async function DELETE(request: NextRequest) {
   let query = request.nextUrl.searchParams;
   let id = query.get('id');
-  if (id === null) return new NextResponse(new Blob([JSON.stringify({ ok: false, error: 'id should not be empty'})]));
+  if (id === null) return new NextResponse(new Blob([JSON.stringify({ ok: false, error: 'id should not be empty' })]));
   return await router.DELETE({ id });
 }
 
