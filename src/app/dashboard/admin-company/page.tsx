@@ -4,7 +4,7 @@ import { ReactNode, useEffect, useState } from 'react';
 
 import server from './admin-company.api';
 import { Companies, FormItems } from '@/global/type';
-import { formInput } from '@/utils/input';
+import { PhoneCheck, formInput } from '@/utils/input';
 import Modal from '@/components/modal/modal.component';
 import Form from '@/components/form/form.component';
 import Table from '@/components/table/table.component';
@@ -38,7 +38,14 @@ export default function Page() {
   ];
   const saveAdd = () => {
     let form_value = formInput(document.getElementById('add-form') as HTMLElement);
-    console.log(form_value);
+    let data: { name: string, phone: string, mail: string } = { name: form_value[0] as string, phone: form_value[1] as string, mail: form_value[2] as string };
+    if (data.name.length === 0 || data.mail.length === 0 || data.phone.length === 0) {
+      console.error('必填信息不能为空');
+      return ;
+    }
+    if (PhoneCheck(data.phone)) {
+      console.error('手机号码格式错误');
+    }
   }
   const saveEdit = () => {
 
@@ -68,9 +75,10 @@ export default function Page() {
         } />
       </div>
 
+      {/* 添加模态框 */}
       <Modal shown={addModalShown} id='add-modal' modal_title='添加学生信息' close_function={() => setAddModalShown(false)} modal_btns={
         <>
-          <button type="button" className="btn btn-primary">确认</button>
+          <button type="button" className="btn btn-primary" onClick={() => saveAdd()}>确认</button>
           <button type="button" className="btn btn-secondary" onClick={() => setAddModalShown(false)}>关闭</button>
         </>
       }>

@@ -21,3 +21,11 @@ export function ArrayBuffer2Base64(buffer: ArrayBuffer): string {
   }
   return window.btoa(binary);
 }
+
+export function PhoneCheck(phone: string) {
+  return (new RegExp(/^[+]{0,1}[0-9]{1,15}$/)).test(phone);
+}
+
+export function MailCheck(mail: string) {
+  return (new RegExp(/^[a-zA-Z0-9.-]{1,16}@[a-zA-Z0-9.-]{1,16}$/)).test(mail);
+}

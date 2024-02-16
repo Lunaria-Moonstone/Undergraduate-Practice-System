@@ -8,12 +8,14 @@ export default {
       url: '/dashboard/admin-company/api/',
       method: 'get',
     })).data['results'] as Companies;
+    console.log(companies);
     return companies;
   },
-  async addCompany(): Promise<boolean> {
+  async addCompany(data: { name: string, phone: string, mail: string }): Promise<boolean> {
     let results = await axios({
       url: '/dashboard/admin-company/api/',
       method: 'post',
+      data
     });
     return results.data['ok'];
   },

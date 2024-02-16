@@ -62,6 +62,12 @@ export interface Teacher {
   mail: string // 联系邮箱
 }
 
+export interface StudentTeacherMap {
+  id: string // 编号
+  student_id: string // 学生编号
+  teacher_id: string // 教师编号
+}
+
 export interface Company {
   id: string // 编号
   name: string // 企业名称
