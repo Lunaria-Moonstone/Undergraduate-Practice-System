@@ -10,7 +10,7 @@ export default {
     })).data['results'] as Companies;
     return companies;
   },
-  async addCompany(data: { name: string, phone: string, mail: string }): Promise<boolean> {
+  async addCompany(data: { name: string, phone: string, mail: string, lisence: string }): Promise<boolean> {
     let results = await axios({
       url: '/dashboard/admin-company/api/',
       method: 'post',

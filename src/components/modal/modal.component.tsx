@@ -22,7 +22,7 @@ export default class Modal extends Component<ModalProps> {
   constructor(props: any) {
     super(props);
 
-    this.children = props.children;
+    // this.children = props.children;
     this.id = props.id ?? 'modal';
     this.modal_title = props.modal_title ?? 'modal';
     this.modal_btns = props.modal_btns ?? (<button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>);
@@ -46,6 +46,9 @@ export default class Modal extends Component<ModalProps> {
       if (this.props.shown) modal.show();
       else modal.hide();
     }
+    // if (this.props.children !== prevProps.children) {
+    //   this.children = this.props.children;
+    // }
   }
 
   // hide() {
@@ -64,11 +67,11 @@ export default class Modal extends Component<ModalProps> {
                 <h1 className="modal-title fs-5" id="exampleModalLabel">{this.modal_title}</h1>
               </div>
               <div className="modal-body">
-                {this.children}
+                {this.props.children}
               </div>
               <div className="modal-footer">
                 {/* <button onClick={() => this.hide()}>close</button> */}
-                {this.modal_btns}
+                {this.props.modal_btns}
               </div>
             </div>
           </div>
