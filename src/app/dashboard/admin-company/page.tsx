@@ -19,24 +19,23 @@ export default function Page() {
   const [deleteModalShown, setDeleteModalShown] = useState(false);
   const [exportModalShown, setExportModalShown] = useState(false);
 
-  const [refresh, setRefresh] = useState<boolean>(false);
+  const [refresh, setRefresh] = useState(false);
   const [lisence, setLisence] = useState<null | File>(null);
   const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
   const [table_head, setTableHead] = useState<Array<string>>(['编号', '企业名称', '联系电话', '联系邮箱']);
   const [add_form_error_msg, setAddFormErrorMsg] = useState('');
-  console.log('now update lisence', lisence);
 
+  // useEffect(() => {
+  //   server.fetchCompanies()
+  //     .then(res => {
+  //       setTableBody(res.map(x => [x.id, x.name, x.phone, x.mail]));
+  //     });
+  // }, []);
   useEffect(() => {
     server.fetchCompanies()
       .then(res => {
         setTableBody(res.map(x => [x.id, x.name, x.phone, x.mail]));
       });
-  }, []);
-  useEffect(() => {
-    server.fetchCompanies()
-    .then(res => {
-      setTableBody(res.map(x => [x.id, x.name, x.phone, x.mail]));
-    });
   }, [refresh]);
 
   const add_form_items: FormItems = [
@@ -98,8 +97,9 @@ export default function Page() {
     server.addCompany(data)
       .then(res => {
         if (res) {
+          // setRefresh((val) => !val);
           setAddModalShown(false);
-          setRefresh((val) => !val);
+          location.reload();
         } else {
           setAddFormErrorMsg('出现错误');
         }
@@ -124,7 +124,7 @@ export default function Page() {
         <div className="dashboard-model-buttons">
           <button className="btn btn-primary" onClick={() => setAddModalShown(true)}>新增</button>
           <button className="btn btn-danger" onClick={() => setDeleteModalShown(true)}>删除</button>
-          <button className="btn btn-secondary" onClick={() => console.log(table_body)}>导入</button>
+          <button className="btn btn-secondary" onClick={() => setRefresh((val) => !val)}>导入</button>
           <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button>
         </div>
         {/* 数据表格区域 */}
