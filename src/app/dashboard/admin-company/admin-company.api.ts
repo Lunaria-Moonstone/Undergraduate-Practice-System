@@ -18,10 +18,11 @@ export default {
     });
     return results.data['ok'];
   },
-  async delCompany(): Promise<boolean> {
+  async delCompany(id: string): Promise<boolean> {
     let results = await axios({
       url: '/dashboard/admin-company/api/',
-      method: 'delete'
+      method: 'delete',
+      params: { id }
     });
     return results.data['ok'];
   }, 

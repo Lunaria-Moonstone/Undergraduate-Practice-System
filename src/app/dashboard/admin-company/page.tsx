@@ -24,6 +24,7 @@ export default function Page() {
   const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
   const [table_head, setTableHead] = useState<Array<string>>(['编号', '企业名称', '联系电话', '联系邮箱']);
   const [add_form_error_msg, setAddFormErrorMsg] = useState('');
+  const [del_targets, setDelTargets] = useState<string | string[]>();
 
   // useEffect(() => {
   //   server.fetchCompanies()
@@ -88,7 +89,6 @@ export default function Page() {
       setAddFormErrorMsg('邮箱格式错误');
       return;
     }
-    console.log('lisence in function', lisence);
     if (lisence === null) {
       setAddFormErrorMsg('请上传营业执照');
       return;
@@ -111,6 +111,10 @@ export default function Page() {
   const saveEdit = () => {
 
   }
+  const delSingle = () => {
+    
+    setDeleteModalShown(true);
+  }
 
   return (
     <>
@@ -130,7 +134,7 @@ export default function Page() {
         {/* 数据表格区域 */}
         <Table table_id='table' table_head={table_head} table_body={table_body} checkbox={true} line_action={
           <>
-            <a className='link-danger text-decoration-none' onClick={() => setDeleteModalShown(true)}>删除</a>
+            <a className='link-danger text-decoration-none' onClick={() => {  }}>删除</a>
             <a className='link-warning text-decoration-none' onClick={() => setEditModalShown(true)}>修改</a>
           </>
         } />
