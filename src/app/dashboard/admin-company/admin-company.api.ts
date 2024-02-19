@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { Companies } from "@/global/type";
+import { Companies, Company } from "@/global/type";
 
 export default {
   async fetchCompanies(): Promise<Companies> {
@@ -9,6 +9,14 @@ export default {
       method: 'get',
     })).data['results'] as Companies;
     return companies;
+  },
+  async fetchCompany(id: string): Promise<Company> {
+    let company: Company = (await axios({
+      url: '/dashboard/admin-company/api/',
+      method: 'get',
+      params: { id }
+    })).data['results'][0] as Company;
+    return company;
   },
   async addCompany(data: { name: string, phone: string, mail: string, lisence: string }): Promise<boolean> {
     let results = await axios({
@@ -26,10 +34,12 @@ export default {
     });
     return results.data['ok'];
   }, 
-  async updateCompany(): Promise<boolean> {
+  async updateCompany(id: string, data: Company): Promise<boolean> {
     let results = await axios({
       url: '/dashboard/admin-company/api/',
       method: 'put',
+      params: { id },
+      data: data
     });
     return results.data['ok'];
   }

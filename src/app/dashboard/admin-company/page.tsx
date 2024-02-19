@@ -16,6 +16,8 @@ export default function Page() {
 
   const router = useRouter();
 
+  let checked_id_list: string[] = [];
+
   const [addModalShown, setAddModalShown] = useState(false);
   const [editModalShown, setEditModalShown] = useState(false);
   const [deleteModalShown, setDeleteModalShown] = useState(false);
@@ -34,10 +36,12 @@ export default function Page() {
   }
 
   const [add_form_error_msg, setAddFormErrorMsg] = useState('');
+  const [edit_form_error_msg, setEditFormErrorMsg] = useState('');
   const [del_targets, setDelTargets] = useState<string | string[]>();
+  const [edit_target, setEditTarget] = useState<string>();
   const [refresh, setRefresh] = useState(false);
   const [lisence, setLisence] = useState<null | File>(null);
-  const [checked_id_list, setCheckedIdList] = useState<string[]>([]);
+  // const [checked_id_list, setCheckedIdList] = useState<string[]>([]);
   const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
   const [table_head, setTableHead] = useState<Array<string>>(['编号', '企业名称', '联系电话', '联系邮箱']);
   const [table_line_actions, setTableLineActions] = useState<TableLineActions>([
@@ -46,6 +50,27 @@ export default function Page() {
       action_function: (id: string) => {
         setDelTargets(id);
         setDeleteModalShown(true);
+      }
+    }, 
+    {
+      type: 'warning', text: '修改',
+      action_function: (id: string) => {
+        server.fetchCompany(id)
+          .then(res => {
+            let form_value = document.getElementById('edit-form') as HTMLFormElement;
+            let form_input_list = form_value.children;
+            let company_id = res.id;
+            let company_info = [ res.name, res.phone, res.mail ]
+            for ( let info = 0; info < company_info.length; info += 1 ) {
+              let input_item = form_input_list.item(info)?.lastChild as HTMLInputElement;
+              input_item.value = company_info[info];
+            }
+            setEditTarget(company_id);
+            setEditModalShown(true);
+          })
+          .catch(_ => {
+            alert('获取数据失败', 'danger');
+          })
       }
     }
   ]);
@@ -83,18 +108,19 @@ export default function Page() {
     { label: '联系电话', type: 'input' },
     { label: '联系邮箱', type: 'input' },
     {
-      label: '营业执照', type: 'file', fileTypeRestricted: ['.pdf'], fileTackleFunction(event) {
+      label: '营业执照', type: 'file', fileTypeRestricted: ['.pdf'],
+      fileTackleFunction: (event) => {
         const files = event.currentTarget.files;
         if (!files || files.length === 0) return;
         const file = files[0];
-      },
+        setLisence(() => file);
+      }
     },
   ];
 
   const checkChangeRecall = (id_list: string[]) => {
-    setCheckedIdList(id_list);
-    console.log(id_list);
-    console.log(checked_id_list);
+    // setCheckedIdList(id_list);
+    checked_id_list = id_list;
   }
   const saveAdd = async () => {
     let form_value = formInput(document.getElementById('add-form') as HTMLElement).slice(0, -1);
@@ -139,17 +165,34 @@ export default function Page() {
       });
   }
   const saveEdit = () => {
-
+    if (!edit_target) {
+      setEditModalShown(false);
+      alert("id不存在", "danger");
+      return;
+    }
+    server.updateCompany(edit_target, )
   }
-  const delConfirm = () => {
+  const delMutiple = () => {
+    console.log(checked_id_list);
+    setDelTargets(checked_id_list);
+    setDeleteModalShown(true);
+  }
+  const delConfirm = async () => {
     if (!del_targets || typeof del_targets === 'object' && del_targets.length === 0) {
       setDeleteModalShown(false);
       alert('删除id列表为空', "danger");
       return;
     }
+    setDeleteModalShown(false);
     // ... delete process
     if (typeof del_targets === 'object') {
-
+      for ( let del_target of del_targets ) {
+        await server.delCompany(del_target)
+          .catch(err => {
+            alert(del_target + " 删除失败", "danger");
+          }); 
+      }
+      location.reload();
     } else {
       server.delCompany(del_targets)
         .then(res => {
@@ -180,7 +223,7 @@ export default function Page() {
         {/* 功能按钮区域 */}
         <div className="dashboard-model-buttons">
           <button className="btn btn-primary" onClick={() => setAddModalShown(true)}>新增</button>
-          <button className="btn btn-danger" onClick={() => setDeleteModalShown(true)}>删除</button>
+          <button className="btn btn-danger" onClick={delMutiple}>删除</button>
           <button className="btn btn-secondary" onClick={() => setRefresh((val) => !val)}>导入</button>
           <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button>
         </div>
@@ -211,7 +254,9 @@ export default function Page() {
       }>
         <Form form_items={edit_form_items} form_id="edit-form" />
         {/* 错误提示 */}
-
+        <div className='form-error-info'>
+          {edit_form_error_msg}
+        </div>
       </Modal>
 
       {/* 删除确认 */}

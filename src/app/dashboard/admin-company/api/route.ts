@@ -4,10 +4,15 @@ import { dropSafty, executeQuery, insertSafty, select, updateSafty } from "@/uti
 import { Console } from 'console';
 import { NextRequest } from 'next/server';
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   let result: unknown;
+  let query = request.nextUrl.searchParams;
+  let id = query.get('id');
   try {
-    result = await select({ field: '*', table: 'company', where: {}, order: { name: {} } });
+    if (id)
+      result = await select({ field: '*', table: 'company', where: { id }, order: { name: {} } });
+    else 
+      result = await select({ field: '*', table: 'company', where: {  }, order: { name: {} } });
   } catch (error) {
     result = error;
   } finally {
