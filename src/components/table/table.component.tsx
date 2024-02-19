@@ -3,12 +3,21 @@
 import { ChangeEvent, ChangeEventHandler, Component, ReactNode } from 'react';
 import './table.component.css';
 
+export interface TableLineAction {
+  type: 'danger' | 'warning' | 'primary' | 'success',
+  text: string,
+  action_function: (id: string) => void;
+}
+export type TableLineActions = Array<TableLineAction>;
+
 interface TableProps {
   table_id: string;
   table_head: Array<string>;
   table_body: Array<Array<string | number | undefined>>;
-  line_action?: React.ReactNode;
+  // line_action?: React.ReactNode;
   checkbox?: boolean;
+  check_change_function?: (id_list: string[]) => void;
+  line_action?: TableLineActions;
 }
 
 interface TableState {
@@ -18,12 +27,14 @@ export default class Table extends Component<TableProps> {
   table_id: string;
   table_head: Array<string>;
   table_body: Array<Array<string | number | undefined>>;
-  line_action: React.ReactNode | undefined;
+  // line_action: React.ReactNode | undefined;
   checkbox: boolean | undefined;
+  line_action: TableLineActions | undefined;
 
   table_head_node: React.ReactNode;
   table_body_node: React.ReactNode;
   checked_list: (string | null | undefined)[];
+  check_change_function: ((id_list: string[]) => void) | undefined;
 
   constructor(props: TableProps) {
     super(props);
@@ -33,6 +44,7 @@ export default class Table extends Component<TableProps> {
     this.table_body = props.table_body;
     this.line_action = props.line_action;
     this.checkbox = props.checkbox;
+    this.check_change_function = props.check_change_function;
 
     this.checked_list = [];
 
@@ -56,19 +68,24 @@ export default class Table extends Component<TableProps> {
           <td key={sub_index}>{y}</td>
         );
       });
+      const t_action: React.ReactNode = this.line_action ?
+        this.line_action.map((y, sub_index) => {
+          return <a key={sub_index} className={`link-${y.type} text-decoration-none`} onClick={() => y.action_function(x[0] as string)}>{y.text}</a>
+        })
+        : <></>
       let action = <></>;
       let cbox = <></>
-      if (this.line_action) {
+      if (this.line_action && this.line_action.length !== 0) {
         action = (
           <td className="table-inline-buttons" style={{ width: '300px', minWidth: '300px' }}>
-            {this.line_action}
+            {t_action}
           </td>
         );
       }
       if (this.checkbox) {
         cbox = (
           <td style={{ width: '20px' }}>
-            <input className="form-check-input table-checkbox" type="checkbox" onChange={this.checkChange}  />
+            <input className="form-check-input table-checkbox" type="checkbox" onChange={() => this.checkChange(x[0] as string)}  />
           </td>
         );
       }
@@ -89,14 +106,17 @@ export default class Table extends Component<TableProps> {
     }
   }
 
-  checkChange(event: ChangeEvent<HTMLInputElement>) {
-    const checked = (document.getElementById(this.table_id + '-main-checkbox') as HTMLInputElement).checked;
-    const checks = document.getElementsByClassName('table-checkbox');
-    for (let check of checks as HTMLCollectionOf<HTMLInputElement>) {
-      check.checked = checked;
-      if (checked) this.checked_list.push(check.parentElement?.parentElement?.getElementsByTagName('td')[1].textContent);
+  submitChange() {
+    if ( this.props.check_change_function ) {
+      this.props.check_change_function(this.checked_list as string[]);
     }
-    if (!checked) this.checked_list = [];
+  }
+
+  checkChange(id: string) {
+    if (this.checked_list.findIndex(val => val === id) === -1) this.checked_list.push(id);
+    else this.checked_list = this.checked_list.filter(val => val !== id);
+
+    this.submitChange();
   }
 
   changeAllCheck() {
@@ -107,6 +127,8 @@ export default class Table extends Component<TableProps> {
       if (checked) this.checked_list.push(check.parentElement?.parentElement?.getElementsByTagName('td')[1].textContent);
     }
     if (!checked) this.checked_list = [];
+
+    this.submitChange();
   }
 
   render(): ReactNode {

@@ -7,24 +7,49 @@ import { Companies, FormItems } from '@/global/type';
 import { ArrayBuffer2Base64, MailCheck, PhoneCheck, formInput } from '@/utils/input';
 import Modal from '@/components/modal/modal.component';
 import Form from '@/components/form/form.component';
-import Table from '@/components/table/table.component';
+import Table, { TableLineActions } from '@/components/table/table.component';
 import './admin-company.part.css';
 import { useRouter } from 'next/navigation';
+import Alert from '@/components/alert/alert.component';
 
 export default function Page() {
 
   const router = useRouter();
+
   const [addModalShown, setAddModalShown] = useState(false);
   const [editModalShown, setEditModalShown] = useState(false);
   const [deleteModalShown, setDeleteModalShown] = useState(false);
   const [exportModalShown, setExportModalShown] = useState(false);
+  const [alertShown, setAlertShown] = useState<boolean>(false);
+  const [alertMessage, setAlertMessage] = useState<string>('');
+  const [alertType, setAlertType] = useState<'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark'>('info');
+  const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
+    setAlertMessage(message);
+    setAlertType(type);
+    setAlertShown(true);
+  }
+  const alertClear = () => {
+    setAlertMessage("");
+    setAlertShown(false);
+  }
 
-  const [refresh, setRefresh] = useState(false);
-  const [lisence, setLisence] = useState<null | File>(null);
-  const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
-  const [table_head, setTableHead] = useState<Array<string>>(['编号', '企业名称', '联系电话', '联系邮箱']);
   const [add_form_error_msg, setAddFormErrorMsg] = useState('');
   const [del_targets, setDelTargets] = useState<string | string[]>();
+  const [refresh, setRefresh] = useState(false);
+  const [lisence, setLisence] = useState<null | File>(null);
+  const [checked_id_list, setCheckedIdList] = useState<string[]>([]);
+  const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
+  const [table_head, setTableHead] = useState<Array<string>>(['编号', '企业名称', '联系电话', '联系邮箱']);
+  const [table_line_actions, setTableLineActions] = useState<TableLineActions>([
+    {
+      type: 'danger', text: '删除',
+      action_function: (id: string) => {
+        setDelTargets(id);
+        setDeleteModalShown(true);
+      }
+    }
+  ]);
+
 
   // useEffect(() => {
   //   server.fetchCompanies()
@@ -66,6 +91,11 @@ export default function Page() {
     },
   ];
 
+  const checkChangeRecall = (id_list: string[]) => {
+    setCheckedIdList(id_list);
+    console.log(id_list);
+    console.log(checked_id_list);
+  }
   const saveAdd = async () => {
     let form_value = formInput(document.getElementById('add-form') as HTMLElement).slice(0, -1);
     let data: { name: string, phone: string, mail: string, lisence: string } = {
@@ -111,9 +141,32 @@ export default function Page() {
   const saveEdit = () => {
 
   }
-  const delSingle = () => {
-    
-    setDeleteModalShown(true);
+  const delConfirm = () => {
+    if (!del_targets || typeof del_targets === 'object' && del_targets.length === 0) {
+      setDeleteModalShown(false);
+      alert('删除id列表为空', "danger");
+      return;
+    }
+    // ... delete process
+    if (typeof del_targets === 'object') {
+
+    } else {
+      server.delCompany(del_targets)
+        .then(res => {
+          if (res) location.reload();
+          else {
+            setDeleteModalShown(false);
+            alert('删除失败，后台出错', "danger");
+          }
+        })
+        .catch(err => {
+          setDeleteModalShown(false);
+          alert('删除失败，后台出错', "danger");
+        })
+        .finally(() => {
+          setDelTargets(undefined);
+        })
+    }
   }
 
   return (
@@ -132,12 +185,7 @@ export default function Page() {
           <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button>
         </div>
         {/* 数据表格区域 */}
-        <Table table_id='table' table_head={table_head} table_body={table_body} checkbox={true} line_action={
-          <>
-            <a className='link-danger text-decoration-none' onClick={() => {  }}>删除</a>
-            <a className='link-warning text-decoration-none' onClick={() => setEditModalShown(true)}>修改</a>
-          </>
-        } />
+        <Table table_id='table' table_head={table_head} table_body={table_body} checkbox={true} line_action={table_line_actions} check_change_function={checkChangeRecall} />
       </div>
 
       {/* 添加模态框 */}
@@ -169,7 +217,7 @@ export default function Page() {
       {/* 删除确认 */}
       <Modal id="modal-delete" shown={deleteModalShown} close_function={() => setDeleteModalShown(false)} modal_title="是否确认删除" modal_btns={
         <>
-          <button className="btn btn-danger">确认</button>
+          <button className="btn btn-danger" onClick={() => delConfirm()}>确认</button>
           <button className="btn btn-secondary" onClick={() => setDeleteModalShown(false)}>取消</button>
         </>
       }>
@@ -185,6 +233,7 @@ export default function Page() {
         是否将选定内容导出至外部
       </Modal>
 
+      <Alert shown={alertShown} message={alertMessage} close_function={() => alertClear()} type={alertType} />
     </>
   )
 }
