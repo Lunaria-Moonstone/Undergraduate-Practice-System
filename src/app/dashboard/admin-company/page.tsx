@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import server from './admin-company.api';
-import { Companies, FormItems } from '@/global/type';
+import { Companies, Company, FormItems } from '@/global/type';
 import { ArrayBuffer2Base64, MailCheck, PhoneCheck, formInput } from '@/utils/input';
 import Modal from '@/components/modal/modal.component';
 import Form from '@/components/form/form.component';
@@ -162,15 +162,37 @@ export default function Page() {
       })
       .catch(_ => {
         setAddFormErrorMsg('出现错误');
+      })
+      .finally(() => {
+        setLisence(null);
       });
   }
-  const saveEdit = () => {
+  const saveEdit = async () => {
     if (!edit_target) {
       setEditModalShown(false);
       alert("id不存在", "danger");
       return;
     }
-    server.updateCompany(edit_target, )
+    let form_value = formInput(document.getElementById('edit-form') as HTMLElement).slice(0, -1);
+    let data: { [key: string]: string } = { name: form_value[0] as string , phone: form_value[1] as string, mail: form_value[2] as string }
+    if (lisence) data['lisence'] = ArrayBuffer2Base64(await lisence.arrayBuffer());;
+    server.updateCompany(edit_target, data)
+      .then(res => {
+        if (res) {
+          setEditModalShown(false);
+          location.reload();
+        } else {
+          setEditModalShown(false);
+          alert("修改失败，后台出错", 'danger');
+        }
+      })
+      .catch(err => {
+        setEditModalShown(false);
+        alert("修改失败，后台出错", 'danger');
+      })
+      .finally(() => {
+        setEditTarget(undefined);
+      })
   }
   const delMutiple = () => {
     console.log(checked_id_list);

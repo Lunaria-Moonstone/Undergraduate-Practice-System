@@ -34,7 +34,7 @@ export default {
     });
     return results.data['ok'];
   }, 
-  async updateCompany(id: string, data: Company): Promise<boolean> {
+  async updateCompany(id: string, data: { [key: string]: string }): Promise<boolean> {
     let results = await axios({
       url: '/dashboard/admin-company/api/',
       method: 'put',
