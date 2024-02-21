@@ -1,22 +1,31 @@
+import axios from "axios";
+
 import { Notification, Notifications } from "@/global/type";
 
+const require_route = '/dashboard/company-home/api/';
+
 export default {
-  fetchNotifications(): Notifications {
-    const items: Notifications = [
-      {
-        id: '10086',
-        title: '新的简历投递',
-        simple_descript: '来自Nick的简历'
-      },
-    ];
+  async fetchNotifications(): Promise<Notifications> {
+    const items: Notifications = (await axios({
+      url: require_route,
+      method: 'get'
+    })).data['results'] as Notifications;
     return items;
   },
-  fetchNotification(): Notification {
-    return {
-      id: '10086',
-      title: '新的简历投递',
-      descript: '来自Nick的简历投递',
-      created: '2024/1/24'
-    };
+  async fetchNotification(id: string): Promise<Notification> {
+    let item: Notification = (await axios({
+      url: require_route,
+      method: 'get',
+      params: { id },
+    })).data['results'][0] as Notification;
+    return item;
   },
+  async delNotification(id: string): Promise<boolean> {
+    let results = await axios({
+      url: require_route,
+      method: 'delete',
+      params: { id }
+    });
+    return results.data['ok'];
+  }
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
 import { Students, FormItems } from '@/global/type';
 import server from './admin-student.api';
@@ -8,26 +8,64 @@ import { formInput } from '@/utils/input';
 
 import Modal from '@/components/modal/modal.component';
 import Form from '@/components/form/form.component';
-import Table from '@/components/table/table.component';
+import Table, { TableLineActions } from '@/components/table/table.component';
+import Alert from '@/components/alert/alert.component';
 
 export default function Page() {
+
+  let checked_id_list: string[] = [];
 
   const [addModalShown, setAddModalShown] = useState(false);
   const [deleteModalShown, setDeleteModalShown] = useState(false);
   const [exportModalShown, setExportModalShown] = useState(false);
+  const [alertShown, setAlertShown] = useState<boolean>(false);
+  const [alertMessage, setAlertMessage] = useState<string>('');
+  const [alertType, setAlertType] = useState<'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark'>('info');
+  const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
+    setAlertMessage(message);
+    setAlertType(type);
+    setAlertShown(true);
+  }
+  const alertClear = () => {
+    setAlertMessage("");
+    setAlertShown(false);
+  }
 
-  const students: Students = server.fetchStudent();
-  const table_head: Array<string> = ['编号', '学生姓名', '学号', '年级', '联系电话', '联系邮箱', '是否处于实习中', '当前实习公司', '个人简历', '实习凭证', '实习分数',];
-  const table_body: Array<Array<string | number | undefined>> = students.map(x => {
-    return [
-      x.id, x.name, x.number, x.grade, x.phone, x.mail,
-      x.is_practice ? '是' : '否',
-      x.is_practice ? x.practice_cmp[-1] : '未处于实习状态',
-      x.has_vitae ? '有' : '无',
-      x.has_proof ? '有' : '无',
-      x.score !== undefined ? x.score : '未录入实习成绩'
-    ];
-  });
+  const [add_form_error_msg, setAddFormErrorMsg] = useState('');
+  const [edit_form_error_msg, setEditFormErrorMsg] = useState('');
+  const [del_targets, setDelTargets] = useState<string | string[]>();
+  const [edit_target, setEditTarget] = useState<string>();
+  const [table_head, setTableHead] = useState<Array<string>>([
+    '编号', '学生姓名', '学号', '年级', '联系电话',
+    '联系邮箱', '是否处于实习中', '当前实习公司', '个人简历',
+    '实习凭证', '实习分数',
+  ]);
+  const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
+  const [table_line_actions, setTableLineActions] = useState<TableLineActions>([
+    {
+      type: 'danger', text: '删除',
+      action_function: (id: string) => {
+        setDelTargets(id);
+        setDeleteModalShown(true);
+      }
+    },
+  ]);
+
+  useEffect(() => {
+    server.fetchStudents()
+      .then(res => {
+        setTableBody(res.map(x => [
+          x.id, x.name, x.number, x.grade, x.phone,
+          x.mail,
+          Buffer.from(res[0].is_practice)[0] ? '是' : '否',
+          Buffer.from(res[0].is_practice)[0] ? x.practice_cmp[-1] : '未处于实习状态',
+          Buffer.from(res[0].has_vitae)[0] ? '有' : '无',
+          Buffer.from(res[0].has_proof)[0] ? '有' : '无',
+          x.score !== undefined && x.score !== -1 ? x.score : '未录入实习成绩'
+        ]));
+      })
+      .catch();
+  }, []);
 
   const add_form_items: FormItems = [
     { label: '学生姓名', type: 'input' },
@@ -44,7 +82,63 @@ export default function Page() {
 
   const saveAdd = () => {
     let form_value: Array<string | number | boolean | undefined> = formInput(document.getElementById('add-form') as HTMLElement);
-    console.log(form_value);
+    let data = { name: form_value[0] as string, number: form_value[1] as string, grade: form_value[2] as string }
+    if (data.name.length === 0 || data.number.length === 0 || data.grade === '请选择') {
+      setAddFormErrorMsg('必填信息不能为空');
+      return;
+    }
+    server.addStudent(data)
+      .then(res => {
+        if (res) {
+          setAddModalShown(false);
+          location.reload();
+        } else {
+          setAddModalShown(false);
+          alert("添加失败, 后台错误", 'danger');
+        }
+      })
+      .catch(err => {
+        setAddModalShown(false);
+        alert("添加失败, 后台错误", 'danger');
+      })
+  }
+  const delMutiple = () => {
+    setDelTargets(checked_id_list);
+    setDeleteModalShown(true);
+  }
+  const delConfirm = async () => {
+    if (!del_targets || typeof del_targets === 'object' && del_targets.length === 0) {
+      setDeleteModalShown(false);
+      alert('删除id列表为空', "danger");
+      return;
+    }
+    setDeleteModalShown(false);
+    // ... delete process
+    if (typeof del_targets === 'object') {
+      for ( let del_target of del_targets ) {
+        await server.delStudent(del_target)
+          .catch(err => {
+            alert(del_target + " 删除失败", "danger");
+          }); 
+      }
+      location.reload();
+    } else {
+      server.delStudent(del_targets)
+        .then(res => {
+          if (res) location.reload();
+          else {
+            setDeleteModalShown(false);
+            alert('删除失败，后台出错', "danger");
+          }
+        })
+        .catch(err => {
+          setDeleteModalShown(false);
+          alert('删除失败，后台出错', "danger");
+        })
+        .finally(() => {
+          setDelTargets(undefined);
+        })
+    }
   }
 
   return (
@@ -59,33 +153,30 @@ export default function Page() {
         <div className="dashboard-model-buttons">
           <button className="btn btn-primary" onClick={() => setAddModalShown(true)}>新增</button>
           <button className="btn btn-danger" onClick={() => setDeleteModalShown(true)}>删除</button>
-          <button className="btn btn-secondary">导入</button>
-          <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button>
+          {/* <button className="btn btn-secondary">导入</button>
+          <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button> */}
         </div>
         {/* 数据表格区域 */}
-        <Table table_id='table' table_head={table_head} table_body={table_body} checkbox={true} line_action={
-          <>
-            <a className='link-danger text-decoration-none'>删除</a>
-            <a className='link-warning text-decoration-none'>修改</a>
-            <a className='link-info text-decoration-none'>查看个人简历</a>
-            <a className='link-info text-decoration-none'>查看实习凭证</a>
-          </>
-        } />
+        <Table table_id='table' table_head={table_head} table_body={table_body} checkbox={true} line_action={table_line_actions} />
       </div>
 
+      {/* 添加学生 */}
       <Modal shown={addModalShown} id='add-modal' modal_title='添加学生信息' close_function={() => setAddModalShown(false)} modal_btns={
         <>
-          <button type="button" className="btn btn-primary">确认</button>
+          <button type="button" className="btn btn-primary" onClick={() => saveAdd()}>确认</button>
           <button type="button" className="btn btn-secondary" onClick={() => setAddModalShown(false)}>关闭</button>
         </>
       }>
         <Form form_items={add_form_items} form_id="add-form" />
+        <div className='form-error-info'>
+          {add_form_error_msg}
+        </div>
       </Modal>
 
       {/* 删除确认 */}
       <Modal id="modal-delete" shown={deleteModalShown} close_function={() => setDeleteModalShown(false)} modal_title="是否确认删除" modal_btns={
         <>
-          <button className="btn btn-danger">确认</button>
+          <button className="btn btn-danger" onClick={() => delConfirm()}>确认</button>
           <button className="btn btn-secondary" onClick={() => setDeleteModalShown(false)}>取消</button>
         </>
       }>
@@ -100,6 +191,8 @@ export default function Page() {
       }>
         是否将选定内容导出至外部
       </Modal>
+
+      <Alert shown={alertShown} message={alertMessage} close_function={() => alertClear()} type={alertType} />
     </>
   )
 }

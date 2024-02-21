@@ -40,7 +40,7 @@ export default function Page() {
   const [del_targets, setDelTargets] = useState<string | string[]>();
   const [edit_target, setEditTarget] = useState<string>();
   const [refresh, setRefresh] = useState(false);
-  const [lisence, setLisence] = useState<null | File>(null);
+  const [license, setLicense] = useState<null | File>(null);
   // const [checked_id_list, setCheckedIdList] = useState<string[]>([]);
   const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
   const [table_head, setTableHead] = useState<Array<string>>(['编号', '企业名称', '联系电话', '联系邮箱']);
@@ -99,7 +99,7 @@ export default function Page() {
         const files = event.currentTarget.files;
         if (!files || files.length === 0) return;
         const file = files[0];
-        setLisence(() => file);
+        setLicense(() => file);
       }
     },
   ];
@@ -113,7 +113,7 @@ export default function Page() {
         const files = event.currentTarget.files;
         if (!files || files.length === 0) return;
         const file = files[0];
-        setLisence(() => file);
+        setLicense(() => file);
       }
     },
   ];
@@ -124,11 +124,11 @@ export default function Page() {
   }
   const saveAdd = async () => {
     let form_value = formInput(document.getElementById('add-form') as HTMLElement).slice(0, -1);
-    let data: { name: string, phone: string, mail: string, lisence: string } = {
+    let data: { name: string, phone: string, mail: string, license: string } = {
       name: form_value[0] as string,
       phone: form_value[1] as string,
       mail: form_value[2] as string,
-      lisence: ''
+      license: ''
     };
     if (data.name.length === 0 || data.mail.length === 0 || data.phone.length === 0) {
       console.error('必填信息不能为空');
@@ -145,11 +145,11 @@ export default function Page() {
       setAddFormErrorMsg('邮箱格式错误');
       return;
     }
-    if (lisence === null) {
+    if (license === null) {
       setAddFormErrorMsg('请上传营业执照');
       return;
     }
-    data.lisence = ArrayBuffer2Base64(await lisence.arrayBuffer());
+    data.license = ArrayBuffer2Base64(await license.arrayBuffer());
     server.addCompany(data)
       .then(res => {
         if (res) {
@@ -164,7 +164,7 @@ export default function Page() {
         setAddFormErrorMsg('出现错误');
       })
       .finally(() => {
-        setLisence(null);
+        setLicense(null);
       });
   }
   const saveEdit = async () => {
@@ -175,7 +175,7 @@ export default function Page() {
     }
     let form_value = formInput(document.getElementById('edit-form') as HTMLElement).slice(0, -1);
     let data: { [key: string]: string } = { name: form_value[0] as string , phone: form_value[1] as string, mail: form_value[2] as string }
-    if (lisence) data['lisence'] = ArrayBuffer2Base64(await lisence.arrayBuffer());;
+    if (license) data['license'] = ArrayBuffer2Base64(await license.arrayBuffer());;
     server.updateCompany(edit_target, data)
       .then(res => {
         if (res) {
@@ -246,8 +246,8 @@ export default function Page() {
         <div className="dashboard-model-buttons">
           <button className="btn btn-primary" onClick={() => setAddModalShown(true)}>新增</button>
           <button className="btn btn-danger" onClick={delMutiple}>删除</button>
-          <button className="btn btn-secondary" onClick={() => setRefresh((val) => !val)}>导入</button>
-          <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button>
+          {/* <button className="btn btn-secondary" onClick={() => setRefresh((val) => !val)}>导入</button>
+          <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button> */}
         </div>
         {/* 数据表格区域 */}
         <Table table_id='table' table_head={table_head} table_body={table_body} checkbox={true} line_action={table_line_actions} check_change_function={checkChangeRecall} />
@@ -270,7 +270,7 @@ export default function Page() {
       {/* 修改模态框 */}
       <Modal id="modal-edit" shown={editModalShown} close_function={() => setEditModalShown(false)} modal_title='修改公司信息' modal_btns={
         <>
-          <button className='btn btn-primary' >确定</button>
+          <button className='btn btn-primary' onClick={() => saveEdit()}>确定</button>
           <button className='btn btn-secondary' onClick={() => setEditModalShown(false)}>取消</button>
         </>
       }>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Notification, Notifications } from '@/global/type';
 import Modal from '@/components/modal/modal.component';
@@ -11,26 +11,56 @@ export default function Page() {
 
   const [infoModalShown, setInfoModalShown] = useState(false);
 
-  const notifition_items: Notifications = server.fetchNotifications();
-  const notifications_body: React.ReactNode = notifition_items.map((x, index) => {
-    return (
-      <div className="card" key={index}>
-        <div className="card-body">
-          <h5 className="card-title">
-            {x.title}
-          </h5>
-          <p className='card-text'>
-            {x.simple_descript}
-          </p>
-          <div className="notification-inline-btns">
-            <a className='btn btn-primary btn-sm' onClick={() => setInfoModalShown(true)}>详细</a>
-            <a className='btn btn-secondary btn-sm'>忽略</a>
-          </div>
-        </div>
-      </div>
-    );
-  });
-  const notification_modal_item: Notification = server.fetchNotification();
+  const [notifications_body, setNotificationsBody] = useState<React.ReactNode>();
+
+  // const notifition_items: Notifications = server.fetchNotifications();
+  // const notifications_body: React.ReactNode = notifition_items.map((x, index) => {
+  //   return (
+  //     <div className="card" key={index}>
+  //       <div className="card-body">
+  //         <h5 className="card-title">
+  //           {x.title}
+  //         </h5>
+  //         <p className='card-text'>
+  //           {x.simple_descript}
+  //         </p>
+  //         <div className="notification-inline-btns">
+  //           <a className='btn btn-primary btn-sm' onClick={() => setInfoModalShown(true)}>详细</a>
+  //           <a className='btn btn-secondary btn-sm'>忽略</a>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // });
+  // const notification_modal_item: Notification = server.fetchNotification();
+
+  useEffect(() => {
+    server.fetchNotifications()
+      .then(res => {
+        setNotificationsBody(res.map((x, index) => {
+          return (
+            <div className="card" key={index}>
+              <div className="card-body">
+                <h5 className="card-title">
+                  {x.title}
+                </h5>
+                <p className='card-text'>
+                  {x.simple_descript}
+                </p>
+                <div className="notification-inline-btns">
+                  <a className='btn btn-primary btn-sm' onClick={() => setInfoModalShown(true)}>详细</a>
+                  <a className='btn btn-secondary btn-sm'>忽略</a>
+                </div>
+              </div>
+            </div>
+          );
+        }));
+      });
+  }, []);
+
+  const getInfo = (id: string) => {
+
+  }
 
   return (
     <>

@@ -45,10 +45,10 @@ export interface Student {
   grade: string // 年级
   phone: string // 联系电话
   mail: string // 联系邮箱
-  is_practice: boolean // 是否处于实习中
+  is_practice: Uint8Array // 是否处于实习中
   practice_cmp: string[] // 历史实习公司
-  has_vitae: boolean // 是否存在个人简历
-  has_proof: boolean // 是否存在实习凭证
+  has_vitae: Uint8Array // 是否存在个人简历
+  has_proof: Uint8Array // 是否存在实习凭证
   score?: number // 实习分数
   proof?: string[] // 实习凭证 PDF
   vitae?: string[] // 个人简历 PDF
