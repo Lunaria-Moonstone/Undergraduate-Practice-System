@@ -7,27 +7,34 @@ import { NavItems } from "@/global/type";
 import server from './dashboard.api';
 
 import './dashboard.part.css';
-import { Component, Context, ReactNode, createContext, useContext, useState } from "react";
+import { Component, Context, ReactNode, createContext, useContext, useEffect, useState } from "react";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 // import { GlobalStateContext } from "@/utils/context";
 
 export default function Layouts({ children }: any) {
 
   // const params = useSearchParams();
-  const path = usePathname() as string;
-  // const roleState = useContext(GlobalStateContext);
-  // const nav_items: NavItems = server.fetchNavItems(roleState['role'][0] as number, path);
-  const [nav_items, setNavItems] = useState<NavItems>();
+  // const path = usePathname() as string;
 
-  server.fetchRole()
+  const [path, setPath] = useState<string>(usePathname() as string);
+  const [nav_items, setNavItems] = useState<NavItems>();
+  
+  useEffect(() => {
+    server.fetchRole()
     .then(res => {
       if (res.role === -1) {
         useRouter().replace('/authorized/signin');
       } else {
-        setNavItems(server.fetchNavItems(res.role, path));
+        setNavItems(server.fetchNavItems(res.role, path as string));
       }
     })
+  }, [path]);
 
+  for (let item of nav_items??[]) {
+    if (path.slice(path.lastIndexOf('/') + 1) === item.href.slice(path.lastIndexOf('/') + 1)) item.active = true;
+    else item.active = false;
+  }
+  
   return (
     <>
       <div className="nav-area">

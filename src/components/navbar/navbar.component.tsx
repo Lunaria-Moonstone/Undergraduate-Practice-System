@@ -22,7 +22,6 @@ export default function Navbar(props: any) {
       if (x.active) return (<a type="button" className="list-group-item list-group-item-action active" onClick={() => router.push(x.href)} key={index} >{x.label}</a>)
       return (<a type="button" className="list-group-item list-group-item-action" key={index} onClick={() => router.push(x.href)}>{x.label}</a>)
     }) : <></>)
-    console.log(1);
   }, [nav_items]);
 
   return (
