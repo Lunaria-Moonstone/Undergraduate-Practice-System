@@ -27,18 +27,25 @@ export default function Layouts({ children }: any) {
       } else {
         setNavItems(server.fetchNavItems(res.role, path as string));
       }
-    })
+    });
   }, [path]);
 
-  for (let item of nav_items??[]) {
-    if (path.slice(path.lastIndexOf('/') + 1) === item.href.slice(path.lastIndexOf('/') + 1)) item.active = true;
-    else item.active = false;
+  const change_path = (path: string) => {
+    setPath(path);
   }
+
+  // useEffect(() => {
+  //   setPath(usePathname());
+  //   for (let item of nav_items??[]) {
+  //   if (path.slice(path.lastIndexOf('/') + 1) === item.href.slice(path.lastIndexOf('/') + 1)) item.active = true;
+  //   else item.active = false;
+  // }
+  // }, [path === usePathname()]);
   
   return (
     <>
       <div className="nav-area">
-        <Navbar nav_items={nav_items} />
+        <Navbar nav_items={nav_items} change_path_func={change_path} />
       </div>
       <div className="dashboard-body">
         {children}

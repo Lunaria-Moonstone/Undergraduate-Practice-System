@@ -22,22 +22,22 @@ export default {
         { label: '企业信息管理', href: '/dashboard/admin-company' },
         { label: '个人信息设置', href: '/dashboard/admin-info'},
       ];
-      // switch(path) {
-      //   case 'admin-home': 
-      //   items[0]['active'] = true;
-      //   break;
-      //   case 'admin-student':
-      //   items[1]['active'] = true;
-      //   break;
-      //   case 'admin-teacher':
-      //   items[2]['active'] = true;
-      //   break;
-      //   case 'admin-company':
-      //   items[3]['active'] = true;
-      //   break;
-      //   case 'admin-info':
-      //   items[4]['active'] = true;
-      // }
+      switch(path) {
+        case 'admin-home': 
+        items[0]['active'] = true;
+        break;
+        case 'admin-student':
+        items[1]['active'] = true;
+        break;
+        case 'admin-teacher':
+        items[2]['active'] = true;
+        break;
+        case 'admin-company':
+        items[3]['active'] = true;
+        break;
+        case 'admin-info':
+        items[4]['active'] = true;
+      }
       return items;
     } 
     else if (role === 1) {
@@ -49,26 +49,26 @@ export default {
         { label: '岗位简历投递', href: '/dashboard/student-job' },
         { label: '简历投递进度', href: '/dashboard/student-job-audit'},
       ];
-      // switch(path) {
-      //   case 'student-home':
-      //   items[0]['active'] = true;
-      //   break;
-      //   case 'student-info':
-      //   items[1]['active'] = true;
-      //   break;
-      //   case 'student-annex':
-      //   items[2]['active'] = true;
-      //   break;
-      //   case 'student-experience':
-      //   items[3]['active'] = true;
-      //   break;  
-      //   case 'student-job':
-      //   items[4]['active'] = true;
-      //   break;
-      //   case 'student-job-audit':
-      //   items[5]['active'] = true;
-      //   break;
-      // }
+      switch(path) {
+        case 'student-home':
+        items[0]['active'] = true;
+        break;
+        case 'student-info':
+        items[1]['active'] = true;
+        break;
+        case 'student-annex':
+        items[2]['active'] = true;
+        break;
+        case 'student-experience':
+        items[3]['active'] = true;
+        break;  
+        case 'student-job':
+        items[4]['active'] = true;
+        break;
+        case 'student-job-audit':
+        items[5]['active'] = true;
+        break;
+      }
       return items;
     } else if (role === 2) {
       const items: NavItems = [
@@ -76,14 +76,14 @@ export default {
         { label: '名下学生信息', href: '/dashboard/teacher-student' },
         { label: '个人信息设置', href: '/dashboard/teacher-info' },
       ];
-      // switch(path) {
-      //   case 'teacher-home':
-      //   items[0]['active'] = true;
-      //   break;
-      //   case 'teacher-student':
-      //   items[1]['active'] = true;
-      //   break;
-      // }
+      switch(path) {
+        case 'teacher-home':
+        items[0]['active'] = true;
+        break;
+        case 'teacher-student':
+        items[1]['active'] = true;
+        break;
+      }
       return items;
     } else if (role === 3) {
       const items: NavItems = [
@@ -92,20 +92,20 @@ export default {
         { label: '应聘人员一览', href: '/dashboard/company-student' },
         { label: '企业信息设置', href: '/dashboard/company-info' },
       ];
-      // switch(path) {
-      //   case 'company-home':
-      //   items[0]['active'] = true;
-      //   break;
-      //   case 'company-job':
-      //   items[1]['active'] = true;
-      //   break;
-      //   case 'company-student':
-      //   items[2]['active'] = true;
-      //   break;
-      //   case 'company-info':
-      //   items[3]['active'] = true;
-      //   break;
-      // }
+      switch(path) {
+        case 'company-home':
+        items[0]['active'] = true;
+        break;
+        case 'company-job':
+        items[1]['active'] = true;
+        break;
+        case 'company-student':
+        items[2]['active'] = true;
+        break;
+        case 'company-info':
+        items[3]['active'] = true;
+        break;
+      }
       return items;
     } else {
       return [

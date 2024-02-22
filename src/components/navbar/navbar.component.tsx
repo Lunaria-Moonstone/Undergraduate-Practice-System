@@ -11,16 +11,20 @@ import { useRouter } from "next/navigation";
 export default function Navbar(props: any) {
   const router = useRouter();
   const { nav_items }: { nav_items: NavItems } = props
-  // const item_btns: ReactNode = nav_items ? nav_items.map((x, index) => {
-  //   if (x.active) return (<a type="button" className="list-group-item list-group-item-action active" onClick={() => router.push(x.href)} key={index} >{x.label}</a>)
-  //   return (<a type="button" className="list-group-item list-group-item-action" key={index} onClick={() => router.push(x.href)}>{x.label}</a>)
-  // }) : <></>
+  const { change_path_func }: { change_path_func: ((path: string) => void) | undefined } = props;
+
   const [item_btns, setItemBtns] = useState<ReactNode>(<></>);
   
   useEffect(() => {
     setItemBtns(nav_items ? nav_items.map((x, index) => {
-      if (x.active) return (<a type="button" className="list-group-item list-group-item-action active" onClick={() => router.push(x.href)} key={index} >{x.label}</a>)
-      return (<a type="button" className="list-group-item list-group-item-action" key={index} onClick={() => router.push(x.href)}>{x.label}</a>)
+      if (x.active) return (<a type="button" className="list-group-item list-group-item-action active" onClick={() => { 
+        router.replace(x.href); 
+        if (change_path_func) change_path_func(x.href); 
+      }} key={index} >{x.label}</a>)
+      return (<a type="button" className="list-group-item list-group-item-action" key={index} onClick={() => {
+        router.push(x.href);
+        if (change_path_func) change_path_func(x.href);
+      }}>{x.label}</a>)
     }) : <></>)
   }, [nav_items]);
 
