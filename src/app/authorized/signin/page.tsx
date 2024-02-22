@@ -12,15 +12,13 @@ import './signin.part.css';
 
 import { useContext, useEffect, useState } from "react";
 import Alert from "@/components/alert/alert.component";
-import { GlobalStateContext } from "@/utils/context";
-import { useCookies } from "react-cookie";
+// import { GlobalStateContext } from "@/utils/context";
 
 export default function Page() {
   const router = useRouter();
-  const [setCookie] = useCookies(["user"]);
 
-  const roleState = useContext(GlobalStateContext);
-  const roleSetter = roleState['role'][1] as (idx: GlobalStateVariableType) => void;
+  // const roleState = useContext(GlobalStateContext);
+  // const roleSetter = roleState['role'][1] as (idx: GlobalStateVariableType) => void;
 
   const [alertShown, setAlertShown] = useState<boolean>(false);
   const [alertMessage, setAlertMessage] = useState<string>('');
@@ -51,25 +49,25 @@ export default function Page() {
       return;
     }
     const role = await server.authorize(form_value[0] as string, form_value[1] as string);
-    router.push(`/dashboard?role=${role}`);
+    // router.push(`/dashboard?role=${role}`);
     switch (role) {
       case -1:
         alert("用户名不存在或密码错误", "danger");
         return;
       case 0: 
-        roleSetter(0);
+        // roleSetter(0);
         router.push(`/dashboard/admin-home`);
         break;
       case 1: 
-        roleSetter(1);
+        // roleSetter(1);
         router.push(`/dashboard/student-home`);
         break;
       case 2:
-        roleSetter(2);
+        // roleSetter(2);
         router.push(`/dashboard/teacher-home`);
         break;
       case 3:
-        roleSetter(3);
+        // roleSetter(3);
         router.push(`/dashboard/company-home`);
         break;
     }
