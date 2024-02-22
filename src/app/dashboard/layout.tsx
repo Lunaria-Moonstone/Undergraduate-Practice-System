@@ -1,7 +1,6 @@
 "use client"
 
 // import { usePathname } from "next/navigation";
-import { useRouter } from "next/router";
 
 import Navbar from "@/components/navbar/navbar.component";
 import { NavItems } from "@/global/type";
@@ -9,7 +8,7 @@ import server from './dashboard.api';
 
 import './dashboard.part.css';
 import { Component, Context, ReactNode, createContext, useContext, useState } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { GlobalStateContext } from "@/utils/context";
 
 export default function Layouts({ children }: any) {
@@ -17,7 +16,17 @@ export default function Layouts({ children }: any) {
   // const params = useSearchParams();
   const path = usePathname() as string;
   const roleState = useContext(GlobalStateContext);
-  const nav_items: NavItems = server.fetchNavItems(roleState['role'][0] as number, path);
+  // const nav_items: NavItems = server.fetchNavItems(roleState['role'][0] as number, path);
+  const [nav_items, setNavItems] = useState<NavItems>(server.fetchNavItems(roleState['role'][0] as number, path));
+
+  server.fetchRole()
+    .then(res => {
+      if (res.role === -1) {
+        useRouter().replace('/authorized/signin');
+      } else {
+        setNavItems(server.fetchNavItems(res.role, path));
+      }
+    })
 
   return (
     <>

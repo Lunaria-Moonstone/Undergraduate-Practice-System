@@ -13,9 +13,12 @@ import './signin.part.css';
 import { useContext, useEffect, useState } from "react";
 import Alert from "@/components/alert/alert.component";
 import { GlobalStateContext } from "@/utils/context";
+import { useCookies } from "react-cookie";
 
 export default function Page() {
   const router = useRouter();
+  const [setCookie] = useCookies(["user"]);
+
   const roleState = useContext(GlobalStateContext);
   const roleSetter = roleState['role'][1] as (idx: GlobalStateVariableType) => void;
 
@@ -36,7 +39,7 @@ export default function Page() {
     { label: '用户名（学号或工号）', type: 'input' },
     { label: '密码', type: 'input', isPassword: true },
   ];
-  const submitForm = () => {
+  const submitForm = async () => {
     let form_value = formInput(document.getElementById('form') as HTMLElement);
 
     if (form_value[0] === '') { 
@@ -47,8 +50,8 @@ export default function Page() {
       alert('密码不能为空', 'danger');
       return;
     }
-    const role = server.authorize(form_value[0] as string, form_value[1] as string);
-    // router.push(`/dashboard?role=${role}`);
+    const role = await server.authorize(form_value[0] as string, form_value[1] as string);
+    router.push(`/dashboard?role=${role}`);
     switch (role) {
       case -1:
         alert("用户名不存在或密码错误", "danger");
@@ -70,6 +73,8 @@ export default function Page() {
         router.push(`/dashboard/company-home`);
         break;
     }
+    
+    // console.log(role);
   }
   const enterDown = (e: KeyboardEvent) => {
     if (e.code === 'Enter') {

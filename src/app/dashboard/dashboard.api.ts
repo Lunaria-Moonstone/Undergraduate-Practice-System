@@ -2,8 +2,16 @@
 // import { useRouter } from "next/router";
 
 import { NavItems } from "@/global/type"
+import axios from "axios";
 
 export default {
+  async fetchRole(): Promise<{ name: string, role: -1 | 0 | 1 | 2 | 3 }> {
+    let result = (await axios({
+      url: '/dashboard/api/',
+      method: 'get',
+    })).data;
+    return { name: result.name, role: result.role };
+  },
   fetchNavItems(role: number, path: string): NavItems {
     path = path.slice(path.lastIndexOf('/') + 1);
     if (role == 0) {
