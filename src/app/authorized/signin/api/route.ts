@@ -13,14 +13,16 @@ export async function POST(request: NextRequest) {
 
   let result: unknown;
   try {
-    result = (await selectSafty({ field: ['name', 'role'], table: 'user', where: { name, password }, limit: 1 }));
+    result = (await selectSafty({ field: ['name', 'role', 'foreign_id'], table: 'user', where: { name, password }, limit: 1 }));
     console.log((result as { ok: boolean, results: Array<any> })['results'].length);
     if ((result as { ok: boolean, results: Array<any> })['results'].length === 0 || !(result as { ok: boolean, results: Array<any> })['ok']) {
     } else {
       let role = Buffer.from((result as { ok: boolean, results: Array<any> })['results'][0]['role'])[0];
+      let role_id = (result as { ok: boolean, results: Array<any> })['results'][0]['foreign_id'];
+
       cookies().set({
         name: 'user',
-        value: JSON.stringify({ name, role }),
+        value: JSON.stringify({ name, role, role_id }),
         maxAge: 60 * 60 * 24 * 7,
       });
       console.log('cookies user: ', cookies().get('user')?.value)
@@ -36,4 +38,13 @@ export async function POST(request: NextRequest) {
       status: 200,
     });
   }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    cookies().delete('user', );
+  } catch (err: unknown) {
+    console.log(err);
+  }
+  return new NextResponse(new Blob([JSON.stringify(true)]));
 }

@@ -62,7 +62,7 @@ export default function Page() {
               })
           }
           return (
-            <div className='card' key={index}>
+            <div className='card' key={index} style={{  marginBlockStart: 'var(--standard-padding-width)' }}>
               <div className='card-body'>
                 <h5 className="card-title">
                   {x.title}

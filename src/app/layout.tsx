@@ -20,6 +20,7 @@ export default function RootLayout({
   useEffect(() => {
     require('bootstrap/dist/js/bootstrap')
   }, []);
+  
   return (
     <html lang="ch-hans">
       <head>
