@@ -1,39 +1,27 @@
 import {  Announcements, Notification, Notifications } from "@/global/type";
+import axios from "axios";
 
 export default {
-  fetchNotifications(): Notifications {
-    const items: Notifications = [
-      {
-        id: '10086',
-        title: '新的投递进度',
-        simple_descript: '您在国家安全局投递的简历有新进展了',
-        // descript: '您在国家安全局投递的简历当前的状态为已被拒绝'
-      },
-      {
-        id: '10086',
-        title: '新的投递进度',
-        simple_descript: '您在国家安全局投递的简历有新进展了',
-        // descript: '您在国家安全局投递的简历当前的状态为已读'
-      },
-    ];
+  async fetchNotifications(): Promise<Notifications> {
+    const items: Notifications = (await axios({
+      url: '/dashboard/notification-api',
+      method: 'get',
+    })).data.results as Notifications;
+    console.log(items);
     return items;
   },
-  fetchNotification(): Notification {
-    return {
-      id: '10086',
-      title: '新的投递进度',
-      descript: '您在国家安全局投递的简历当前的状态为已被拒绝',
-      created: '2024/1/24'
-    };
+  async fetchNotification(id: string): Promise<Notification> {
+    const item: Notification = (await axios({
+      url: '/dashboard/notification-api',
+      method: 'get',
+    })).data.results[0] as Notification;
+    return item;
   },
-  fetchAnnouncements() {
-    const items: Announcements = [
-      {
-        id: '10086',
-        title: '企业海天酱油厂进驻',
-        descript: '夹道欢迎新企业海天酱油厂进驻系统！'
-      }
-    ];
+  async fetchAnnouncements(): Promise<Announcements> {
+    const items: Announcements = (await axios({
+      url: '/dashboard/announcement-api',
+      method: 'get',
+    })).data.results as Announcements;
     return items;
   }
 }

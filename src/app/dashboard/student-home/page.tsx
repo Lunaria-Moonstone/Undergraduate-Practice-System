@@ -1,56 +1,124 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Announcements, Notification, Notifications } from '@/global/type';
 import server from './student-home.api';
 import Modal from '@/components/modal/modal.component';
 import './student-home.part.css';
 import Layout from '../layout';
+import Alert from '@/components/alert/alert.component';
 
 export default function Page() {
 
   const [infoModalShown, setInfoModalShown] = useState(false);
+  const [alertShown, setAlertShown] = useState<boolean>(false);
+  const [alertMessage, setAlertMessage] = useState<string>('');
+  const [alertType, setAlertType] = useState<'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark'>('info');
+  const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
+    setAlertMessage(message);
+    setAlertType(type);
+    setAlertShown(true);
+  }
+  const alertClear = () => {
+    setAlertMessage("");
+    setAlertShown(false);
+  }
 
-  const notifition_items: Notifications = server.fetchNotifications();
-  const notifications_body: React.ReactNode = notifition_items.map((x, index) => {
-    return (
-      <div className="card" key={index}>
-        <div className="card-body">
-          <h5 className="card-title">
-            {x.title}
-          </h5>
-          <p className='card-text'>
-            {x.simple_descript}
-          </p>
-          <div className="notification-inline-btns">
-            <a className='btn btn-primary btn-sm' onClick={() => setInfoModalShown(true)}>详细</a>
-            <a className='btn btn-secondary btn-sm'>忽略</a>
-          </div>
-        </div>
-      </div>
-    );
-  });
-  const announcement_items: Announcements = server.fetchAnnouncements();
-  const announcements_body: React.ReactNode = announcement_items.map((x, index) => {
-    return (
-      <div className="card" key={index}>
-        <div className="card-body">
-          <h5 className="card-title">
-            {x.title}
-          </h5>
-          <p className='card-text'>
-            {x.descript}
-          </p>
-        </div>
-      </div>
-    )
-  });
-  const notification_modal_item: Notification = server.fetchNotification();
+  // const notifition_items: Notifications = server.fetchNotifications();
+  // const notifications_body: React.ReactNode = notifition_items.map((x, index) => {
+  //   return (
+  //     <div className="card" key={index}>
+  //       <div className="card-body">
+  //         <h5 className="card-title">
+  //           {x.title}
+  //         </h5>
+  //         <p className='card-text'>
+  //           {x.simple_descript}
+  //         </p>
+  //         <div className="notification-inline-btns">
+  //           <a className='btn btn-primary btn-sm' onClick={() => setInfoModalShown(true)}>详细</a>
+  //           <a className='btn btn-secondary btn-sm'>忽略</a>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // });
+  // const announcement_items: Announcements = server.fetchAnnouncements();
+  // const announcements_body: React.ReactNode = announcement_items.map((x, index) => {
+  //   return (
+  //     <div className="card" key={index}>
+  //       <div className="card-body">
+  //         <h5 className="card-title">
+  //           {x.title}
+  //         </h5>
+  //         <p className='card-text'>
+  //           {x.descript}
+  //         </p>
+  //       </div>
+  //     </div>
+  //   )
+  // });
+  // const notification_modal_item: Notification = server.fetchNotification();
+
+  const [notifications_body, setNotificationsBody] = useState<React.ReactNode>();
+  const [announcements_body, setAnnouncementsBody] = useState<React.ReactNode>();
+
+  useEffect(() => {
+    server.fetchNotifications()
+      .then(res => {
+        setNotificationsBody(
+          res.map((x, index) => {
+            return (
+              <div className="card" key={index}>
+                <div className="card-body">
+                  <h5 className="card-title">
+                    {x.title}
+                  </h5>
+                  <p className='card-text'>
+                    {x.simple_descript}
+                  </p>
+                  <div className="notification-inline-btns">
+                    <a className='btn btn-primary btn-sm' onClick={() => setInfoModalShown(true)}>详细</a>
+                    <a className='btn btn-secondary btn-sm'>忽略</a>
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        );
+      })
+      .catch(err => {
+        console.log(err);
+        alert("后台错误，抓取信息失败", 'danger');
+      });
+    server.fetchAnnouncements()
+      .then(res => {
+        setAnnouncementsBody(
+          res.map((x, index) => {
+            return (
+              <div className="card" key={index}>
+                <div className="card-body">
+                  <h5 className="card-title">
+                    {x.title}
+                  </h5>
+                  <p className='card-text'>
+                    {x.descript}
+                  </p>
+                </div>
+              </div>
+            )
+          })
+        );
+      })
+      .catch(err => {
+        console.log(err);
+        alert("后台错误，抓取信息失败", 'danger');
+      });
+  }, [])
 
   return (
     <>
-
       <div className="dashboard-base-panel" style={{ height: '100vh' }}>
         <div className="dashboard-model-title">
           <h2>个人中心</h2>
@@ -119,21 +187,24 @@ export default function Page() {
           <button type="button" className="btn btn-secondary" onClick={() => setInfoModalShown(false)}>关闭</button>
         </>
       }>
-        <div>
+        ...
+        {/* <div>
           <h4 style={{ marginBlockEnd: 0 }}>
             {notification_modal_item.title}
           </h4>
         </div>
         <div>
           <span style={{ color: 'gray', fontSize: '10px' }}>
-          创建于 {notification_modal_item.created}
+            创建于 {notification_modal_item.created}
           </span>
         </div>
-        
-        <div style={{ marginBlockStart: 'var(--standard-padding-width)'}}>
+
+        <div style={{ marginBlockStart: 'var(--standard-padding-width)' }}>
           {notification_modal_item.descript}
-        </div>
+        </div> */}
       </Modal>
+
+      <Alert shown={alertShown} message={alertMessage} close_function={() => alertClear()} type={alertType} />
     </>
   );
 }
