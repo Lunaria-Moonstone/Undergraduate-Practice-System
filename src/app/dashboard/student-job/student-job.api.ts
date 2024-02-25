@@ -1,12 +1,12 @@
 import { Jobs } from "@/global/type";
+import axios from "axios";
 
 export default {
-  fetchJobs(): Jobs {
-    const jobs: Jobs = [
-      { id: '10086', company_id: '10086', name: '外卖小哥', salary: '1800', descript: '建设中国梦' },
-      { id: '10086', company_id: '10086', name: '外卖小哥', salary: '1800', descript: '建设中国梦' },
-      { id: '10086', company_id: '10086', name: '外卖小哥', salary: '1800', descript: '建设中国梦' }
-    ];
+  async fetchJobs(): Promise<Jobs> {
+    const jobs: Jobs = (await axios({
+      url: '/dashboard/student-job/api',
+      method: 'get'
+    })).data['results'];
     return jobs;
   }
 }
