@@ -115,6 +115,16 @@ export default function Page() {
         console.log(err);
         alert("后台错误，抓取信息失败", 'danger');
       });
+    server.fetchStudentInfo()
+      .then(res => {
+        (document.getElementById("student-name") as HTMLElement).innerText = res.name;
+        (document.getElementById("student-number") as HTMLElement).innerText = res.number;
+        (document.getElementById("student-phone") as HTMLElement).innerText = res.phone;
+        (document.getElementById("student-mail") as HTMLElement).innerText = res.mail;
+      })
+      .catch(err => {
+
+      })
   }, [])
 
   return (
@@ -132,19 +142,19 @@ export default function Page() {
                 <div className="student-info-panel">
                   <div>
                     <span>姓名</span>
-                    <p>lain</p>
+                    <p id="student-name">lain</p>
                   </div>
                   <div>
                     <span>学号</span>
-                    <p>20044231</p>
+                    <p id="student-number">20044231</p>
                   </div>
                   <div>
                     <span>联系电话</span>
-                    <p>110</p>
+                    <p id="student-phone">110</p>
                   </div>
                   <div>
                     <span>联系邮箱</span>
-                    <p>110@outlook.com</p>
+                    <p id="student-mail">110@outlook.com</p>
                   </div>
                 </div>
               </div>

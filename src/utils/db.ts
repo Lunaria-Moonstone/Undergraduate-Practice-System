@@ -22,6 +22,10 @@ export async function executeQuery({ query, values }: { query: string, values: A
   return results;
 }
 
+// export function whereIn(...values: string[]) {
+//   return ` IN (${values.join(',')})`;
+// }
+
 export async function select({ 
   field, table, where, order, group, limit 
 }: {

@@ -13,3 +13,7 @@
 .student-annex-card-body-buttons > * {
   margin-inline-end: var(--standard-padding-width);
 }
+
+.img-undefinded {
+  margin: var(--standard-padding-width) var(--standard-padding-width)
+}

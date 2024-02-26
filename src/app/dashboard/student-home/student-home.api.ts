@@ -1,6 +1,13 @@
 import {  Announcements, Notification, Notifications } from "@/global/type";
 import axios from "axios";
 
+interface SimpleStudent {
+  name: string; 
+  number: string; 
+  phone: string; 
+  mail: string;
+}
+
 export default {
   async fetchNotifications(): Promise<Notifications> {
     const items: Notifications = (await axios({
@@ -23,5 +30,12 @@ export default {
       method: 'get',
     })).data.results as Announcements;
     return items;
+  },
+  async fetchStudentInfo(): Promise<SimpleStudent> {
+    const item: SimpleStudent = (await axios({
+      url: '/dashboard/student-home/api',
+      method: 'get',
+    })).data['results'][0] as SimpleStudent;
+    return item;
   }
 }

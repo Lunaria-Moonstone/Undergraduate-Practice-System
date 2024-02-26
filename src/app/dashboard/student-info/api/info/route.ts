@@ -47,10 +47,6 @@ export async function PUT(request: NextRequest ) {
   user = JSON.parse(original_info_from_cookie.value);
   
   try {
-    // let check: { ok: boolean, results: Array<any> } = await selectSafty({ field: ['*'], table: 'student', where: { foreign_id: user.role_id, password: password } }) as { ok: boolean, results: Array<any> } ;
-    // if (!check.ok || (check.ok && check.results.length === 0)) {
-    //   throw new Error();
-    // }
     results = await updateSafty({ field: { ...data }, table: 'student', where: { id: user.role_id } });
   } catch (error: unknown) {
     results = error;
