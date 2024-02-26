@@ -8,14 +8,38 @@ import Form from '@/components/form/form.component';
 
 export default function Page() {
 
-  const [submitModalShown, setSubmitModalShown] = useState(false);
-  const [infoModalShown, setInfoModalShown] = useState(false);
+  const checked_list: string[] = []
 
-  const table_head = ['编号', '公司名称', '岗位名称', '薪资'];
-  const table_body = server.fetchJobs().map(x => {
-    return [x.id, x.company_id, x.name, x.salary];
+  // const [submitModalShown, setSubmitModalShown] = useState(false);
+  // const [infoModalShown, setInfoModalShown] = useState(false);
+  const [modalStates, setModalStates] = useState<{ [key: string]: boolean }>({
+    submitModalShown: false,
+    infoModalShown: false,
+  });
+  const toggleModal = (modalName: string) => {
+    setModalStates(prev => ({ ...prev, [`${modalName}ModalShown`]: !prev[`${modalName}ModalShown`] }));
+    
+  }
+  const modalProps = (modalName: string, title: string, children: React.ReactNode, buttons?: React.ReactNode) => ({
+    id: `modal-${modalName}`,
+    shown: modalStates[`${modalName}ModalShown`],
+    close_function: () => toggleModal(`${modalName}ModalShown`),
+    modal_title: title,
+    modal_btns: (
+      <>
+        {buttons}
+        <button className='btn btn-secondary' onClick={() => toggleModal(modalName)}>关闭</button>
+      </>
+    ),
+    children,
   });
 
+  // const table_head = ['编号', '公司名称', '岗位名称', '薪资'];
+  // const table_body = server.fetchJobs().map(x => {
+  //   return [x.id, x.company_id, x.name, x.salary];
+  // });
+  const [table_head, setTableHead] = useState<string[]>(['编号', '公司名称', '岗位名称', '薪资']);
+  const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>();
 
   return (
     <>
@@ -37,27 +61,20 @@ export default function Page() {
         </div>
       </div>
 
-      <Modal id="modal-submit" shown={submitModalShown} close_function={() => setSubmitModalShown(false)} modal_title='岗位投递' modal_btns={
-        <>
-          <button className='btn btn-primary'>确认</button>
-          <button className='btn btn-secondary' onClick={() => setSubmitModalShown(false)}>取消</button>
-        </>
-      }>
-        是否确定向该投递求职意向
-      </Modal>
+      <Modal {...modalProps('submit', '投递确认', (
+        <p>是否确定向该投递求职意向</p>
+      ), (
+        <button className='btn btn-primary' onClick={() => {}}>确认</button>
+      ))} />
 
-      <Modal id="modal-info" shown={infoModalShown} close_function={() => setInfoModalShown(false)} modal_title='投递信息' modal_btns={
-        <>
-          <button className='btn btn-secondary' onClick={() => setInfoModalShown(false)}>关闭</button>
-        </>
-      }>
+      <Modal {...modalProps('info', '岗位信息', (
         <div className='job-info'>
           <div>
             <div>岗位</div>
             <div>保安</div>
           </div>
         </div>
-      </Modal>
+      ), )} />
     </>
   );
 }
