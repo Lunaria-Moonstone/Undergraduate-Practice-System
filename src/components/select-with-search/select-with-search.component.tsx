@@ -3,6 +3,8 @@
 import React from "react";
 import { Dropdown } from "bootstrap";
 
+import 'bootstrap/js/dist/dropdown';
+
 // import "./select-with-search.component.css";
 
 // export default function Select(props: any) {
@@ -53,7 +55,7 @@ import { Dropdown } from "bootstrap";
 //   // const dropdownChange = (state: boolean) => {
 //   //   const dropdownMenu = document.querySelector('.dropdown-menu');
 //   //   const selectInput = document.getElementById(component_id + '-input');
-    
+
 //   //   if (state) { // 如果激活输入框（获得焦点）
 //   //     changeDropdownIcon(
 //   //       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-up" viewBox="0 0 16 16">
@@ -120,17 +122,19 @@ export default class Select extends React.Component<SelectProps> {
   render(): React.ReactNode {
     return (
       <>
-        <input data-bs-toggle="dropdown" className="form-control dropdown-toggle" placeholder={this.props.placeholder}/>
-        <ul className="dropdown-menu">
-          {this.dropdown_items}
-        </ul>
+        <div className="dropdown">
+          <input className="form-control dropdown-toggle" data-bs-toggle="dropdown" placeholder={this.props.placeholder} aria-expanded="false" />
+          <ul className="dropdown-menu" style={{ width: '100%' }}>
+            {this.dropdown_items}
+          </ul>
+        </div>
       </>
     )
   }
 
   private static _dropdownItemBuild(options: Options): React.ReactNode {
     return options.map(x => (
-      <li key={x.label}><a className="dropdown-item">{x.label}</a></li>
+      <li key={x.label}><a className="dropdown-item" style={{ width: '100%' }}>{x.label}</a></li>
     ));
   }
 }
