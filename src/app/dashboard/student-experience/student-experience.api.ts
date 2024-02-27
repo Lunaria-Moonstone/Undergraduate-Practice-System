@@ -7,7 +7,6 @@ export default {
       url: '/dashboard/student-experience/api',
       method: 'get'
     })).data['results'];
-
     return items;
   },
   async fetchCompanies(): Promise<Companies> {
