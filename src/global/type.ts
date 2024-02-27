@@ -79,6 +79,8 @@ export interface Company {
 export interface StudentPracticeExperience {
   id: string // 编号
   company_id: string // 企业编号
+  company_name?: string // 企业名称
+  student_id: string // 学生编号
   start: string // 就职时间
   end: string // 离职时间
 }

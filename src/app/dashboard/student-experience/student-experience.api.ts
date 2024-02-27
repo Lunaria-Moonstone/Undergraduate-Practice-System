@@ -1,17 +1,20 @@
 import { Companies, StudentPracticeExperiencies } from "@/global/type"
+import axios from "axios";
 
 export default {
-  fetchExperience(): StudentPracticeExperiencies {
-    const items: StudentPracticeExperiencies = [
-      { id: '10086', company_id: '10086', start: '23-1-8', end: '24-1-8' },
-    ];
+  async fetchExperience(): Promise<StudentPracticeExperiencies> {
+    const items: StudentPracticeExperiencies = (await axios({
+      url: '/dashboard/student-experience/api',
+      method: 'get'
+    })).data['results'];
 
     return items;
   },
-  fetchCompanies(): Companies {
-    const items: Companies = [
-      { id: '10086', name: '国家安全局', phone: '110', mail: '110@outlook.jp', license: '00' }
-    ]
+  async fetchCompanies(): Promise<Companies> {
+    const items: Companies = (await axios({
+      url: '/dashboard/admin-company/api/',
+      method: 'get',
+    })).data['results'] as Companies;
     return items;
   }
 }

@@ -41,5 +41,11 @@ export default {
       params: { id }
     })).data;
     return result;
-  }
+  },
+  // async fetchSingleAnnex(id: string) {
+  //   axios({
+  //     url: '',
+  //     method: ''
+  //   })
+  // }
 }

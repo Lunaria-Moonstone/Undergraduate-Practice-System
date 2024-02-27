@@ -3,7 +3,7 @@
 import Table, { TableLineActions } from '@/components/table/table.component';
 import server from './student-annex.api';
 import "./student-annex.part.css";
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Modal from '@/components/modal/modal.component';
 import Alert from '@/components/alert/alert.component';
 import { FormItems } from '@/global/type';
@@ -19,7 +19,6 @@ export default function Page() {
   });
   const toggleModal = (modalName: string) => {
     setModalStates(prev => ({ ...prev, [`${modalName}ModalShown`]: !prev[`${modalName}ModalShown`] }));
-    
   }
   const modalProps = (modalName: string, title: string, children: React.ReactNode, buttons?: React.ReactNode) => ({
     id: `modal-${modalName}`,
@@ -64,13 +63,15 @@ export default function Page() {
   //   return [x.id, x.created];
   // });
 
-  const showAnnex = (id: string) => {
-    let target = new Array<{ id: string, base64code: string, created: string }>().concat(resume_list, practice_document_list).filter(x => x.id === id);
+  const annexShown = (id: string) => {
+    const target = annex_list_ref.current.filter(x => x.id === id);
     if (target.length === 0) {
-      alert('找不到目标材料', 'danger');
+      alert('目标材料不存在', 'danger');
       return;
     }
-  };
+    setAnnexInfo("data:application/pdf;base64," + Buffer.from(target[0].base64code).toString());
+    toggleModal('info');
+  }
   const addResume = () => {
     setNowType('r');
     toggleModal('add');
@@ -101,18 +102,10 @@ export default function Page() {
       })
   };
   const infoShown = () => {
-    if (now_type === 'r') {
-      if (resume === 'x') {
-        return <p className="img-undefinded">暂无简历</p>;
-      } else {
-        return <img src={resume} className="card-img-top" />;
-      }
+    if (annex_info === 'x') {
+      return <p>当前材料为空</p>
     } else {
-      if (practice_document === 'x') {
-        return <p className="img-undefinded">暂无实习材料</p>;
-      } else {
-        return <img src={practice_document} className="card-img-top" />;
-      }
+      return <embed src={annex_info} type="application/pdf" style={{ height: '100%' }} />
     }
   };
   const delMark = (id: string) => {
@@ -149,8 +142,11 @@ export default function Page() {
   const [del_target, setDelTarget] = useState<string>();
   const [resume, setResume] = useState<string>('x');
   const [practice_document, setPracticeDocument] = useState<string>('x');
+  const [annex_info, setAnnexInfo] = useState<string>('x');
   const [practice_document_list, setPracticeDocumentList] = useState<{ id: string, base64code: string, created: string }[]>([]);
   const [resume_list, setResumeList] = useState<{ id: string, base64code: string, created: string }[]>([]);
+  const [annex_list, setAnnexList] = useState<{ id: string, base64code: string, created: string }[]>([]);
+  const annex_list_ref = useRef(annex_list);
   const [history_resume_table_head, setHistoryResumeTableHead] = useState<string[]>(['编号', '时间']);
   const [history_practice_document_table_head, setHistoryPracticeDocumentTableHead] = useState<string[]>(['编号', '时间']);
   const [history_resume_table_line_actions, setHistoryResumeTableLineActions] = useState<TableLineActions>([
@@ -159,9 +155,7 @@ export default function Page() {
     },
     {
       type: 'primary', text: '预览',
-      action_function: (id: string) => {
-
-      }
+      action_function: annexShown
     },
   ]);
   const [history_practice_docuement_table_line_actions, setHistoryPracticeDocumentTableLineActions] = useState<TableLineActions>([
@@ -170,9 +164,7 @@ export default function Page() {
     },
     {
       type: 'primary', text: '预览',
-      action_function: (id: string) => {
-
-      }
+      action_function: annexShown
     },
   ]);
   const [history_resume_table_body, setHistoryResumeTableBody] = useState<Array<Array<string | number | undefined>>>([]);
@@ -193,6 +185,11 @@ export default function Page() {
   ]
 
   useEffect(() => {
+    annex_list_ref.current = annex_list;
+    // console.log('annex_list_ref:', annex_list_ref.current);
+  }, [annex_list]);
+
+  useEffect(() => {
     server.fetchAnnex()
       .then(res => {
         console.log(res);
@@ -204,7 +201,6 @@ export default function Page() {
             // proof_shown = "data:image/jpeg;base64," + Buffer.from(proof_list[proof_list.length - 1].base64code).toString();
             proof_shown = "data:application/pdf;base64," + Buffer.from(proof_list[proof_list.length - 1].base64code).toString();
             setPracticeDocument(proof_shown);
-
           } else setPracticeDocument('x');
           let resume_shown: string;
           if (_resume_list.length !== 0) {
@@ -218,10 +214,13 @@ export default function Page() {
           setHistoryResumeTableBody(
             _resume_list.map(x => [x.id, x.created])
           );
-          setPracticeDocumentList(proof_list);
           setResumeList(_resume_list);
+          setPracticeDocumentList(proof_list);
+          const _annex_list = new Array<{ id: string, base64code: string, created: string }>().concat(_resume_list, proof_list);
+          console.log('_annex_list: ', _annex_list);
+          setAnnexList(_annex_list);
         } else {
-          alert('后台拉取信息失败', 'danger')
+          alert('后台拉取信息失败', 'danger');
         }
       })
       .catch(err => {
@@ -229,6 +228,7 @@ export default function Page() {
         alert('后台拉取信息失败', 'danger')
       });
   }, []);
+  
 
   return (
     <>
@@ -290,7 +290,7 @@ export default function Page() {
       ))} />
 
       <Modal {...modalProps('info', '材料详细', (
-        <div className='card'>
+        <div className='card' style={{ height: '500px' }}>
           {/* <img className='card-img-top' src={resume} /> */}
           {infoShown()}
         </div>

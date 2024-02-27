@@ -2,31 +2,110 @@
 
 import { StudentPracticeExperiencies } from '@/global/type';
 import server from './student-experience.api'
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import Modal from '@/components/modal/modal.component';
 import Select from '@/components/select-with-search/select-with-search.component';
-import Table from '@/components/table/table.component';
+import Table, { TableLineActions } from '@/components/table/table.component';
 
 import './student-experience.part.css';
+import Alert from '@/components/alert/alert.component';
+import { formInput } from '@/utils/input';
 
 export default function Page() {
 
-  const [addModalShown, setAddModalShown] = useState(false);
-  const [delModalShown, setDelModalShown] = useState(false);
-  const [exportModalShown, setExportModalShown] = useState(false);
-  const [infoModalShown, setInfoModalShown] = useState(false);
-
-  const experiencies: StudentPracticeExperiencies = server.fetchExperience();
-  const table_head: Array<string> = ['企业名称', '就职时间', '离职时间'];
-  const table_body: Array<Array<string | number | undefined>> = experiencies.map(x => {
-    return [x.company_id, x.start, x.end];
+  const [modalStates, setModalStates] = useState<{ [key: string]: boolean }>({
+    addModalShown: false,
+    delModalShown: false,
+    // infoModalShown: false,
   });
-  const company_opts: { label: string, value: string | number }[] = server.fetchCompanies().map(x => {
-    return {
-      label: x.name,
-      value: x.id
+  const toggleModal = (modalName: string) => {
+    setModalStates(prev => ({ ...prev, [`${modalName}ModalShown`]: !prev[`${modalName}ModalShown`] }));
+  }
+  const modalProps = (modalName: string, title: string, children: React.ReactNode, buttons?: React.ReactNode) => ({
+    id: `modal-${modalName}`,
+    shown: modalStates[`${modalName}ModalShown`],
+    close_function: () => toggleModal(`${modalName}ModalShown`),
+    modal_title: title,
+    modal_btns: (
+      <>
+        {buttons}
+        <button className='btn btn-secondary' onClick={() => toggleModal(modalName)}>关闭</button>
+      </>
+    ),
+    children,
+  });
+
+  const [alertState, setAlertState] = useState<{ alertShown: boolean, alertMessage: string, alertType: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark' }>({
+    alertShown: false,
+    alertMessage: '',
+    alertType: 'info'
+  });
+  const alertProps = () => ({
+    shown: alertState['alertShown'],
+    type: alertState['alertType'],
+    message: alertState['alertMessage'],
+    close_function: () => setAlertState({ alertShown: false, alertMessage: '', alertType: 'info' })
+  });
+  const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
+    setAlertState({ alertShown: true, alertMessage: message, alertType: type });
+  };
+
+
+  // const experiencies: StudentPracticeExperiencies = server.fetchExperience();
+  // const table_head: Array<string> = ['企业名称', '就职时间', '离职时间'];
+  // const table_body: Array<Array<string | number | undefined>> = experiencies.map(x => {
+  //   return [x.company_id, x.start, x.end];
+  // });
+  const [table_head, setTableHead] = useState<string[]>(['企业名称', '就职时间', '离职时间']);
+  const [table_body, setTableBody] = useState<(string | number | undefined)[][]>([]);
+  const [table_line_actions, setTableLineActions] = useState<TableLineActions>([
+    {
+      type: 'danger',
+      text: '删除',
+      action_function: (id: string) => {
+
+      }
     }
-  })
+  ]);
+  const [company_opts, setCompanyOpts] = useState<{ label: string, value: string | number }[]>([]);
+  // const company_opts: { label: string, value: string | number }[] = server.fetchCompanies().map(x => {
+  //   return {
+  //     label: x.name,
+  //     value: x.id
+  //   }
+  // });
+
+  useEffect(() => {
+    server.fetchExperience()
+      .then(res => {
+        if (res) {
+          setTableBody(res.map(x => [x.id, x.company_id, x.company_name, x.start, x.end]));
+        } else {
+          alert('后台拉取信息错误', 'danger');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert('后台拉取信息错误', 'danger');
+      });
+    server.fetchCompanies()
+      .then(res => {
+        if (res) {
+          setCompanyOpts(res.map(x => { return { label: x.name, value: x.id } }))
+        } else {
+          alert('后台拉取信息错误', 'danger');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert('后台拉取信息错误', 'danger');
+      });
+  }, []);
+
+  const saveAdd = () => {
+    // let form_value = formInput(document.getElementById('form-add') as HTMLElement);
+    // console.log(form_value);
+  }
 
   return (
     <>
@@ -36,51 +115,41 @@ export default function Page() {
           <hr />
         </div>
         <div className="dashboard-model-buttons">
-          <button className="btn btn-success" onClick={() => setAddModalShown(true)}>添加</button>
-          <button className="btn btn-danger" onClick={() => setDelModalShown(true)}>删除</button>
-          <button className="btn btn-secondary">导入</button>
-          <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button>
+          <button className="btn btn-success" onClick={() => toggleModal('add')}>添加</button>
+          <button className="btn btn-danger" onClick={() => { }}>删除</button>
         </div>
-        <Table table_id='table' table_head={table_head} table_body={table_body} checkbox={true} line_action={
-          <>
-            <a className='link-danger text-decoration-none' onClick={() => setDelModalShown(true)}>删除</a>
-            <a className='link-secondary text-decoration-none' onClick={() => setInfoModalShown(true)}>详细</a>
-          </>
-        } />
+        <Table table_id='table' table_head={table_head} table_body={table_body} checkbox={true} line_action={table_line_actions} />
       </div>
 
-      <Modal shown={addModalShown} id='modal-add' modal_title='添加实习经历' close_function={() => setAddModalShown(false)} modal_btns={
-        <>
-          <button type="button" className="btn btn-primary">保存</button>
-          <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-        </>
-      }>
+      <Modal {...modalProps('add', '添加经历', (
         <div>
-          <div className="mb-3">
-            <label className="form-label">企业名称</label>
-            <Select opts={company_opts} placeholder="企业名称" component_id="company-search" />
-          </div>
-          <div className="mb-3">
-            <label className="form-label">入职时间</label>
-            <input className="form-control" type="date" defaultValue="1999-01-01" />
-          </div>
-          <div className="mb-3">
-            <label className="form-label">离职时间</label>
-            <input className="form-control" type="date" defaultValue="1999-01-01" />
-          </div>
+          {/* <form id='form-add'> */}
+            <div className="mb-3">
+              <label className="form-label">企业名称</label>
+              {/* <Select opts={company_opts} placeholder="企业名称" component_id="company-search" /> */}
+              <Select options={company_opts} />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">入职时间</label>
+              <input className="form-control" type="date" defaultValue="1999-01-01" />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">离职时间</label>
+              <input className="form-control" type="date" defaultValue="1999-01-01" />
+            </div>
+          {/* </form> */}
         </div>
-      </Modal>
+      ), (
+        <button className='btn btn-primary' onClick={() => { saveAdd() }}>确认</button>
+      ))} />
 
-      <Modal shown={delModalShown} id='modal-del' modal_title='确认删除' close_function={() => setDelModalShown(false)} modal_btns={
-        <>
-          <button className="btn btn-danger">确认</button>
-          <button className="btn btn-secondary" onClick={() => setDelModalShown(false)}>取消</button>
-        </>
-      }>
-        删除内容后无法恢复，是否继续
-      </Modal>
+      <Modal {...modalProps('del', '删除确认', (
+        <p>删除内容后无法恢复，是否继续</p>
+      ), (
+        <button className='btn btn-primary' onClick={() => { }}>确认</button>
+      ))} />
 
-      <Modal shown={infoModalShown} id="modal-info" modal_title='详细' close_function={() => setInfoModalShown(false)} modal_btns={
+      {/* <Modal shown={infoModalShown} id="modal-info" modal_title='详细' close_function={() => setInfoModalShown(false)} modal_btns={
         <>
           <button className='btn btn-secondary' onClick={() => setInfoModalShown(false)}>关闭</button>
         </>
@@ -108,7 +177,9 @@ export default function Page() {
         </>
       }>
         是否将选定内容导出至外部
-      </Modal>
+      </Modal> */}
+
+      <Alert {...alertProps()} />
     </>
   )
 }
