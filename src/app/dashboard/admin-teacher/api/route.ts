@@ -1,3 +1,4 @@
+import { insertSafty } from "@/utils/db";
 import { RouterFactory } from "@/utils/factory";
 import { nanoid } from "nanoid";
 import { NextRequest, NextResponse } from "next/server";
@@ -9,10 +10,24 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  let results: unknown;
   let request_body = await (new Response(request.body)).blob();
   let id = nanoid();
   let { name, number, phone, mail } = JSON.parse((await request_body.text()));
-  return await router.POST({ id, name, number, phone, mail });
+  // return await router.POST({ id, name, number, phone, mail });
+  try {
+    let sub_results = await insertSafty({ field: {id, name, number, phone, mail }, table: 'teacher', insert_values_num: 5 })
+    results = { ...sub_results, id, };
+  } catch (error: unknown) {
+    results = error;
+  } finally {
+    const blob = new Blob([JSON.stringify(results, null, 2)], {
+      type: 'application/json',
+    });
+    return new Response(blob, {
+      status: 200,
+    });
+  }
 }
 
 export async function DELETE(request: NextRequest) {

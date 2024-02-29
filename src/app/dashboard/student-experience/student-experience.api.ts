@@ -15,5 +15,25 @@ export default {
       method: 'get',
     })).data['results'] as Companies;
     return items;
+  },
+  async addExperience(data: {
+    company_id: string,
+    start: string,
+    end?: string,
+  }): Promise<boolean> {
+    const result = (await axios({
+      url: '/dashboard/student-experience/api',
+      method: 'post',
+      data: data
+    })).data;
+    return result['ok'];
+  },
+  async delExperience(id: string) {
+    const result = (await axios({
+      url: '/dashboard/student-experience/api',
+      method: 'delete',
+      params: { id }
+    })).data;
+    return result['ok'];
   }
 }

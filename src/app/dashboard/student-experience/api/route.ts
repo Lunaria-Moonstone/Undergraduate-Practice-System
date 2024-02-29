@@ -51,6 +51,7 @@ export async function POST(request: NextRequest) {
   let request_body = await (new Response(request.body)).blob();
   let id = nanoid();
   let { company_id, start, end } = JSON.parse((await request_body.text()));
+  console.log(company_id, start, end);
   let student_id = user.role_id;
   return await router.POST({ id, company_id, student_id, start, end });
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Announcements,  } from '@/global/type';
 import server from './teacher-home.api';
@@ -10,22 +10,100 @@ import './teacher-home.part.css';
 export default function Page() {
 
   const [infoModalShown, setInfoModalShown] = useState(false);
+  const [alertShown, setAlertShown] = useState<boolean>(false);
+  const [alertMessage, setAlertMessage] = useState<string>('');
+  const [alertType, setAlertType] = useState<'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark'>('info');
+  const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
+    setAlertMessage(message);
+    setAlertType(type);
+    setAlertShown(true);
+  }
+  const alertClear = () => {
+    setAlertMessage("");
+    setAlertShown(false);
+  }
 
-  const announcement_items: Announcements = server.fetchAnnouncements();
-  const announcements_body: React.ReactNode = announcement_items.map((x, index) => {
-    return (
-      <div className="card" key={index}>
-        <div className="card-body">
-          <h5 className="card-title">
-            {x.title}
-          </h5>
-          <p className='card-text'>
-            {x.descript}
-          </p>
-        </div>
-      </div>
-    )
-  });
+  const [notifications_body, setNotificationsBody] = useState<React.ReactNode>();
+  const [announcements_body, setAnnouncementsBody] = useState<React.ReactNode>();
+
+  useEffect(() => {
+    server.fetchNotifications()
+      .then(res => {
+        setNotificationsBody(
+          res.map((x, index) => {
+            return (
+              <div className="card" key={index}>
+                <div className="card-body">
+                  <h5 className="card-title">
+                    {x.title}
+                  </h5>
+                  <p className='card-text'>
+                    {x.simple_descript}
+                  </p>
+                  <div className="notification-inline-btns">
+                    <a className='btn btn-primary btn-sm' onClick={() => setInfoModalShown(true)}>详细</a>
+                    <a className='btn btn-secondary btn-sm'>忽略</a>
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        );
+      })
+      .catch(err => {
+        console.log(err);
+        alert("后台错误，抓取信息失败", 'danger');
+      });
+    server.fetchAnnouncements()
+      .then(res => {
+        setAnnouncementsBody(
+          res.map((x, index) => {
+            return (
+              <div className="card" key={index}>
+                <div className="card-body">
+                  <h5 className="card-title">
+                    {x.title}
+                  </h5>
+                  <p className='card-text'>
+                    {x.descript}
+                  </p>
+                </div>
+              </div>
+            )
+          })
+        );
+      })
+      .catch(err => {
+        console.log(err);
+        alert("后台错误，抓取信息失败", 'danger');
+      });
+    server.fetchTeacherInfo()
+      .then(res => {
+        (document.getElementById("teacher-name") as HTMLElement).innerText = res.name;
+        (document.getElementById("teacher-number") as HTMLElement).innerText = res.number;
+        (document.getElementById("teacher-phone") as HTMLElement).innerText = res.phone;
+        (document.getElementById("teacher-mail") as HTMLElement).innerText = res.mail;
+      })
+      .catch(err => {
+
+      })
+  }, [])
+
+  // const announcement_items: Announcements = server.fetchAnnouncements();
+  // const announcements_body: React.ReactNode = announcement_items.map((x, index) => {
+  //   return (
+  //     <div className="card" key={index}>
+  //       <div className="card-body">
+  //         <h5 className="card-title">
+  //           {x.title}
+  //         </h5>
+  //         <p className='card-text'>
+  //           {x.descript}
+  //         </p>
+  //       </div>
+  //     </div>
+  //   )
+  // });
 
   return (
     <>
@@ -43,19 +121,19 @@ export default function Page() {
                 <div className="teacher-info-panel">
                   <div>
                     <span>姓名</span>
-                    <p>lain</p>
+                    <p id="teacher-name">lain</p>
                   </div>
                   <div>
                     <span>学号</span>
-                    <p>20044231</p>
+                    <p id="teacher-number">20044231</p>
                   </div>
                   <div>
                     <span>联系电话</span>
-                    <p>110</p>
+                    <p id="teacher-phone">110</p>
                   </div>
                   <div>
                     <span>联系邮箱</span>
-                    <p>110@outlook.com</p>
+                    <p id="teacher-mail">110@outlook.com</p>
                   </div>
                 </div>
               </div>

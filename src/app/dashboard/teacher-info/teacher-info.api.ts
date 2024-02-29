@@ -3,14 +3,14 @@ import axios from "axios";
 export default {
   async fetchName() {
     let results = (await axios({
-      url: '/dashboard/company-info/api/account',
+      url: '/dashboard/teacher-info/api/account',
       method: 'get',
     })).data;
     return results;
   },
   async submitAccountChange(password: string, new_password: string) {
     let results = (await axios({
-      url: '/dashboard/company-info/api/account',
+      url: '/dashboard/teacher-info/api/account',
       method: 'put',
       data: { password, new_password },
     })).data;
@@ -25,7 +25,7 @@ export default {
 
   async fetchInfo() {
     let results = (await axios({
-      url: '/dashboard/company-info/api/info',
+      url: '/dashboard/teacher-info/api/info',
       method: 'get',
     })).data;
     // console.log(results);
@@ -33,7 +33,7 @@ export default {
   },
   async submitInfoChange(data: {[key: string]: string}) {
     let results = (await axios({
-      url: '/dashboard/company-info/api/info',
+      url: '/dashboard/teacher-info/api/info',
       method: 'put',
       data
     })).data;

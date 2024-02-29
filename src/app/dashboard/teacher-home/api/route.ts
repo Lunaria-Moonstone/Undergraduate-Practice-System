@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
       type: 'application/json',
     }));
   user = JSON.parse(original_info_from_cookie.value);
-  let results: { ok: boolean, results: Array<any> } = await selectSafty({ field: ['name', 'phone', 'mail'], table: 'company', where: { id: user.role_id }, limit: 1 }) as { ok: boolean, results: Array<any> };
+  let results: { ok: boolean, results: Array<any> } = await selectSafty({ field: ['name', 'number', 'phone', 'mail'], table: 'teacher', where: { id: user.role_id }, limit: 1 }) as { ok: boolean, results: Array<any> };
   if (!results || !results['ok'] || results['results'].length === 0) {
     return new NextResponse(new Blob([JSON.stringify({ ok: false, error: '抓取用户信息失败' }, null, 2)], {
       type: 'application/json',

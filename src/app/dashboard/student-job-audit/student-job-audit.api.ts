@@ -1,10 +1,20 @@
 import { JobAudits } from "@/global/type";
+import axios from "axios";
 
 export default {
-  fetchJobAudit(): JobAudits {
-    let items: JobAudits = [
-      {id: '10086', student_id: '10086', company_id: '10086', job_id: '10086', progress: 'reading'},
-    ]
-    return items;
+  async fetchJobAudit(): Promise<JobAudits> {
+    let results: JobAudits = (await (axios({
+      url: '/dashboard/student-job-audit/api',
+      method: 'get'
+    }))).data['results'];
+    return results;
+  },
+  async cancleJobAudit(id: string): Promise<boolean> {
+    let results = (await (axios({
+      url: '/dashboard/student-job-audit/api',
+      method: 'delete',
+      params: {id}
+    }))).data['ok'];
+    return results;
   }
 }

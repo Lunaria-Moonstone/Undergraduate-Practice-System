@@ -1,17 +1,36 @@
 import { RouterFactory } from "@/utils/factory";
 import { nanoid } from "nanoid";
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 const router = new RouterFactory('job');
 
 export async function GET() {
-  return await router.GET('*', { company_id: '8qdq3MN5Lw0id1PU_yct3' },)
+
+  let original_info_from_cookie = cookies().get('user');
+  let user: { role_id: string, };
+  if (!original_info_from_cookie)
+    return new NextResponse(new Blob([JSON.stringify({ ok: false, error: '未登录' }, null, 2)], {
+      type: 'application/json',
+    }));
+  user = JSON.parse(original_info_from_cookie.value);
+
+  return await router.GET('*', { company_id: user.role_id },)
 }
 
 export async function POST(request: NextRequest) {
+
+  let original_info_from_cookie = cookies().get('user');
+  let user: { role_id: string, };
+  if (!original_info_from_cookie)
+    return new NextResponse(new Blob([JSON.stringify({ ok: false, error: '未登录' }, null, 2)], {
+      type: 'application/json',
+    }));
+  user = JSON.parse(original_info_from_cookie.value);
+
   let request_body = await (new Response(request.body)).blob();
   let id = nanoid();
-  let company_id = "8qdq3MN5Lw0id1PU_yct3";
+  let company_id = user.role_id;
   let { name, salary, descript } = JSON.parse((await request_body.text()));
   return await router.POST({ id, company_id, name, salary, descript });
 }
