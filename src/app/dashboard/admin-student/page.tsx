@@ -37,7 +37,7 @@ export default function Page() {
   const [edit_target, setEditTarget] = useState<string>();
   const [table_head, setTableHead] = useState<Array<string>>([
     '编号', '学生姓名', '学号', '年级', '联系电话',
-    '联系邮箱', '是否处于实习中', '当前实习公司', '个人简历',
+    '联系邮箱', '个人简历',
     '实习凭证', '实习分数',
   ]);
   const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
@@ -57,8 +57,8 @@ export default function Page() {
         setTableBody(res.map(x => [
           x.id, x.name, x.number, x.grade, x.phone,
           x.mail,
-          Buffer.from(res[0].is_practice)[0] ? '是' : '否',
-          Buffer.from(res[0].is_practice)[0] ? x.practice_cmp[-1] : '未处于实习状态',
+          // Buffer.from(res[0].is_practice)[0] ? '是' : '否',
+          // Buffer.from(res[0].is_practice)[0] ? x.practice_cmp[-1] : '未处于实习状态',
           Buffer.from(res[0].has_vitae)[0] ? '有' : '无',
           Buffer.from(res[0].has_proof)[0] ? '有' : '无',
           x.score !== undefined && x.score !== -1 ? x.score : '未录入实习成绩'
@@ -79,7 +79,6 @@ export default function Page() {
       ]
     },
   ]
-
   const saveAdd = () => {
     let form_value: Array<string | number | boolean | undefined> = formInput(document.getElementById('add-form') as HTMLElement);
     let data = { name: form_value[0] as string, number: form_value[1] as string, grade: form_value[2] as string }

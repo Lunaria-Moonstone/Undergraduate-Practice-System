@@ -54,12 +54,11 @@ export default class Table extends Component<TableProps, TableState> {
     this.state = {
       now_page: 1
     };
-    this.max_item = 5;
+    this.max_item = 10;
 
     this.makeTableHead();
     this.makeTableBody(this.state.now_page);
     this.makePagin(this.state.now_page);
-
   }
 
   makeTableHead() {
@@ -71,7 +70,7 @@ export default class Table extends Component<TableProps, TableState> {
   }
 
   makeTableBody(now_page: number) {
-    const _table_body = this.table_body.slice(now_page - 1, now_page + (this.max_item - 1));
+    const _table_body = this.table_body.slice((now_page - 1) * this.max_item, now_page * this.max_item);
     this.table_body_node = _table_body.map((x, index) => {
       const t_line: React.ReactNode = x.map((y, sub_index) => {
         return (
@@ -143,8 +142,13 @@ export default class Table extends Component<TableProps, TableState> {
       this.makeTableBody(this.state.now_page);
     }
     if (this.state.now_page != prevState.now_page) {
-      
+      this.makeTableBody(this.state.now_page);
     }
+    this.makePagin(this.state.now_page);
+  }
+
+  componentDidMount(): void {
+    this.makePagin(this.state.now_page);
   }
 
   submitChange() {

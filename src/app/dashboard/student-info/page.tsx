@@ -7,11 +7,17 @@ import server from './student-info.api';
 import Modal from '@/components/modal/modal.component';
 import Alert from '@/components/alert/alert.component';
 import { formInput } from '@/utils/input';
+import Select from '@/components/select-with-search/select-with-search.component';
+import { Teacher } from '@/global/type';
 
 export default function Page() {
   const router = useRouter();
 
+  const [mounted_teacher, setMountedTeacher] = useState<Teacher>();
   const [successMsgModalShown, setSuccessMsgModalShown] = useState<boolean>(false);
+  const [mountModalShown, setMountModalShown] = useState<boolean>(false);
+  const [teacher_opts, setTeacherOpts] = useState<{ label: string, value: string | number }[]>([]);
+  const [option_selected, setOptionSelected] = useState<string | number>();
   const [alertShown, setAlertShown] = useState<boolean>(false);
   const [alertMessage, setAlertMessage] = useState<string>('');
   const [alertType, setAlertType] = useState<'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark'>('info');
@@ -49,6 +55,30 @@ export default function Page() {
       .catch(err => {
         alert('后台抓取用户名失败', "danger");
       });
+    server.fetchTeachers()
+      .then(res => {
+        if (res) {
+          setTeacherOpts(res.map(x => {
+            return {label:x.name, value:x.id}
+          }))
+        } else {
+          alert('后台抓取用户名失败', "danger");
+        }
+      });
+    server.fetchStudentMap()
+      .then(res => {
+        if (res) {
+          if (res.length !== 0) {
+            setMountedTeacher(res[0]);
+          }
+        }
+        else {
+          alert('后台抓取绑定教师失败', "danger");
+        }
+      })
+      .catch(err => {
+        alert('后台抓取绑定教师失败', "danger");
+      })
   }, []);
 
   const submitPasswordChange = async () => {
@@ -100,6 +130,27 @@ export default function Page() {
     server.resign();
     router.replace('/authorized/signin');
   }
+  const mountTeacher = () => {
+    if(!option_selected) {
+      setMountModalShown(false);
+      alert('未选中教师', 'danger');
+      return;
+    }
+
+    server.mountTeacher(option_selected as string)
+      .then(res => {
+        if (res) {
+          location.reload();
+        } else {
+          setMountModalShown(false);
+          alert('后台错误，绑定失败', 'danger');
+        }
+      })
+      .catch(err => {
+        setMountModalShown(false);
+        alert('后台错误，绑定失败', 'danger');
+      })
+  }
 
   return (
     <>
@@ -114,6 +165,7 @@ export default function Page() {
           <div className="nav nav-tabs" id="nav-tab" role="tablist">
             <button className="nav-link active" id="profile-msg-tab" data-bs-toggle="tab" data-bs-target="#profile-msg" type="button" role="tab" aria-controls="profile-msg" aria-selected="true">名片信息</button>
             <button className="nav-link" id="account-msg-tab" data-bs-toggle="tab" data-bs-target="#account-msg" type="button" role="tab" aria-controls="account-msg" aria-selected="false">账号信息</button>
+            <button className="nav-link" id="teacher-tab" data-bs-toggle="tab" data-bs-target="#teacher" type="button" role="tab" aria-controls="teacher" aria-selected="false">绑定教师</button>
           </div>
         </nav>
         <div className="tab-content" id="nav-tabContent">
@@ -183,16 +235,34 @@ export default function Page() {
               <button className="btn btn-primary btn-block" onClick={submitPasswordChange}>确认修改</button>
             </div>
           </div>
+
+          <div className='tab-pane fade' id="teacher" role="tabpanel" aria-labelledby="teacher-tab">
+            <div className='card' style={{ marginBlockStart: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', padding: '8px', flexDirection: 'column' }}>
+                { mounted_teacher ? <p>已绑定教师{mounted_teacher.name}({mounted_teacher.id})</p> : <p>暂未绑定教师</p>}
+                <button className='btn btn-primary btn-lg' onClick={() => setMountModalShown(true)} disabled={mounted_teacher !== undefined}>绑定教师</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <Modal shown={successMsgModalShown} close_function={() => setSuccessMsgModalShown(false)} modal_btns={
+      <Modal id='succuss-modal' shown={successMsgModalShown} close_function={() => setSuccessMsgModalShown(false)} modal_btns={
         <>
           <button className="btn btn-primary" onClick={() => relog()}>确认</button>
         </>
       }>
         您的密码已完成更改，请重新登录
       </Modal>
+
+      <Modal id='mount-modal' shown={mountModalShown} close_function={() => setMountModalShown(false)} modal_title='绑定教师' modal_btns={
+        <>
+          <button className="btn btn-primary" onClick={() => mountTeacher()}>确认</button>
+        </>
+      }>
+        <Select options={teacher_opts} placeholder='确认教师' selected={setOptionSelected} />
+      </Modal>
+
       <Alert shown={alertShown} message={alertMessage} close_function={() => alertClear()} type={alertType} />
     </>
   )

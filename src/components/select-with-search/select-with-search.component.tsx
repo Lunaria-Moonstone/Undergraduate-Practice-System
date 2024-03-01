@@ -75,7 +75,7 @@ export default class Select extends React.Component<SelectProps, SelectStates> {
   }
 
   private _dropdownItemBuild(options: Options): React.ReactNode {
-    if (options.length === 0) return <li><a className="dropdown-item">查无此企业</a></li>
+    if (options.length === 0) return <li><a className="dropdown-item">查无此项</a></li>
     return options.map((x, index) => (
       <li key={x.label + index}><a className="dropdown-item" onClick={() => {this._autoComplete(x.label, x.value)}}>{x.label}</a></li>
     ));
