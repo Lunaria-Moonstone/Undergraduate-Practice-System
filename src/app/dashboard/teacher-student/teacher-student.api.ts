@@ -36,4 +36,20 @@ export default {
   //     vitae: [],
   //   }
   // }
+  async fetchProof(id: string) {
+    const results = (await axios({
+      url: '/dashboard/teacher-student/fetch-proof',
+      method: 'get',
+      params: { id }
+    })).data;
+    return results['results'];
+  },
+  async submitRate(id: string, rate: number) {
+    const results = (await axios({
+      url: '/dashboard/teacher-student/api',
+      method: 'patch',
+      data: { id, rate }
+    })).data;
+    return results['ok'];
+  }
 }

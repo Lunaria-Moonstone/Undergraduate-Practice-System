@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
   try {
     results = await executeQuery({
       query: `
-      SELECT s.name, j.name, a.base64code as resume, ja.* FROM job_audit ja 
+      SELECT s.name as student_name, j.name as job_name, a.base64code as resume, ja.id as id, ja.progress as progress, ja.feedback as feedback FROM job_audit ja 
       LEFT JOIN student s ON ja.student_id=s.id
       LEFT JOIN job j ON ja.job_id=j.id
       LEFT JOIN annex_history a ON ja.resume=a.id 

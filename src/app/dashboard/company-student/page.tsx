@@ -63,18 +63,21 @@ export default function Page() {
   const [job_audit_list, setJobAuditList] = useState<StudentsWithJob>([]);
   const job_audit_list_ref = useRef(job_audit_list);
   const [resume, setResume] = useState<string>();
-  const [table_head, setTableHead] = useState<string[]>(['应聘学生姓名', '应聘岗位名称', '当前状态']);
+  const [table_head, setTableHead] = useState<string[]>(['编号', '应聘学生姓名', '应聘岗位名称', '当前状态']);
   const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
   const [table_line_actions, setTableLineActions] = useState<TableLineActions>([
     {
       type: 'primary', text: '详细', action_function: (id: string) => {
+        console.log('fuck u')
         const tmp_list = job_audit_list_ref.current.filter(x => x.id === id);
+        console.log(tmp_list)
         if (tmp_list.length === 0) {
           alert('请求不存在，联系后台管理员', "danger");
           return;
         }
         const target = tmp_list[0];
         setResume("data:application/pdf;base64," + Buffer.from(target.resume as Buffer).toString());
+        console.log(resume);
         (document.getElementById("student-info-name") as HTMLElement).innerText = target.student_name;
         (document.getElementById("job-info-name") as HTMLElement).innerText = target.job_name;
         (document.getElementById("student-info-progress") as HTMLElement).innerText = target.progress;
@@ -86,11 +89,12 @@ export default function Page() {
 
   useEffect(() => {
     job_audit_list_ref.current = job_audit_list;
+    console.log('update Ref')
   }, [job_audit_list])
   useEffect(() => {
     server.fetchStudents()
       .then(res => {
-        setTableBody(res.map(x => [x.student_name, x.job_name, x.progress]));
+        setTableBody(res.map(x => [x.id, x.student_name, x.job_name, x.progress]));
         setJobAuditList(res);
       })
   }, []);
@@ -186,7 +190,7 @@ export default function Page() {
           </div>
         </form>
       ), (
-        <button className="btn btn-primary">确认</button>
+        <button className="btn btn-primary" onClick={saveUpdate}>确认</button>
       ))}></Modal>
 
       {/* <Modal id="modal-export" shown={exportModalShown} close_function={() => setExportModalShown(false)} modal_title="导出确认" modal_btns={

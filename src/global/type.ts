@@ -50,8 +50,8 @@ export interface Student {
   has_vitae: Uint8Array // 是否存在个人简历
   has_proof: Uint8Array // 是否存在实习凭证
   score?: number // 实习分数
-  proof?: string[] // 实习凭证 PDF
-  vitae?: string[] // 个人简历 PDF
+  proof?: Uint8Array // 实习凭证 PDF
+  vitae?: Uint8Array // 个人简历 PDF
 }
 
 export interface Teacher {
