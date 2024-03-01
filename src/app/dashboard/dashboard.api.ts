@@ -83,6 +83,9 @@ export default {
         case 'teacher-student':
         items[1]['active'] = true;
         break;
+        case 'teacher-info':
+        items[2]['active'] = true;
+        break;
       }
       return items;
     } else if (role === 3) {

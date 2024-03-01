@@ -16,3 +16,7 @@
 .teacher-info-panel span {
   font-weight: bold;
 }
+
+.notification-cards > * {
+  margin-block-end: var(--standard-padding-width);
+}

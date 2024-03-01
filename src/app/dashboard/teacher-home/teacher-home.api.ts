@@ -1,14 +1,41 @@
-import { Announcements } from "@/global/type";
+import {  Announcements, Notification, Notifications } from "@/global/type";
+import axios from "axios";
+
+interface SimpleStudent {
+  name: string; 
+  number: string; 
+  phone: string; 
+  mail: string;
+}
 
 export default {
-  fetchAnnouncements(): Announcements {
-    const items: Announcements = [
-      {
-        id: '10086',
-        title: '企业海天酱油厂进驻',
-        descript: '夹道欢迎新企业海天酱油厂进驻系统！'
-      }
-    ];
+  async fetchNotifications(): Promise<Notifications> {
+    const items: Notifications = (await axios({
+      url: '/dashboard/notification-api',
+      method: 'get',
+    })).data.results as Notifications;
+    console.log(items);
     return items;
+  },
+  async fetchNotification(id: string): Promise<Notification> {
+    const item: Notification = (await axios({
+      url: '/dashboard/notification-api',
+      method: 'get',
+    })).data.results[0] as Notification;
+    return item;
+  },
+  async fetchAnnouncements(): Promise<Announcements> {
+    const items: Announcements = (await axios({
+      url: '/dashboard/announcement-api',
+      method: 'get',
+    })).data.results as Announcements;
+    return items;
+  },
+  async fetchTeacherInfo(): Promise<SimpleStudent> {
+    const item: SimpleStudent = (await axios({
+      url: '/dashboard/teacher-home/api',
+      method: 'get',
+    })).data['results'][0] as SimpleStudent;
+    return item;
   }
 }

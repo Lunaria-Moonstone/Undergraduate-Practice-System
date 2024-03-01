@@ -21,9 +21,10 @@ interface TableProps {
 }
 
 interface TableState {
+  now_page: number;
 }
 
-export default class Table extends Component<TableProps> {
+export default class Table extends Component<TableProps, TableState> {
   table_id: string;
   table_head: Array<string>;
   table_body: Array<Array<string | number | undefined>>;
@@ -33,8 +34,11 @@ export default class Table extends Component<TableProps> {
 
   table_head_node: React.ReactNode;
   table_body_node: React.ReactNode;
+  paginator: React.ReactNode;
   checked_list: (string | null | undefined)[];
   check_change_function: ((id_list: string[]) => void) | undefined;
+
+  max_item: number;
 
   constructor(props: TableProps) {
     super(props);
@@ -47,10 +51,14 @@ export default class Table extends Component<TableProps> {
     this.check_change_function = props.check_change_function;
 
     this.checked_list = [];
+    this.state = {
+      now_page: 1
+    };
+    this.max_item = 10;
 
     this.makeTableHead();
-    this.makeTableBody();
-    
+    this.makeTableBody(this.state.now_page);
+    this.makePagin(this.state.now_page);
   }
 
   makeTableHead() {
@@ -61,8 +69,9 @@ export default class Table extends Component<TableProps> {
     });
   }
 
-  makeTableBody() {
-    this.table_body_node = this.table_body.map((x, index) => {
+  makeTableBody(now_page: number) {
+    const _table_body = this.table_body.slice((now_page - 1) * this.max_item, now_page * this.max_item);
+    this.table_body_node = _table_body.map((x, index) => {
       const t_line: React.ReactNode = x.map((y, sub_index) => {
         return (
           <td key={sub_index}>{y}</td>
@@ -85,7 +94,7 @@ export default class Table extends Component<TableProps> {
       if (this.checkbox) {
         cbox = (
           <td style={{ width: '20px' }}>
-            <input className="form-check-input table-checkbox" type="checkbox" onChange={() => this.checkChange(x[0] as string)}  />
+            <input className="form-check-input table-checkbox" type="checkbox" onChange={() => this.checkChange(x[0] as string)} />
           </td>
         );
       }
@@ -99,15 +108,51 @@ export default class Table extends Component<TableProps> {
     });
   }
 
-  componentDidUpdate(prevProps: Readonly<TableProps>, prevState: Readonly<{}>, snapshot?: any): void {
+  makePagin(now_page: number) {
+    let len = Math.ceil(this.table_body.length / this.max_item);
+    let pages: Array<React.ReactNode> = []
+    for (let i = 0; i < len; i += 1) {
+      pages.push(
+        <li className="page-item" key={'page-icon-' + i}>
+          <a
+            className={"page-link " + (now_page === i + 1 ? "active" : "")}
+            style={{ cursor: 'pointer' }}
+            onClick={() => {
+              this.setState({ now_page: i + 1 }, () => {
+                // 可以在这里执行任何需要在页码更新后完成的逻辑
+                console.log('Page changed to:', this.state.now_page);
+              });
+            }}
+          >
+            {i + 1}
+          </a>
+        </li>
+      )
+    }
+    this.paginator = pages;
+  }
+
+  // changePage(page: number) {
+  //   ;
+  // }
+
+  componentDidUpdate(prevProps: Readonly<TableProps>, prevState: Readonly<TableState>, snapshot?: any): void {
     if (this.table_body != this.props.table_body) {
       this.table_body = this.props.table_body;
-      this.makeTableBody();
+      this.makeTableBody(this.state.now_page);
     }
+    if (this.state.now_page != prevState.now_page) {
+      this.makeTableBody(this.state.now_page);
+    }
+    this.makePagin(this.state.now_page);
+  }
+
+  componentDidMount(): void {
+    this.makePagin(this.state.now_page);
   }
 
   submitChange() {
-    if ( this.props.check_change_function ) {
+    if (this.props.check_change_function) {
       this.props.check_change_function(this.checked_list as string[]);
     }
   }
@@ -132,14 +177,14 @@ export default class Table extends Component<TableProps> {
   }
 
   render(): ReactNode {
-    return  (
+    return (
       <>
         <div className="dashboard-model-table">
           <div className="dashboard-model-table-body">
             <table className="table table-striped">
               <thead className="table-dark">
                 <tr>
-                  {this.checkbox === undefined ? <></> : <th style={{ width: '20px' }}><input className="form-check-input" type="checkbox" id={this.table_id + '-main-checkbox'} onChange={() => this.changeAllCheck()}/></th>}
+                  {this.checkbox === undefined ? <></> : <th style={{ width: '20px' }}><input className="form-check-input" type="checkbox" id={this.table_id + '-main-checkbox'} onChange={() => this.changeAllCheck()} /></th>}
                   {this.table_head_node}
                   {this.line_action === undefined ? <></> : <th>操作</th>}
                 </tr>
@@ -152,19 +197,11 @@ export default class Table extends Component<TableProps> {
           <div className="dashboard-model-table-pagination">
             <nav aria-label="Page navigation example">
               <ul className="pagination">
-                <li className="page-item">
-                  <a className="page-link" href="#" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                  </a>
-                </li>
-                <li className="page-item"><a className="page-link" href="#">1</a></li>
+
+                {/* <li className="page-item"><a className="page-link" href="#">1</a></li>
                 <li className="page-item"><a className="page-link" href="#">2</a></li>
-                <li className="page-item"><a className="page-link" href="#">3</a></li>
-                <li className="page-item">
-                  <a className="page-link" href="#" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                  </a>
-                </li>
+                <li className="page-item"><a className="page-link" href="#">3</a></li> */}
+                {this.paginator}
               </ul>
             </nav>
           </div>

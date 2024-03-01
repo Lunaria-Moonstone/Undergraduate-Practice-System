@@ -10,7 +10,11 @@
   font-size: large;
 }
 
-
+.job-info .under-title {
+  display: flex;
+  flex-direction: row;
+  gap: var(--standard-padding-width);
+}
 
 .job-info .info {
   margin-block-start: var(--standard-padding-width);

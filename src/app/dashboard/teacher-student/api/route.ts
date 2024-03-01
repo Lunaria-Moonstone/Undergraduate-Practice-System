@@ -1,6 +1,7 @@
 import { executeQuery } from "@/utils/db";
 import { RouterFactory } from "@/utils/factory";
 import { nanoid } from "nanoid";
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 const router = new RouterFactory(
@@ -8,8 +9,8 @@ const router = new RouterFactory(
   async (teacher_id: string) => {
     let results: unknown;
     let sql = `
-    SELECT st.*, stm.id as id FROM student_teacher_map stm
-    INNER JOIN student st ON stm.student_id=st.id
+    SELECT st.* FROM student_teacher_map stm
+    LEFT JOIN student st ON stm.student_id=st.id
     WHERE stm.teacher_id=?
     `;
     try {
@@ -76,10 +77,18 @@ const router = new RouterFactory(
   },
 );
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  let original_info_from_cookie = cookies().get('user');
+  let user: { role_id: string };
+  if (!original_info_from_cookie)
+    return new NextResponse(new Blob([JSON.stringify({ ok: false, error: '未登录' }, null, 2)], {
+      type: 'application/json',
+    }));
+  user = JSON.parse(original_info_from_cookie.value);
+
   return await router.GET(
     // @ts-ignore
-    '79yJMFZdPG3xmFX3UkYSQ', 
+    user.role_id, 
   );
 }
 
@@ -97,4 +106,34 @@ export async function DELETE(request: NextRequest) {
   if (id === null) return new NextResponse(new Blob([JSON.stringify({ ok: false, error: 'id should not be empty'})]));
   // @ts-ignore
   return await router.DELETE(id);
+}
+
+export async function PATCH(request: NextRequest) {
+  let results: unknown;
+
+  let request_body = await (new Response(request.body)).blob();
+  let { id, rate } = JSON.parse((await request_body.text()));
+  if (!id || !rate) {
+    return new NextResponse(new Blob([JSON.stringify({ ok: false, error: '参数错漏' }, null, 2)], {
+      type: 'application/json',
+    }));
+  }
+
+  try {
+    results = await executeQuery({
+      query: `
+      UPDATE \`student\` SET score=? WHERE id=?
+      `,
+      values: [rate, id]
+    });
+  } catch (error) {
+    results = error;
+  } finally {
+    const blob = new Blob([JSON.stringify(results, null, 2)], {
+      type: 'application/json',
+    });
+    return new Response(blob, {
+      status: 200,
+    });
+  }
 }

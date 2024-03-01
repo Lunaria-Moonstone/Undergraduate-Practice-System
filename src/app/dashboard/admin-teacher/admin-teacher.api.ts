@@ -1,5 +1,7 @@
-import { Teachers, Teacher } from '@/global/type';
 import axios from 'axios';
+
+import { Teachers, Teacher } from '@/global/type';
+import AccountServer from '../account-manage/account-manage.api';
 
 const require_route = '/dashboard/admin-teacher/api/';
 
@@ -25,12 +27,14 @@ export default {
     phone: string,
     mail: string,
   }): Promise<boolean> {
-    let results = await axios({
+    let results = (await axios({
       url: require_route,
       method: 'post',
       data
-    });
-    return results.data['ok'];
+    })).data;
+    if (results['ok'])
+      AccountServer.addAccount(data.number, 2, results['id']);
+    return results['ok'];
   },
   async delTeacher(id: string): Promise<boolean> {
     let results = await axios({

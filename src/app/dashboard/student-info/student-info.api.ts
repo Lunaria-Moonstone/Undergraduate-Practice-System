@@ -1,3 +1,4 @@
+import { Teachers,Teacher } from "@/global/type";
 import axios from "axios";
 
 export default {
@@ -38,5 +39,29 @@ export default {
       data
     })).data;
     return results;
+  },
+
+  async fetchStudentMap(): Promise<Teachers> {
+    let results = (await axios({
+      url: '/dashboard/student-teacher-map/',
+      method: 'get',
+    })).data;
+    // return results['ok'] && results['results'].length !== 0;
+    return results['results'];
+  },
+  async fetchTeachers(): Promise<Teachers> {
+    let results: Teachers = (await axios({
+      url: '/dashboard/admin-teacher/api',
+      method: 'get',
+    })).data['results'] as Teachers;
+    return results;
+  },
+  async mountTeacher(id: string): Promise<boolean> {
+    let results = (await axios({
+      url: '/dashboard/student-teacher-map/',
+      method: 'post',
+      data: { id },
+    })).data;
+    return results['ok'];
   }
 }

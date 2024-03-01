@@ -1,6 +1,8 @@
 import axios from 'axios';
 
 import { Companies, Company } from "@/global/type";
+import { nanoid } from 'nanoid';
+import AccountServer from '../account-manage/account-manage.api';
 
 export default {
   async fetchCompanies(): Promise<Companies> {
@@ -19,12 +21,14 @@ export default {
     return company;
   },
   async addCompany(data: { name: string, phone: string, mail: string, license: string }): Promise<boolean> {
-    let results = await axios({
+    let results = (await axios({
       url: '/dashboard/admin-company/api/',
       method: 'post',
       data
-    });
-    return results.data['ok'];
+    })).data;
+    if (results['ok'])
+      AccountServer.addAccount(results['id'], 3, results['id']);
+    return results['ok'];
   },
   async delCompany(id: string): Promise<boolean> {
     let results = await axios({

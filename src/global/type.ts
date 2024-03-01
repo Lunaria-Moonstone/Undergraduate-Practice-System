@@ -50,8 +50,8 @@ export interface Student {
   has_vitae: Uint8Array // 是否存在个人简历
   has_proof: Uint8Array // 是否存在实习凭证
   score?: number // 实习分数
-  proof?: string[] // 实习凭证 PDF
-  vitae?: string[] // 个人简历 PDF
+  proof?: Uint8Array // 实习凭证 PDF
+  vitae?: Uint8Array // 个人简历 PDF
 }
 
 export interface Teacher {
@@ -94,7 +94,8 @@ export interface AnnexHistory {
 
 export interface Job {
   id: string // 编号
-  company_id: string // 企业名称
+  company_id: string // 企业编号
+  company_name?: string // 企业名称
   name: string // 岗位名称
   salary: string // 薪资
   descript: string // 描述
@@ -104,10 +105,14 @@ export interface JobAudit {
   id: string // 编号
   student_id: string // 学生编号
   company_id: string // 企业编号
+  company_name?: string //
   job_id: string // 岗位编号
-  progress: 'unread' | 'reading' | 'invaild' | 'complete' // 状态
+  job_name?: string //
+  salary?: string //
+  progress: string // 状态
   feedback?: string // 企业反馈
-  resume?: string // 简历
+  resume?: Buffer // 简历
+  descript?: string // 
   created?: string
 }
 
