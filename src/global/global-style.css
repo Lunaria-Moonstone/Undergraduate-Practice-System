@@ -2,6 +2,14 @@
 
 @import "./global-variable.css";
 
+:root {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+}
+
 /* 
 标准数据操作面板样式
 */
@@ -9,6 +17,7 @@
   padding: var(--standard-padding-width) var(--standard-padding-width);
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .dashboard-base-panel .dashboard-model-title {
@@ -24,6 +33,10 @@
 
 .dashboard-model-body {
   flex: 1;
+}
+
+.dashboard-base-panel .dashboard-model-buttons {
+  margin-block-end: var(--standard-padding-width);
 }
 
 .dashboard-base-panel .dashboard-model-buttons > * {

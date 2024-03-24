@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react"
+import { ChangeEvent, ReactNode } from "react"
 
 /**
  * 页面样式渲染类型
@@ -19,8 +19,17 @@ export interface FormItem {
   fileTackleFunction?: (event: ChangeEvent<HTMLInputElement>) => void // 文件抓取函数
 }
 
+export interface TableColumn {
+  title: string
+  dataIndex: string
+  key: string,
+  render?: (...args: any) => ReactNode
+}
+
 export type NavItems = Array<NavItem>;
 export type FormItems = Array<FormItem>;
+export type TableColumns = Array<TableColumn>;
+export type TableDataSource = Array<{ [key: string]: string | number | undefined }>
 
 /**
  * 后台处理类型

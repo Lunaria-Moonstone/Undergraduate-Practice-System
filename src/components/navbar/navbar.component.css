@@ -9,8 +9,9 @@
 
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   /* align-items: center; */
+  gap: 10%;
 }
 
 .nav-head {
@@ -26,6 +27,13 @@
 
   padding-block-start: calc(3 * var(--standard-padding-width));
   padding-inline: var(--standard-padding-width);
+}
+
+.nav-items {
+  /* padding-block-end: 50%; */
+  padding-inline: var(--standard-padding-width);
+  border-radius: 15px;
+  overflow: hidden;
 }
 
 .userinfo-line {

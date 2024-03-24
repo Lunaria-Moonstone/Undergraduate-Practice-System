@@ -12,4 +12,5 @@
 
 .dashboard-body {
   padding-left: var(--desktop-navbar-width);
+  height: 100%;
 }

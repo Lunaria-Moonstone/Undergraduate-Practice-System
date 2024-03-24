@@ -18,8 +18,7 @@ export default function Layouts({ children }: any) {
   const router = useRouter();
 
   const [path, setPath] = useState<string>(usePathname() as string);
-  const [name, setName] = useState<string>('Lain');
-  const [nav_items, setNavItems] = useState<NavItems>();
+  const [nav_items, setNavItems] = useState<NavItems>([]);
   
   useEffect(() => {
     server.fetchRole()
@@ -28,8 +27,9 @@ export default function Layouts({ children }: any) {
         router.replace('/authorized/signin');
       } else {
         setNavItems(server.fetchNavItems(res.role, path as string));
-        setName(res.name);
+        // setName(res.name);
       }
+      console.log(1)
     });
   }, [path]);
 
@@ -48,7 +48,7 @@ export default function Layouts({ children }: any) {
   return (
     <>
       <div className="nav-area">
-        <Navbar nav_items={nav_items} change_path_func={change_path} name={name} />
+        <Navbar nav_items={nav_items} change_path_func={change_path} />
       </div>
       <div className="dashboard-body">
         {children}

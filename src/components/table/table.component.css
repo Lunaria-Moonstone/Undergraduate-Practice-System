@@ -35,3 +35,8 @@
   justify-content: flex-end;
   align-items: center;
 }
+
+.table-main {
+  height: 100%;
+  flex: 1;
+}

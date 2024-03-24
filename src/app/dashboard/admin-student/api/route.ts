@@ -1,6 +1,7 @@
 import { insertSafty } from "@/utils/db";
 import { RouterFactory } from "@/utils/factory";
-import { nanoid } from "nanoid";
+import uuid from 'node-uuid';
+
 import { NextRequest, NextResponse } from "next/server";
 
 const router = new RouterFactory('student');
@@ -12,7 +13,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   let results: unknown;
   let request_body = await (new Response(request.body)).blob();
-  let id = nanoid();
+  let id = uuid.v4();
   let { name, number, grade, phone, mail } = JSON.parse((await request_body.text()));
   let proof = JSON.stringify([], null, 2);
   let vitae = JSON.stringify([], null, 2);

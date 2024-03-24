@@ -2,7 +2,7 @@
 
 import { ReactNode, useEffect, useState } from 'react';
 
-import { Students, FormItems } from '@/global/type';
+import { Students, FormItems, TableColumns, TableDataSource } from '@/global/type';
 import server from './admin-student.api';
 import { formInput } from '@/utils/input';
 
@@ -10,6 +10,7 @@ import Modal from '@/components/modal/modal.component';
 import Form from '@/components/form/form.component';
 import Table, { TableLineActions } from '@/components/table/table.component';
 import Alert from '@/components/alert/alert.component';
+import { Button, Space } from 'antd';
 
 export default function Page() {
 
@@ -35,34 +36,66 @@ export default function Page() {
   const [edit_form_error_msg, setEditFormErrorMsg] = useState('');
   const [del_targets, setDelTargets] = useState<string | string[]>();
   const [edit_target, setEditTarget] = useState<string>();
-  const [table_head, setTableHead] = useState<Array<string>>([
-    '编号', '学生姓名', '学号', '年级', '联系电话',
-    '联系邮箱', '个人简历',
-    '实习凭证', '实习分数',
-  ]);
-  const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
-  const [table_line_actions, setTableLineActions] = useState<TableLineActions>([
-    {
-      type: 'danger', text: '删除',
-      action_function: (id: string) => {
-        setDelTargets(id);
-        setDeleteModalShown(true);
-      }
-    },
-  ]);
+  // const [table_head, setTableHead] = useState<Array<string>>([
+  //   '编号', '学生姓名', '学号', '年级', '联系电话',
+  //   '联系邮箱', '个人简历',
+  //   '实习凭证', '实习分数',
+  // ]);
+  // const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
+  const table_columns: TableColumns = [
+    { title: '编号', dataIndex: 'id', key: 'id' },
+    { title: '学生姓名', dataIndex: 'name', key: 'name' },
+    { title: '学号', dataIndex: 'number', key: 'number' },
+    { title: '年级', dataIndex: 'grade', key: 'grade' },
+    { title: '联系电话', dataIndex: 'phone', key: 'phone' },
+    { title: '联系邮箱', dataIndex: 'mail', key: 'mail' },
+    { title: '个人简历', dataIndex: 'has_vitae', key: 'has_vitae' },
+    { title: '实习凭证', dataIndex: 'has_proof', key: 'has_proof' },
+    { title: '实习分数', dataIndex: 'score', key: 'score' },
+    { title: '操作', dataIndex: 'actions', key: 'actions', render: (_, record) => {
+      return  <Space size="middle">
+        <Button onClick={() => { setDelTargets(record.id); setDeleteModalShown(true) }} type='link' danger>删除</Button>
+      </Space>
+    }}
+    // { title: '是否处于实习状态', dataIndex: 'is_practice', key: 'is_practice' },
+    // { title: '实习公司', dataIndex: 'practice_cmp', key: 'practice_cmp' },
+  ];
+  const [table_data_source, setTableDataSource] = useState<TableDataSource>([]);
+  // const [table_line_actions, setTableLineActions] = useState<TableLineActions>([
+  //   {
+  //     type: 'danger', text: '删除',
+  //     action_function: (id: string) => {
+  //       setDelTargets(id);
+  //       setDeleteModalShown(true);
+  //     }
+  //   },
+  // ]);
 
   useEffect(() => {
     server.fetchStudents()
       .then(res => {
-        setTableBody(res.map(x => [
-          x.id, x.name, x.number, x.grade, x.phone,
-          x.mail,
-          // Buffer.from(res[0].is_practice)[0] ? '是' : '否',
-          // Buffer.from(res[0].is_practice)[0] ? x.practice_cmp[-1] : '未处于实习状态',
-          Buffer.from(res[0].has_vitae)[0] ? '有' : '无',
-          Buffer.from(res[0].has_proof)[0] ? '有' : '无',
-          x.score !== undefined && x.score !== -1 ? x.score : '未录入实习成绩'
-        ]));
+        // setTableBody(res.map(x => [
+        //   x.id, x.name, x.number, x.grade, x.phone,
+        //   x.mail,
+        //   // Buffer.from(res[0].is_practice)[0] ? '是' : '否',
+        //   // Buffer.from(res[0].is_practice)[0] ? x.practice_cmp[-1] : '未处于实习状态',
+        //   Buffer.from(res[0].has_vitae)[0] ? '有' : '无',
+        //   Buffer.from(res[0].has_proof)[0] ? '有' : '无',
+        //   x.score !== undefined && x.score !== -1 ? x.score : '未录入实习成绩'
+        // ]));
+        setTableDataSource(res.map(x => {
+          return {
+            id: x.id,
+            name: x.name,
+            number: x.number,
+            grade: x.grade,
+            phone: x.phone,
+            mail: x.mail,
+            has_vitae: Buffer.from(x.has_vitae)[0] ? '有' : '无',
+            has_proof: Buffer.from(x.has_proof)[0] ? '有' : '无',
+            score: x.score !== undefined && x.score !== -1 ? x.score : '未录入实习成绩'
+          };
+        }));
       })
       .catch();
   }, []);
@@ -88,6 +121,7 @@ export default function Page() {
     }
     server.addStudent(data)
       .then(res => {
+        console.log(res)
         if (res) {
           setAddModalShown(false);
           location.reload();
@@ -150,13 +184,15 @@ export default function Page() {
         <hr />
         {/* 功能按钮区域 */}
         <div className="dashboard-model-buttons">
-          <button className="btn btn-primary" onClick={() => setAddModalShown(true)}>新增</button>
-          <button className="btn btn-danger" onClick={() => setDeleteModalShown(true)}>删除</button>
+          <Button type='primary' onClick={() => setAddModalShown(true)}>新增</Button>
+          <Button onClick={() => setDeleteModalShown(true)} danger>删除</Button>
           {/* <button className="btn btn-secondary">导入</button>
           <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button> */}
         </div>
         {/* 数据表格区域 */}
-        <Table table_id='table' table_head={table_head} table_body={table_body} checkbox={true} line_action={table_line_actions} />
+        {/* <Table table_id='table' table_head={table_head} table_body={table_body} checkbox={true} line_action={table_line_actions} /> */}
+        <Table dataSource={table_data_source} columns={table_columns} />
+        
       </div>
 
       {/* 添加学生 */}
