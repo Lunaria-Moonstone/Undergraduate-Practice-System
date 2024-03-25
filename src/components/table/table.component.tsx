@@ -232,11 +232,11 @@ export default class Table extends Component<TableProps, TableState> {
             columns={this.props.columns}
             style={{ height: '100%', maxHeight: '100%', minHeight: '100%', minWidth: '100%' }}
             // scroll={{ y: '100%' }}
-            rowSelection={{ type: 'checkbox', onChange: (selectedRowKeys, selectedRows) => {
+            rowSelection={ this.props.check_change_function ? { type: 'checkbox', onChange: (selectedRowKeys, selectedRows) => {
               if (this.props.check_change_function) {
                 this.props.check_change_function(selectedRows.map(x => x.id as string));
               }
-            }}}
+            }} : undefined }
           />
         </div>
       </>

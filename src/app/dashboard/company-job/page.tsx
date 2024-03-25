@@ -1,6 +1,6 @@
 'use client';
 
-import { FormItems, Job, Jobs } from "@/global/type";
+import { FormItems, Job, Jobs, TableColumns, TableDataSource } from "@/global/type";
 import { useEffect, useRef, useState } from "react";
 
 import server from './company-job.api';
@@ -11,6 +11,7 @@ import Form from "@/components/form/form.component";
 import './company-job.part.css';
 import Alert from "@/components/alert/alert.component";
 import { formInput } from "@/utils/input";
+import { Button, Input, Space } from "antd";
 
 export default function Page() {
 
@@ -76,47 +77,94 @@ export default function Page() {
 
   const [job_list, setJobList] = useState<Jobs>([]);
   const job_list_ref = useRef(job_list);
-  const [table_head, setTableHead] = useState<string[]>(['编号', '岗位名称', '薪资',]);
-  const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
-  const [table_line_actions, setTableLineActions] = useState<TableLineActions>([{
-    type: 'danger',
-    text: '删除',
-    action_function: (id: string) => {
-      setDelTarget(id);
-      toggleModal('del');
-    }
-  }, {
-    type: 'primary',
-    text: '详细',
-    action_function: (id: string) => {
-      let tmp_list = job_list_ref.current.filter(x => x.id === id);
-      if (tmp_list.length === 0) {
-        alert('岗位不存在，联系后台管理员', "danger");
-        return;
+  // const [table_head, setTableHead] = useState<string[]>(['编号', '岗位名称', '薪资',]);
+  // const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
+  // const [table_line_actions, setTableLineActions] = useState<TableLineActions>([{
+  //   type: 'danger',
+  //   text: '删除',
+  //   action_function: (id: string) => {
+  //     setDelTarget(id);
+  //     toggleModal('del');
+  //   }
+  // }, {
+  //   type: 'primary',
+  //   text: '详细',
+  //   action_function: (id: string) => {
+  //     let tmp_list = job_list_ref.current.filter(x => x.id === id);
+  //     if (tmp_list.length === 0) {
+  //       alert('岗位不存在，联系后台管理员', "danger");
+  //       return;
+  //     }
+  //     const target = tmp_list[0];
+  //     (document.getElementById("job-info-title") as HTMLElement).innerText = target.name;
+  //     (document.getElementById("job-info-salary") as HTMLElement).innerText = target.salary;
+  //     (document.getElementById("job-info-descript") as HTMLElement).innerText = target.descript;
+  //     toggleModal('info')
+  //   }
+  // }, {
+  //   type: 'primary',
+  //   text: '修改',
+  //   action_function: (id: string) => {
+  //     let tmp_list = job_list_ref.current.filter(x => x.id === id);
+  //     if (tmp_list.length === 0) {
+  //       alert('岗位不存在，联系后台管理员', "danger");
+  //       return;
+  //     }
+  //     const target = tmp_list[0];
+  //     (document.getElementById("job-edit-id") as HTMLInputElement).value = target.id;
+  //     (document.getElementById("job-edit-title") as HTMLInputElement).value = target.name;
+  //     (document.getElementById("job-edit-salary") as HTMLInputElement).value = target.salary;
+  //     (document.getElementById("job-edit-descript") as HTMLInputElement).value = target.descript;
+  //     toggleModal('edit')
+  //   }
+  // }]);
+  const table_columns: TableColumns = [
+    // '编号', '岗位名称', '薪资'
+    { title: '编号', dataIndex: 'id', key: 'id' },
+    { title: '岗位名称', dataIndex: 'name', key: 'name' },
+    { title: '薪资', dataIndex: 'salary', key: 'salary' },
+    {
+      title: '操作', dataIndex: 'actions', key: 'actions', render: (_, record) => {
+        return <Space size='middle'>
+          <Button type="link" danger onClick={
+            () => {
+              setDelTarget(record.id);
+              toggleModal('del');
+            }
+          }>删除</Button>
+          <Button type="link" onClick={
+            () => {
+              let tmp_list = job_list_ref.current.filter(x => x.id === record.id);
+              if (tmp_list.length === 0) {
+                alert('岗位不存在，联系后台管理员', "danger");
+              }
+              const target = tmp_list[0];
+              // (document.getElementById("job-info-id") as HTMLInputElement).value = target.id;
+              (document.getElementById("job-info-title") as HTMLElement).innerText = target.name;
+              (document.getElementById("job-info-salary") as HTMLElement).innerText = target.salary;
+              (document.getElementById("job-info-descript") as HTMLElement).innerText = target.descript;
+              toggleModal('info')
+            }
+          }>详细</Button>
+          <Button type="link" onClick={
+            () => {
+              let tmp_list = job_list_ref.current.filter(x => x.id === record.id);
+              if (tmp_list.length === 0) {
+                alert('岗位不存在，联系后台管理员', "danger");
+              }
+              const target = tmp_list[0];
+              (document.getElementById("job-edit-id") as HTMLInputElement).value = target.id;
+              (document.getElementById("job-edit-title") as HTMLInputElement).value = target.name;
+              (document.getElementById("job-edit-salary") as HTMLInputElement).value = target.salary;
+              (document.getElementById("job-edit-descript") as HTMLInputElement).value = target.descript;
+              toggleModal('edit')
+            }
+          }>修改</Button>
+        </Space>
       }
-      const target = tmp_list[0];
-      (document.getElementById("job-info-title") as HTMLElement).innerText = target.name;
-      (document.getElementById("job-info-salary") as HTMLElement).innerText = target.salary;
-      (document.getElementById("job-info-descript") as HTMLElement).innerText = target.descript;
-      toggleModal('info')
     }
-  }, {
-    type: 'primary',
-    text: '修改',
-    action_function: (id: string) => {
-      let tmp_list = job_list_ref.current.filter(x => x.id === id);
-      if (tmp_list.length === 0) {
-        alert('岗位不存在，联系后台管理员', "danger");
-        return;
-      }
-      const target = tmp_list[0];
-      (document.getElementById("job-edit-id") as HTMLInputElement).value = target.id;
-      (document.getElementById("job-edit-title") as HTMLInputElement).value = target.name;
-      (document.getElementById("job-edit-salary") as HTMLInputElement).value = target.salary;
-      (document.getElementById("job-edit-descript") as HTMLInputElement).value = target.descript;
-      toggleModal('edit')
-    }
-  }]);
+  ];
+  const [table_data_source, setTableDataSource] = useState<TableDataSource>([]);
 
   useEffect(() => {
     job_list_ref.current = job_list;
@@ -125,7 +173,14 @@ export default function Page() {
     server.fetchJobs()
       .then(res => {
         if (res) {
-          setTableBody(res.map(x => [x.id, x.name, x.salary]));
+          // setTableBody(res.map(x => [x.id, x.name, x.salary]));
+          setTableDataSource(res.map(x => {
+            return {
+              id: x.id,
+              name: x.name,
+              salary: x.salary,
+            }
+          }))
           setJobList(res);
         }
         else
@@ -233,14 +288,32 @@ export default function Page() {
         </div>
         <hr />
         {/* 功能按钮区域 */}
-        <div className="dashboard-model-buttons">
+        {/* <div className="dashboard-model-buttons">
           <button className="btn btn-primary" onClick={() => toggleModal('add')}>新增</button>
           <button className="btn btn-danger" onClick={() => delMark()}>删除</button>
-          {/* <button className="btn btn-secondary">导入</button>
-          <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button> */}
+          <button className="btn btn-secondary">导入</button>
+          <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button>
+        </div> */}
+        <div className="dashboard-model-buttons-and-search">
+          <div className="dashboard-model-buttons">
+            <Button type='primary' onClick={() => toggleModal('add')}>新增</Button>
+            <Button onClick={() => delMark()} danger>删除</Button>
+            {/* <button className="btn btn-secondary">导入</button>
+            <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button> */}
+          </div>
+          <div>
+            {/* <Search placeholder="搜索"  /> */}
+            <Space>
+              <Space.Compact>
+                <Input placeholder="输入关键字" />
+                <Button type="primary">搜索</Button>
+              </Space.Compact>
+            </Space>
+          </div>
         </div>
         {/* 数据表格区域 */}
-        <Table table_id="table" table_head={table_head} table_body={table_body} checkbox={true} line_action={table_line_actions} check_change_function={checkChangeRecall} />
+        {/* <Table table_id="table" table_head={table_head} table_body={table_body} checkbox={true} line_action={table_line_actions} check_change_function={checkChangeRecall} /> */}
+        <Table dataSource={table_data_source} columns={table_columns} check_change_function={(checked_list: string[]) => { checked_id_list = checked_list; }} />
       </div>
 
       {/* 添加岗位 */}

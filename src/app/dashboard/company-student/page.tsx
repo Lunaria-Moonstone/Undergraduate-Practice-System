@@ -1,11 +1,12 @@
 'use client';
 
 import Table, { TableLineActions } from "@/components/table/table.component";
-import { FormItems, StudentsWithJob } from "@/global/type";
+import { FormItems, StudentsWithJob, TableColumns, TableDataSource } from "@/global/type";
 import { useEffect, useRef, useState } from "react";
 import server from './company-student.api';
 import Modal from "@/components/modal/modal.component";
 import './company-student.part.css'
+import { Button, Space } from "antd";
 
 export default function Page() {
 
@@ -63,29 +64,59 @@ export default function Page() {
   const [job_audit_list, setJobAuditList] = useState<StudentsWithJob>([]);
   const job_audit_list_ref = useRef(job_audit_list);
   const [resume, setResume] = useState<string>();
-  const [table_head, setTableHead] = useState<string[]>(['编号', '应聘学生姓名', '应聘岗位名称', '当前状态']);
-  const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
-  const [table_line_actions, setTableLineActions] = useState<TableLineActions>([
+  // const [table_head, setTableHead] = useState<string[]>(['编号', '应聘学生姓名', '应聘岗位名称', '当前状态']);
+  // const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
+  // const [table_line_actions, setTableLineActions] = useState<TableLineActions>([
+  //   {
+  //     type: 'primary', text: '详细', action_function: (id: string) => {
+  //       console.log('fuck u')
+  //       const tmp_list = job_audit_list_ref.current.filter(x => x.id === id);
+  //       console.log(tmp_list)
+  //       if (tmp_list.length === 0) {
+  //         alert('请求不存在，联系后台管理员', "danger");
+  //         return;
+  //       }
+  //       const target = tmp_list[0];
+  //       setResume("data:application/pdf;base64," + Buffer.from(target.resume as Buffer).toString());
+  //       console.log(resume);
+  //       (document.getElementById("student-info-name") as HTMLElement).innerText = target.student_name;
+  //       (document.getElementById("job-info-name") as HTMLElement).innerText = target.job_name;
+  //       (document.getElementById("student-info-progress") as HTMLElement).innerText = target.progress;
+  //       setUpdateTarget(id);
+  //       toggleModal('info');
+  //     }
+  //   }
+  // ]);
+  const table_columns: TableColumns = [
+    // '编号', '应聘学生姓名', '应聘岗位名称', '当前状态'
+    { title: '编号', dataIndex: 'id', key: 'id' },
+    { title: '应聘学生姓名', dataIndex: 'student_name', key: 'student_name' },
+    { title: '应聘岗位名称', dataIndex: 'job_name', key: 'job_name' },
+    { title: '当前状态', dataIndex: 'progress', key: 'progress' },
     {
-      type: 'primary', text: '详细', action_function: (id: string) => {
-        console.log('fuck u')
-        const tmp_list = job_audit_list_ref.current.filter(x => x.id === id);
-        console.log(tmp_list)
-        if (tmp_list.length === 0) {
-          alert('请求不存在，联系后台管理员', "danger");
-          return;
-        }
-        const target = tmp_list[0];
-        setResume("data:application/pdf;base64," + Buffer.from(target.resume as Buffer).toString());
-        console.log(resume);
-        (document.getElementById("student-info-name") as HTMLElement).innerText = target.student_name;
-        (document.getElementById("job-info-name") as HTMLElement).innerText = target.job_name;
-        (document.getElementById("student-info-progress") as HTMLElement).innerText = target.progress;
-        setUpdateTarget(id);
-        toggleModal('info');
+      title: '操作', dataIndex: 'actions', key: 'actions', render: (_, record) => {
+        return <Space>
+          <Button type="link" onClick={
+            () => {
+              const tmp_list = job_audit_list_ref.current.filter(x => x.id === record.id);
+              if (tmp_list.length === 0) {
+                alert('请求不存在，联系后台管理员', "danger");
+              }
+              const target = tmp_list[0];
+              setResume("data:application/pdf;base64," + Buffer.from(target.resume as Buffer).toString());
+              // console.log(resume);
+              (document.getElementById("student-info-name") as HTMLElement).innerText = target.student_name;
+              (document.getElementById("job-info-name") as HTMLElement).innerText = target.job_name;
+              (document.getElementById("student-info-progress") as HTMLElement).innerText = target.progress;
+              setUpdateTarget(record.id);
+              toggleModal('info');
+            }
+          }>详细</Button>
+        </Space>
       }
     }
-  ]);
+  ];
+  const [table_data_source, setTableDataSource] = useState<TableDataSource>([]);
 
   useEffect(() => {
     job_audit_list_ref.current = job_audit_list;
@@ -94,7 +125,15 @@ export default function Page() {
   useEffect(() => {
     server.fetchStudents()
       .then(res => {
-        setTableBody(res.map(x => [x.id, x.student_name, x.job_name, x.progress]));
+        // setTableBody(res.map(x => [x.id, x.student_name, x.job_name, x.progress]));
+        setTableDataSource(res.map(x => {
+          return {
+            id: x.id,
+            student_name: x.student_name,
+            job_name: x.job_name,
+            progress: x.progress,
+          }
+        }));
         setJobAuditList(res);
       })
   }, []);
@@ -138,7 +177,8 @@ export default function Page() {
           {/* <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button> */}
         </div>
         {/* 数据表格区域 */}
-        <Table table_id="table" table_head={table_head} table_body={table_body} line_action={table_line_actions} />
+        {/* <Table table_id="table" table_head={table_head} table_body={table_body} line_action={table_line_actions} /> */}
+        <Table dataSource={table_data_source} columns={table_columns} />
       </div >
 
       <Modal {...modalProps('info', '应聘信息详细', (

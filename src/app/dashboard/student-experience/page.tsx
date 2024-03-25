@@ -1,6 +1,6 @@
 'use client';
 
-import { StudentPracticeExperiencies } from '@/global/type';
+import { StudentPracticeExperiencies, TableColumns, TableDataSource } from '@/global/type';
 import server from './student-experience.api'
 import { ReactNode, useEffect, useState } from 'react';
 import Modal from '@/components/modal/modal.component';
@@ -10,6 +10,7 @@ import Table, { TableLineActions } from '@/components/table/table.component';
 import './student-experience.part.css';
 import Alert from '@/components/alert/alert.component';
 import { formInput } from '@/utils/input';
+import { Button, Input, Space } from 'antd';
 
 export default function Page() {
 
@@ -59,18 +60,39 @@ export default function Page() {
   //   return [x.company_id, x.start, x.end];
   // });
   const [del_target, setDelTarget] = useState<string | string[]>();
-  const [table_head, setTableHead] = useState<string[]>(['编号', '企业编号', '企业名称', '就职时间', '离职时间']);
-  const [table_body, setTableBody] = useState<(string | number | undefined)[][]>([]);
-  const [table_line_actions, setTableLineActions] = useState<TableLineActions>([
+  // const [table_head, setTableHead] = useState<string[]>(['编号', '企业编号', '企业名称', '就职时间', '离职时间']);
+  // const [table_body, setTableBody] = useState<(string | number | undefined)[][]>([]);
+  // const [table_line_actions, setTableLineActions] = useState<TableLineActions>([
+  //   {
+  //     type: 'danger',
+  //     text: '删除',
+  //     action_function: (id: string) => {
+  //       setDelTarget(id);
+  //       toggleModal('del');
+  //     }
+  //   }
+  // ]);
+  const table_columns: TableColumns = [
+    // '编号', '企业编号', '企业名称', '就职时间', '离职时间'
+    { title: '编号', dataIndex: 'id', key: 'id' },
+    { title: '企业编号', dataIndex: 'company_id', key: 'company_id' },
+    { title: '企业名称', dataIndex: 'company_name', key: 'company_name' },
+    { title: '就职时间', dataIndex: 'start', key: 'start' },
+    { title: '离职时间', dataIndex: 'end', key: 'end' },
     {
-      type: 'danger',
-      text: '删除',
-      action_function: (id: string) => {
-        setDelTarget(id);
-        toggleModal('del');
+      title: '操作', dataIndex: 'actions', key: 'actions', render: (_, record) => {
+        return <Space>
+          <Button type='link' danger onClick={
+            () => {
+              setDelTarget(record.id);
+              toggleModal('del');
+            }
+          }>删除</Button>
+        </Space>
       }
     }
-  ]);
+  ];
+  const [table_data_source, setTableDataSource] = useState<TableDataSource>([]);
   const [company_opts, setCompanyOpts] = useState<{ label: string, value: string | number }[]>([]);
   const [option_selected, setOptionSelected] = useState<string | number>();
   const [add_form_error_msg, setAddFormErrorMsg] = useState('');
@@ -85,7 +107,16 @@ export default function Page() {
     server.fetchExperience()
       .then(res => {
         if (res) {
-          setTableBody(res.map(x => [x.id, x.company_id, x.company_name, new Date(x.start).toLocaleDateString(), x.end ? new Date(x.end).toLocaleDateString() : '-']));
+          // setTableBody(res.map(x => [x.id, x.company_id, x.company_name, new Date(x.start).toLocaleDateString(), x.end ? new Date(x.end).toLocaleDateString() : '-']));
+          setTableDataSource(res.map(x => {
+            return {
+              id: x.id,
+              company_id: x.company_id,
+              company_name: x.company_name,
+              start: new Date(x.start).toLocaleDateString(),
+              end: x.end ? new Date(x.end).toLocaleDateString() : '-',
+            }
+          }))
         } else {
           alert('后台拉取信息错误', 'danger');
         }
@@ -188,11 +219,29 @@ export default function Page() {
           <h2>实习经历一览</h2>
           <hr />
         </div>
-        <div className="dashboard-model-buttons">
+        {/* <div className="dashboard-model-buttons">
           <button className="btn btn-primary" onClick={() => toggleModal('add')}>添加</button>
           <button className="btn btn-danger" onClick={() => delChecked()}>删除</button>
+        </div> */}
+        <div className="dashboard-model-buttons-and-search">
+          <div className="dashboard-model-buttons">
+            <Button type='primary' onClick={() => toggleModal('add')}>新增</Button>
+            <Button onClick={() => delChecked()} danger>删除</Button>
+            {/* <button className="btn btn-secondary">导入</button>
+            <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button> */}
+          </div>
+          <div>
+            {/* <Search placeholder="搜索"  /> */}
+            <Space>
+              <Space.Compact>
+                <Input placeholder="输入关键字" />
+                <Button type="primary">搜索</Button>
+              </Space.Compact>
+            </Space>
+          </div>
         </div>
-        <Table table_id='table' table_head={table_head} table_body={table_body} checkbox={true} line_action={table_line_actions} check_change_function={checkChangeRecall} />
+        {/* <Table table_id='table' table_head={table_head} table_body={table_body} checkbox={true} line_action={table_line_actions} check_change_function={checkChangeRecall} /> */}
+        <Table dataSource={table_data_source} columns={table_columns} check_change_function={(checked_list: string[]) => { checked_id_list = checked_list; }}/>
       </div>
 
       <Modal {...modalProps('add', '添加经历', (

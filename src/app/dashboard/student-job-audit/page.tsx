@@ -6,9 +6,10 @@ import server from './student-job-audit.api'
 import Modal from "@/components/modal/modal.component";
 import { useEffect, useRef, useState } from "react";
 import Alert from "@/components/alert/alert.component";
-import { JobAudits } from "@/global/type";
+import { JobAudits, TableColumns, TableDataSource } from "@/global/type";
 
 import './student-job-audit.part.css';
+import { Button, Input, Space } from "antd";
 
 export default function Page() {
 
@@ -58,34 +59,74 @@ export default function Page() {
   const [cancle_target, setCancleTarget] = useState<string | string[]>([]);
   const [job_list, setJobList] = useState<JobAudits>([]);
   const job_list_ref = useRef(job_list);
-  const [table_head, setTableHead] = useState<string[]>(['编号', '岗位编号', '岗位名称', '企业名称', '进度']);
-  const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
-  const [table_line_actions, setTableLineActions] = useState<TableLineActions>([{
-    type: 'danger',
-    text: '取消投递',
-    action_function: (id: string) => {
-      setCancleTarget(id);
-      toggleModal('cancle');
-    }
-  }, {
-    type: 'primary',
-    text: '详细',
-    action_function: (id: string) => {
-      let tmp_list = job_list_ref.current.filter(x => x.id === id);
-      if (tmp_list.length === 0) {
-        alert('编号不存在', 'danger');
-        return;
+  // const [table_head, setTableHead] = useState<string[]>(['编号', '岗位编号', '岗位名称', '企业名称', '进度']);
+  // const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
+  // const [table_line_actions, setTableLineActions] = useState<TableLineActions>([{
+  //   type: 'danger',
+  //   text: '取消投递',
+  //   action_function: (id: string) => {
+  //     setCancleTarget(id);
+  //     toggleModal('cancle');
+  //   }
+  // }, {
+  //   type: 'primary',
+  //   text: '详细',
+  //   action_function: (id: string) => {
+  //     let tmp_list = job_list_ref.current.filter(x => x.id === id);
+  //     if (tmp_list.length === 0) {
+  //       alert('编号不存在', 'danger');
+  //       return;
+  //     }
+  //     const target = tmp_list[0];
+  //     (document.getElementById("job-info-title") as HTMLElement).innerText = target.job_name as string;
+  //     (document.getElementById("company-info-name") as HTMLElement).innerText = target.company_name as string;
+  //     (document.getElementById("job-info-salary") as HTMLElement).innerText = target.salary as string;
+  //     (document.getElementById("job-info-descript") as HTMLElement).innerText = target.descript as string;
+  //     (document.getElementById("job-audit-progress") as HTMLElement).innerText = target.progress as string;
+  //     (document.getElementById("company-info-feedback") as HTMLElement).innerText = target.feedback as string;
+  //     toggleModal('info');
+  //   }
+  // }]);
+  const table_columns: TableColumns = [
+    // '编号', '岗位编号', '岗位名称', '企业名称', '进度'
+    { title: '编号', dataIndex: 'id', key: 'id' },
+    { title: '岗位编号', dataIndex: 'job_id', key: 'job_id' },
+    { title: '岗位名称', dataIndex: 'job_name', key: 'job_name' },
+    { title: '企业名称', dataIndex: 'company_name', key: 'company_name' },
+    { title: '进度', dataIndex: 'progress', key: 'progress' },
+    {
+      title: '操作', dataIndex: 'actions', key: 'actions', render: (_, record) => {
+        return <Space>
+          <Button type="link" danger onClick={
+            () => {
+              setCancleTarget(record.id);
+              toggleModal('cancle');
+            }
+          }>
+            取消投递
+          </Button>
+          <Button type="link" onClick={
+            () => {
+              let tmp_list = job_list_ref.current.filter(x => x.id === record.id);
+              if (tmp_list.length === 0) {
+                alert('编号不存在', 'danger');
+                return;
+              }
+              const target = tmp_list[0];
+              (document.getElementById("job-info-title") as HTMLElement).innerText = target.job_name as string;
+              (document.getElementById("company-info-name") as HTMLElement).innerText = target.company_name as string;
+              (document.getElementById("job-info-salary") as HTMLElement).innerText = target.salary as string;
+              (document.getElementById("job-info-descript") as HTMLElement).innerText = target.descript as string;
+              (document.getElementById("job-audit-progress") as HTMLElement).innerText = target.progress as string;
+              (document.getElementById("company-info-feedback") as HTMLElement).innerText = target.feedback as string;
+              toggleModal('info');
+            }
+          }>详细</Button>
+        </Space>
       }
-      const target = tmp_list[0];
-      (document.getElementById("job-info-title") as HTMLElement).innerText = target.job_name as string;
-      (document.getElementById("company-info-name") as HTMLElement).innerText = target.company_name as string;
-      (document.getElementById("job-info-salary") as HTMLElement).innerText = target.salary as string;
-      (document.getElementById("job-info-descript") as HTMLElement).innerText = target.descript as string;
-      (document.getElementById("job-audit-progress") as HTMLElement).innerText = target.progress as string;
-      (document.getElementById("company-info-feedback") as HTMLElement).innerText = target.feedback as string;
-      toggleModal('info');
     }
-  }]);
+  ];
+  const [table_data_source, setTableDataSource] = useState<TableDataSource>([])
 
   useEffect(() => {
     job_list_ref.current = job_list;
@@ -97,7 +138,14 @@ export default function Page() {
         server.fetchJobAudit()
           .then(res => {
             if (res) {
-              setTableBody(res.map(x => [x.id, x.job_id, x.job_name, x.company_name, x.progress]));
+              // setTableBody(res.map(x => [x.id, x.job_id, x.job_name, x.company_name, x.progress]));
+              setTableDataSource(res.map(x => ({
+                id: x.id,
+                job_id: x.job_id,
+                job_name: x.job_name,
+                company_name: x.company_name,
+                progress: x.progress,
+              })))
               setJobList(res);
             }
             else
@@ -154,11 +202,28 @@ export default function Page() {
           <h2>简历投递进度</h2>
           <hr />
         </div>
-        <div className="dashboard-model-buttons">
+        {/* <div className="dashboard-model-buttons">
           <button className="btn btn-danger" onClick={() => toggleModal('cancle')}>批量取消</button>
+        </div> */}
+        <div className="dashboard-model-buttons-and-search">
+          <div className="dashboard-model-buttons">
+            <Button type='primary' onClick={() => toggleModal('cancle')}>批量投递</Button>
+            {/* <button className="btn btn-secondary">导入</button>
+            <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button> */}
+          </div>
+          <div>
+            {/* <Search placeholder="搜索"  /> */}
+            <Space>
+              <Space.Compact>
+                <Input placeholder="输入关键字" />
+                <Button type="primary">搜索</Button>
+              </Space.Compact>
+            </Space>
+          </div>
         </div>
         <div>
-          <Table table_head={table_head} table_body={table_body} table_id="m-table" line_action={table_line_actions} checkbox={true} check_change_function={checkChangeRecall}/>
+          {/* <Table table_head={table_head} table_body={table_body} table_id="m-table" line_action={table_line_actions} checkbox={true} check_change_function={checkChangeRecall}/> */}
+          <Table dataSource={table_data_source} columns={table_columns} check_change_function={(checked_id_list: string[]) => { checked_list = checked_id_list; }} />
         </div>
       </div>
 

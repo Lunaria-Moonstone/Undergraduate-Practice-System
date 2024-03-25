@@ -6,9 +6,10 @@ import Table, { TableLineActions } from "@/components/table/table.component";
 import { useEffect, useRef, useState } from 'react';
 import Form from '@/components/form/form.component';
 import Alert from '@/components/alert/alert.component';
-import { Jobs } from '@/global/type';
+import { Jobs, TableColumns, TableDataSource } from '@/global/type';
 
 import './student-job.part.css';
+import { Button, Input, Space } from 'antd';
 
 export default function Page() {
 
@@ -60,32 +61,40 @@ export default function Page() {
   const [submit_target, setSubmitTarget] = useState<string | string[]>([]);
   const [job_list, setJobList] = useState<Jobs>([]);
   const job_list_ref = useRef(job_list);
-  const [table_head, setTableHead] = useState<string[]>(['编号', '公司名称', '岗位名称', '薪资']);
-  const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
-  const [table_line_actions, setTableLineActions] = useState<TableLineActions>([{
-    type: 'primary',
-    text: '投递简历',
-    action_function: (id: string) => {
-      setSubmitTarget(id);
-      toggleModal('submit');
-    }
-  }, {
-    type: 'primary',
-    text: '详细',
-    action_function: (id: string) => {
-      let tmp_list = job_list_ref.current.filter(x => x.id === id);
-      if (tmp_list.length === 0) {
-        alert('编号不存在', 'danger');
-        return;
-      }
-      const target = tmp_list[0];
-      (document.getElementById("job-info-title") as HTMLElement).innerText = target.name;
-      (document.getElementById("company-info-name") as HTMLElement).innerText = target.company_name as string;
-      (document.getElementById("job-info-salary") as HTMLElement).innerText = target.salary;
-      (document.getElementById("job-info-descript") as HTMLElement).innerText = target.descript;
-      toggleModal('info');
-    }
-  }]);
+  // const [table_head, setTableHead] = useState<string[]>(['编号', '公司名称', '岗位名称', '薪资']);
+  // const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
+  // const [table_line_actions, setTableLineActions] = useState<TableLineActions>([{
+  //   type: 'primary',
+  //   text: '投递简历',
+  //   action_function: (id: string) => {
+  //     setSubmitTarget(id);
+  //     toggleModal('submit');
+  //   }
+  // }, {
+  //   type: 'primary',
+  //   text: '详细',
+  //   action_function: (id: string) => {
+  //     let tmp_list = job_list_ref.current.filter(x => x.id === id);
+  //     if (tmp_list.length === 0) {
+  //       alert('编号不存在', 'danger');
+  //       return;
+  //     }
+  //     const target = tmp_list[0];
+  //     (document.getElementById("job-info-title") as HTMLElement).innerText = target.name;
+  //     (document.getElementById("company-info-name") as HTMLElement).innerText = target.company_name as string;
+  //     (document.getElementById("job-info-salary") as HTMLElement).innerText = target.salary;
+  //     (document.getElementById("job-info-descript") as HTMLElement).innerText = target.descript;
+  //     toggleModal('info');
+  //   }
+  // }]);
+  const table_columns: TableColumns = [
+    // '编号', '公司名称', '岗位名称', '薪资'
+    { title: '编号', dataIndex: 'id', key: 'id' },
+    { title: '公司名称', dataIndex: 'company_name', key: 'company_name' },
+    { title: '岗位名称', dataIndex: 'name', key: 'name' },
+    { title: '薪资', dataIndex: 'salary', key: 'salary' },
+  ];
+  const [table_data_source, setTableDataSource] = useState<TableDataSource>([]);
 
   useEffect(() => {
     job_list_ref.current = job_list;
@@ -94,7 +103,15 @@ export default function Page() {
     server.fetchJobs()
       .then(res => {
         if (res) {
-          setTableBody(res.map(x => [x.id, x.company_name, x.name, x.salary]));
+          // setTableBody(res.map(x => [x.id, x.company_name, x.name, x.salary]));
+          setTableDataSource(res.map(x => {
+            return {
+              id: x.id,
+              company_name: x.company_name,
+              name: x.name,
+              salary: x.salary,
+            }
+          }))
           setJobList(res);
         }
         else
@@ -169,12 +186,28 @@ export default function Page() {
           <h2>岗位简历投递</h2>
           <hr />
         </div>
-        <div className="dashboard-model-buttons">
+        {/* <div className="dashboard-model-buttons">
           <button className="btn btn-primary" onClick={() => openSubmitModal()}>批量投递</button>
+        </div> */}
+        <div className="dashboard-model-buttons-and-search">
+          <div className="dashboard-model-buttons">
+            <Button type='primary' onClick={() => openSubmitModal()}>批量投递</Button>
+            {/* <button className="btn btn-secondary">导入</button>
+            <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button> */}
+          </div>
+          <div>
+            {/* <Search placeholder="搜索"  /> */}
+            <Space>
+              <Space.Compact>
+                <Input placeholder="输入关键字" />
+                <Button type="primary">搜索</Button>
+              </Space.Compact>
+            </Space>
+          </div>
         </div>
         <div>
           {/* <Table table_head={table_head} table_body={table_body} checkbox={true} table_id="m-table" line_action={table_line_actions} check_change_function={checkChangeRecall} /> */}
-          
+          <Table dataSource={table_data_source} columns={table_columns} check_change_function={checkChangeRecall} />
         </div>
       </div>
 

@@ -6,9 +6,10 @@ import "./student-annex.part.css";
 import { useEffect, useRef, useState } from 'react';
 import Modal from '@/components/modal/modal.component';
 import Alert from '@/components/alert/alert.component';
-import { FormItems } from '@/global/type';
+import { FormItems, TableColumns, TableDataSource } from '@/global/type';
 import Form from '@/components/form/form.component';
 import { ArrayBuffer2Base64 } from '@/utils/input';
+import { Button, Space } from 'antd';
 
 export default function Page() {
 
@@ -147,28 +148,60 @@ export default function Page() {
   const [resume_list, setResumeList] = useState<{ id: string, base64code: string, created: string }[]>([]);
   const [annex_list, setAnnexList] = useState<{ id: string, base64code: string, created: string }[]>([]);
   const annex_list_ref = useRef(annex_list);
-  const [history_resume_table_head, setHistoryResumeTableHead] = useState<string[]>(['编号', '时间']);
-  const [history_practice_document_table_head, setHistoryPracticeDocumentTableHead] = useState<string[]>(['编号', '时间']);
-  const [history_resume_table_line_actions, setHistoryResumeTableLineActions] = useState<TableLineActions>([
-    {
-      type: 'danger', text: '删除', action_function: delMark
-    },
-    {
-      type: 'primary', text: '预览',
-      action_function: annexShown
-    },
-  ]);
-  const [history_practice_docuement_table_line_actions, setHistoryPracticeDocumentTableLineActions] = useState<TableLineActions>([
-    {
-      type: 'danger', text: '删除', action_function: delMark
-    },
-    {
-      type: 'primary', text: '预览',
-      action_function: annexShown
-    },
-  ]);
-  const [history_resume_table_body, setHistoryResumeTableBody] = useState<Array<Array<string | number | undefined>>>([]);
-  const [history_practice_document_table_body, setHistoryPracticeDocumentTableBody] = useState<Array<Array<string | number | undefined>>>([]);
+  // const [history_resume_table_head, setHistoryResumeTableHead] = useState<string[]>(['编号', '时间']);
+  // const [history_practice_document_table_head, setHistoryPracticeDocumentTableHead] = useState<string[]>(['编号', '时间']);
+  // const [history_resume_table_line_actions, setHistoryResumeTableLineActions] = useState<TableLineActions>([
+  //   {
+  //     type: 'danger', text: '删除', action_function: delMark
+  //   },
+  //   {
+  //     type: 'primary', text: '预览',
+  //     action_function: annexShown
+  //   },
+  // ]);
+  const history_resume_table_columns: TableColumns = [
+    // '编号', '时间'
+    { title: '编号', dataIndex: 'id', key: 'id' },
+    { title: '时间', dataIndex: 'created', key: 'created' },
+    { title: '操作', dataIndex: 'action', key: 'action', render: (_, record) => {
+      return <Space>
+        <Button type="link" danger onClick={
+          () => delMark(record.id)
+        }>删除</Button>
+        <Button type="link" onClick={
+          () => annexShown(record.id)
+        }>预览</Button>
+      </Space>
+    } },
+  ];
+  const [history_resume_table_data_source, setHistoryResumeTableDataSource] = useState<TableDataSource>([]);
+  const history_practice_table_columns: TableColumns = [
+    // '编号', '时间'
+    { title: '编号', dataIndex: 'id', key: 'id' },
+    { title: '时间', dataIndex: 'created', key: 'created' },
+    { title: '操作', dataIndex: 'action', key: 'action', render: (_, record) => {
+      return <Space>
+        <Button type="link" danger onClick={
+          () => delMark(record.id)
+        }>删除</Button>
+        <Button type="link" onClick={
+          () => annexShown(record.id)
+        }>预览</Button>
+      </Space>
+    }}
+  ];
+  const [history_practice_table_data_source, setHistoryPracticeTableDataSource] = useState<TableDataSource>([]);
+  // const [history_practice_docuement_table_line_actions, setHistoryPracticeDocumentTableLineActions] = useState<TableLineActions>([
+  //   {
+  //     type: 'danger', text: '删除', action_function: delMark
+  //   },
+  //   {
+  //     type: 'primary', text: '预览',
+  //     action_function: annexShown
+  //   },
+  // ]);
+  // const [history_resume_table_body, setHistoryResumeTableBody] = useState<Array<Array<string | number | undefined>>>([]);
+  // const [history_practice_document_table_body, setHistoryPracticeDocumentTableBody] = useState<Array<Array<string | number | undefined>>>([]);
 
   const addItems: FormItems = [
     {
@@ -208,12 +241,14 @@ export default function Page() {
             resume_shown = "data:application/pdf;base64," + Buffer.from(_resume_list[_resume_list.length - 1].base64code).toString();
             setResume(resume_shown);
           } else setResume('x');
-          setHistoryPracticeDocumentTableBody(
-            proof_list.map(x => [x.id, x.created])
-          );
-          setHistoryResumeTableBody(
-            _resume_list.map(x => [x.id, x.created])
-          );
+          // setHistoryPracticeDocumentTableBody(
+          //   proof_list.map(x => [x.id, x.created])
+          // );
+          // setHistoryResumeTableBody(
+          //   _resume_list.map(x => [x.id, x.created])
+          // );
+          setHistoryPracticeTableDataSource(proof_list.map(x => { return { id: x.id, created: x.created } }));
+          setHistoryResumeTableDataSource(_resume_list.map(x => { return { id: x.id, created: x.created } }));
           setResumeList(_resume_list);
           setPracticeDocumentList(proof_list);
           const _annex_list = new Array<{ id: string, base64code: string, created: string }>().concat(_resume_list, proof_list);
@@ -259,7 +294,8 @@ export default function Page() {
                 </div>
               </div>
               <div>
-                <Table table_id='table' table_head={history_resume_table_head} table_body={history_resume_table_body} line_action={history_resume_table_line_actions} />
+                {/* <Table table_id='table' table_head={history_resume_table_head} table_body={history_resume_table_body} line_action={history_resume_table_line_actions} /> */}
+                <Table dataSource={history_resume_table_data_source} columns={history_resume_table_columns} />
               </div>
             </div>
             <div className="tab-pane fade" id="practice-document" role="tabpanel" aria-labelledby="practice-document-tab" style={{ height: '100%' }}>
@@ -275,7 +311,8 @@ export default function Page() {
                 </div>
               </div>
               <div>
-                <Table table_id='table' table_head={history_practice_document_table_head} table_body={history_practice_document_table_body} line_action={history_practice_docuement_table_line_actions} />
+                {/* <Table table_id='table' table_head={history_practice_document_table_head} table_body={history_practice_document_table_body} line_action={history_practice_docuement_table_line_actions} /> */}
+                <Table dataSource={history_practice_table_data_source} columns={history_practice_table_columns} />
               </div>
             </div>
           </div>
