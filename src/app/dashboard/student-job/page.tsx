@@ -173,7 +173,8 @@ export default function Page() {
           <button className="btn btn-primary" onClick={() => openSubmitModal()}>批量投递</button>
         </div>
         <div>
-          <Table table_head={table_head} table_body={table_body} checkbox={true} table_id="m-table" line_action={table_line_actions} check_change_function={checkChangeRecall} />
+          {/* <Table table_head={table_head} table_body={table_body} checkbox={true} table_id="m-table" line_action={table_line_actions} check_change_function={checkChangeRecall} /> */}
+          
         </div>
       </div>
 

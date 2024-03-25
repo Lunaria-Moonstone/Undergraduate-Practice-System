@@ -1,6 +1,6 @@
 'use client'
 
-import { FormItems, Teachers } from "@/global/type";
+import { FormItems, TableColumns, TableDataSource, Teachers } from "@/global/type";
 import { ReactNode, useEffect, useState } from "react";
 
 import server from './admin-teacher.api';
@@ -9,6 +9,7 @@ import Form from "@/components/form/form.component";
 import { formInput } from "@/utils/input";
 import Table, { TableLineActions } from "@/components/table/table.component";
 import Alert from "@/components/alert/alert.component";
+import { Button, Input, Space } from "antd";
 
 export default function Page() {
 
@@ -34,19 +35,36 @@ export default function Page() {
   const [edit_form_error_msg, setEditFormErrorMsg] = useState('');
   const [del_targets, setDelTargets] = useState<string | string[]>();
   const [edit_target, setEditTarget] = useState<string>();
-  const [table_head, setTableHead] = useState<Array<string>>([
-    '编号', '教师姓名', '工号', '联系电话', '联系邮箱'
-  ]);
-  const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
-  const [table_line_actions, setTableLineActions] = useState<TableLineActions>([
+  // const [table_head, setTableHead] = useState<Array<string>>([
+  //   '编号', '教师姓名', '工号', '联系电话', '联系邮箱'
+  // ]);
+  // const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
+  // const [table_line_actions, setTableLineActions] = useState<TableLineActions>([
+  //   {
+  //     type: 'danger', text: '删除',
+  //     action_function: (id: string) => {
+  //       setDelTargets(id);
+  //       setDeleteModalShown(true);
+  //     }
+  //   },
+  // ]);
+  const table_columns: TableColumns = [
+    // '编号', '教师姓名', '工号', '联系电话', '联系邮箱'
+    { title: '编号', dataIndex: 'id', key: 'id' },
+    { title: '教师姓名', dataIndex: 'name', key: 'name' },
+    { title: '工号', dataIndex: 'number', key: 'number' },
+    { title: '联系电话', dataIndex: 'phone', key: 'phone' },
+    { title: '联系邮箱', dataIndex: 'mail', key: 'mail' },
     {
-      type: 'danger', text: '删除',
-      action_function: (id: string) => {
-        setDelTargets(id);
-        setDeleteModalShown(true);
+      title: '操作', dataIndex: 'actions', key: 'actions', render: (_, record) => {
+        return <Space size="middle">
+          <Button onClick={() => { setDelTargets(record.id); setDeleteModalShown(true) }} type='link' danger>删除</Button>
+        </Space>
       }
-    },
-  ]);
+    }
+  ];
+  const [table_data_source, setTableDataSource] = useState<TableDataSource>([]);
+  
 
   // const table_head: Array<string> = ['编号', '教师姓名', '工号', '联系电话', '联系邮箱'];
   // const table_body: Array<Array<string | number | undefined>> = teachers.map(x => {
@@ -63,7 +81,16 @@ export default function Page() {
   useEffect(() => {
     server.fetchTeachers()
       .then(res => {
-        setTableBody(res.map(x => [x.id, x.name, x.number, x.phone, x.mail]))
+        // setTableBody(res.map(x => [x.id, x.name, x.number, x.phone, x.mail]))
+        setTableDataSource(res.map(x => {
+          return {
+            id: x.id,
+            name: x.name,
+            number: x.number,
+            phone: x.phone,
+            mail: x.mail,
+          }
+        }))
       })
       .catch();
   }, []);
@@ -138,14 +165,25 @@ export default function Page() {
         </div>
         <hr />
         {/* 功能按钮区域 */}
-        <div className="dashboard-model-buttons">
-          <button className="btn btn-primary" onClick={() => setAddModalShown(true)}>新增</button>
-          <button className="btn btn-danger" onClick={() => delMutiple()}>删除</button>
-          {/* <button className="btn btn-secondary">导入</button>
-          <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button> */}
+        <div className="dashboard-model-buttons-and-search">
+          <div className="dashboard-model-buttons">
+            <Button type='primary' onClick={() => setAddModalShown(true)}>新增</Button>
+            <Button onClick={() => delMutiple()} danger>删除</Button>
+            {/* <button className="btn btn-secondary">导入</button>
+            <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button> */}
+          </div>
+          <div>
+            {/* <Search placeholder="搜索"  /> */}
+            <Space>
+              <Space.Compact>
+                <Input placeholder="输入关键字" />
+                <Button type="primary">搜索</Button>
+              </Space.Compact>
+            </Space>
+          </div>
         </div>
         {/* 数据表格区域 */}
-        <Table table_id="table" table_head={table_head} table_body={table_body} checkbox={true} line_action={table_line_actions} />
+        <Table dataSource={table_data_source} columns={table_columns} check_change_function={(checked_list) => checked_id_list = checked_list} />
       </div>
 
       <Modal shown={addModalShown} id='add-modal' modal_title='添加教师信息' close_function={() => setAddModalShown(false)} modal_btns={

@@ -35,12 +35,21 @@ body {
   flex: 1;
 }
 
+.dashboard-base-panel .dashboard-model-buttons-and-search {
+  display: flex;
+  justify-content: space-between;
+}
+
 .dashboard-base-panel .dashboard-model-buttons {
   margin-block-end: var(--standard-padding-width);
 }
 
 .dashboard-base-panel .dashboard-model-buttons > * {
   margin-inline-end: var(--standard-padding-width);
+}
+
+.dashboard-base-panel .dashboard-model-search {
+  display: flex;
 }
 
 .dashboard-base-panel .dashboard-model-table {

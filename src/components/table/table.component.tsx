@@ -30,6 +30,7 @@ interface TableProps {
   columns: Array<{ title: string, dataIndex: string, key: string, render?: (...args: any) => ReactNode }>
   dataSource: Array<{ [key: string]: string | number | undefined }>
   // actions?: TableLineActions
+  check_change_function?: (id_list: string[]) => void
 }
 
 interface TableState { }
@@ -52,6 +53,7 @@ export default class Table extends Component<TableProps, TableState> {
   constructor(props: TableProps) {
     
     super(props);
+
     
     // this.table_id = props.table_id;
     // this.table_head = props.table_head;
@@ -230,7 +232,11 @@ export default class Table extends Component<TableProps, TableState> {
             columns={this.props.columns}
             style={{ height: '100%', maxHeight: '100%', minHeight: '100%', minWidth: '100%' }}
             // scroll={{ y: '100%' }}
-            
+            rowSelection={{ type: 'checkbox', onChange: (selectedRowKeys, selectedRows) => {
+              if (this.props.check_change_function) {
+                this.props.check_change_function(selectedRows.map(x => x.id as string));
+              }
+            }}}
           />
         </div>
       </>

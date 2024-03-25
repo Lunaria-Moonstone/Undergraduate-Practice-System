@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import server from './admin-company.api';
-import { Companies, Company, FormItems } from '@/global/type';
+import { Companies, Company, FormItems, TableColumns, TableDataSource } from '@/global/type';
 import { ArrayBuffer2Base64, MailCheck, PhoneCheck, formInput } from '@/utils/input';
 import Modal from '@/components/modal/modal.component';
 import Form from '@/components/form/form.component';
@@ -11,6 +11,7 @@ import Table, { TableLineActions } from '@/components/table/table.component';
 import './admin-company.part.css';
 import { useRouter } from 'next/navigation';
 import Alert from '@/components/alert/alert.component';
+import { Button, Input, Space } from 'antd';
 
 export default function Page() {
 
@@ -42,38 +43,71 @@ export default function Page() {
   const [refresh, setRefresh] = useState(false);
   const [license, setLicense] = useState<null | File>(null);
   // const [checked_id_list, setCheckedIdList] = useState<string[]>([]);
-  const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
-  const [table_head, setTableHead] = useState<Array<string>>(['编号', '企业名称', '联系电话', '联系邮箱']);
-  const [table_line_actions, setTableLineActions] = useState<TableLineActions>([
+  // const [table_body, setTableBody] = useState<Array<Array<string | number | undefined>>>([]);
+  // const [table_head, setTableHead] = useState<Array<string>>(['编号', '企业名称', '联系电话', '联系邮箱']);
+  // const [table_line_actions, setTableLineActions] = useState<TableLineActions>([
+  //   {
+  //     type: 'danger', text: '删除',
+  //     action_function: (id: string) => {
+  //       setDelTargets(id);
+  //       setDeleteModalShown(true);
+  //     }
+  //   }, 
+  //   {
+  //     type: 'warning', text: '修改',
+  //     action_function: (id: string) => {
+  //       server.fetchCompany(id)
+  //         .then(res => {
+  //           let form_value = document.getElementById('edit-form') as HTMLFormElement;
+  //           let form_input_list = form_value.children;
+  //           let company_id = res.id;
+  //           let company_info = [ res.name, res.phone, res.mail ]
+  //           for ( let info = 0; info < company_info.length; info += 1 ) {
+  //             let input_item = form_input_list.item(info)?.lastChild as HTMLInputElement;
+  //             input_item.value = company_info[info];
+  //           }
+  //           setEditTarget(company_id);
+  //           setEditModalShown(true);
+  //         })
+  //         .catch(_ => {
+  //           alert('获取数据失败', 'danger');
+  //         })
+  //     }
+  //   }
+  // ]);
+  const [table_columns, setTableColumns] = useState<TableColumns>([
+    // '编号', '企业名称', '联系电话', '联系邮箱'
+    { title: '编号', dataIndex: 'id', key: 'id' },
+    { title: '企业名称', dataIndex: 'name', key: 'name' },
+    { title: '联系电话', dataIndex: 'phone', key: 'phone' },
+    { title: '联系邮箱', dataIndex: 'mail', key: 'mail' },
     {
-      type: 'danger', text: '删除',
-      action_function: (id: string) => {
-        setDelTargets(id);
-        setDeleteModalShown(true);
-      }
-    }, 
-    {
-      type: 'warning', text: '修改',
-      action_function: (id: string) => {
-        server.fetchCompany(id)
-          .then(res => {
-            let form_value = document.getElementById('edit-form') as HTMLFormElement;
-            let form_input_list = form_value.children;
-            let company_id = res.id;
-            let company_info = [ res.name, res.phone, res.mail ]
-            for ( let info = 0; info < company_info.length; info += 1 ) {
-              let input_item = form_input_list.item(info)?.lastChild as HTMLInputElement;
-              input_item.value = company_info[info];
-            }
-            setEditTarget(company_id);
-            setEditModalShown(true);
-          })
-          .catch(_ => {
-            alert('获取数据失败', 'danger');
-          })
+      title: '操作', dataIndex: 'action', key: 'action', render: (_, record) => {
+        return <Space size='middle'>
+          <Button onClick={() => { setDelTargets(record.id); setDeleteModalShown(true) }} type='link' danger>删除</Button>
+          <Button onClick={() => {
+            server.fetchCompany(record.id)
+              .then(res => {
+                let form_value = document.getElementById('edit-form') as HTMLFormElement;
+                let form_input_list = form_value.children;
+                let company_id = res.id;
+                let company_info = [res.name, res.phone, res.mail]
+                for (let info = 0; info < company_info.length; info += 1) {
+                  let input_item = form_input_list.item(info)?.lastChild as HTMLInputElement;
+                  input_item.value = company_info[info];
+                }
+                setEditTarget(company_id);
+                setEditModalShown(true);
+              })
+              .catch(_ => {
+                alert('获取数据失败', 'danger');
+              })
+          }} type="link">修改</Button>
+        </Space>
       }
     }
-  ]);
+  ])
+  const [table_data_source, setTableDataSource] = useState<TableDataSource>([]);
 
 
   // useEffect(() => {
@@ -85,7 +119,15 @@ export default function Page() {
   useEffect(() => {
     server.fetchCompanies()
       .then(res => {
-        setTableBody(res.map(x => [x.id, x.name, x.phone, x.mail]));
+        // setTableBody(res.map(x => [x.id, x.name, x.phone, x.mail]));
+        setTableDataSource(res.map(x => {
+          return {
+            id: x.id,
+            name: x.name,
+            phone: x.phone,
+            mail: x.mail,
+          }
+        }))
       });
   }, [refresh]);
 
@@ -174,7 +216,7 @@ export default function Page() {
       return;
     }
     let form_value = formInput(document.getElementById('edit-form') as HTMLElement).slice(0, -1);
-    let data: { [key: string]: string } = { name: form_value[0] as string , phone: form_value[1] as string, mail: form_value[2] as string }
+    let data: { [key: string]: string } = { name: form_value[0] as string, phone: form_value[1] as string, mail: form_value[2] as string }
     if (license) data['license'] = ArrayBuffer2Base64(await license.arrayBuffer());;
     server.updateCompany(edit_target, data)
       .then(res => {
@@ -208,11 +250,11 @@ export default function Page() {
     setDeleteModalShown(false);
     // ... delete process
     if (typeof del_targets === 'object') {
-      for ( let del_target of del_targets ) {
+      for (let del_target of del_targets) {
         await server.delCompany(del_target)
           .catch(err => {
             alert(del_target + " 删除失败", "danger");
-          }); 
+          });
       }
       location.reload();
     } else {
@@ -243,14 +285,26 @@ export default function Page() {
         </div>
         <hr />
         {/* 功能按钮区域 */}
-        <div className="dashboard-model-buttons">
-          <button className="btn btn-primary" onClick={() => setAddModalShown(true)}>新增</button>
-          <button className="btn btn-danger" onClick={delMutiple}>删除</button>
-          {/* <button className="btn btn-secondary" onClick={() => setRefresh((val) => !val)}>导入</button>
-          <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button> */}
+        <div className="dashboard-model-buttons-and-search">
+          <div className="dashboard-model-buttons">
+            <Button type='primary' onClick={() => setAddModalShown(true)}>新增</Button>
+            <Button onClick={() => delMutiple()} danger>删除</Button>
+            {/* <button className="btn btn-secondary">导入</button>
+            <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button> */}
+          </div>
+          <div>
+            {/* <Search placeholder="搜索"  /> */}
+            <Space>
+              <Space.Compact>
+                <Input placeholder="输入关键字" />
+                <Button type="primary">搜索</Button>
+              </Space.Compact>
+            </Space>
+          </div>
         </div>
         {/* 数据表格区域 */}
-        <Table table_id='table' table_head={table_head} table_body={table_body} checkbox={true} line_action={table_line_actions} check_change_function={checkChangeRecall} />
+        {/* <Table table_id='table' table_head={table_head} table_body={table_body} checkbox={true} line_action={table_line_actions} check_change_function={checkChangeRecall} /> */}
+        <Table dataSource={table_data_source} columns={table_columns} check_change_function={(checked_list) => checked_id_list = checked_list} />
       </div>
 
       {/* 添加模态框 */}
