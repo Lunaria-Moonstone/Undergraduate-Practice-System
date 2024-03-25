@@ -21,12 +21,12 @@ USE `ups_db`;
 
 -- 导出  表 ups_db.annex_history 结构
 CREATE TABLE IF NOT EXISTS `annex_history` (
-  `id` char(32) NOT NULL,
+  `id` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `type` varchar(20) NOT NULL,
   `base64code` mediumblob NOT NULL,
   `created` datetime NOT NULL DEFAULT (now()),
   PRIMARY KEY (`id`),
-  CONSTRAINT `type_limit` CHECK ((`type` in (_utf8mb4'resume',_utf8mb4'practice-document')))
+  CONSTRAINT `type_limit` CHECK ((`type` in (_utf8mb3'resume',_utf8mb3'practice-document')))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- 正在导出表  ups_db.annex_history 的数据：~0 rows (大约)
@@ -34,14 +34,14 @@ DELETE FROM `annex_history`;
 
 -- 导出  表 ups_db.announcement 结构
 CREATE TABLE IF NOT EXISTS `announcement` (
-  `id` char(32) NOT NULL,
+  `id` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `title` varchar(50) NOT NULL DEFAULT '',
   `descript` text NOT NULL,
   `created` datetime NOT NULL DEFAULT (now()),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- 正在导出表  ups_db.announcement 的数据：~1 rows (大约)
+-- 正在导出表  ups_db.announcement 的数据：~0 rows (大约)
 DELETE FROM `announcement`;
 INSERT INTO `announcement` (`id`, `title`, `descript`, `created`) VALUES
 	('XxQhUysEbig975xS10FAe', '管理员界面完成', '很好', '2024-02-23 15:38:00');
@@ -56,15 +56,15 @@ CREATE TABLE IF NOT EXISTS `company` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- 正在导出表  ups_db.company 的数据：~1 rows (大约)
+-- 正在导出表  ups_db.company 的数据：~0 rows (大约)
 DELETE FROM `company`;
 INSERT INTO `company` (`id`, `name`, `phone`, `mail`, `license`) VALUES
 	('udertBUM0i_PkHM34eMpu', '国家安全局', '1342908972', 'gaj@gmail.com', 'R0lGODlhqASoAfcAAAAAAAAAMwAAZgAAmQAAzAAA/wArAAArMwArZgArmQArzAAr/wBVAABVMwBVZgBVmQBVzABV/wCAAACAMwCAZgCAmQCAzACA/wCqAACqMwCqZgCqmQCqzACq/wDVAADVMwDVZgDVmQDVzADV/wD/AAD/MwD/ZgD/mQD/zAD//zMAADMAMzMAZjMAmTMAzDMA/zMrADMrMzMrZjMrmTMrzDMr/zNVADNVMzNVZjNVmTNVzDNV/zOAADOAMzOAZjOAmTOAzDOA/zOqADOqMzOqZjOqmTOqzDOq/zPVADPVMzPVZjPVmTPVzDPV/zP/ADP/MzP/ZjP/mTP/zDP//2YAAGYAM2YAZmYAmWYAzGYA/2YrAGYrM2YrZmYrmWYrzGYr/2ZVAGZVM2ZVZmZVmWZVzGZV/2aAAGaAM2aAZmaAmWaAzGaA/2aqAGaqM2aqZmaqmWaqzGaq/2bVAGbVM2bVZmbVmWbVzGbV/2b/AGb/M2b/Zmb/mWb/zGb//5kAAJkAM5kAZpkAmZkAzJkA/5krAJkrM5krZpkrmZkrzJkr/5lVAJlVM5lVZplVmZlVzJlV/5mAAJmAM5mAZpmAmZmAzJmA/5mqAJmqM5mqZpmqmZmqzJmq/5nVAJnVM5nVZpnVmZnVzJnV/5n/AJn/M5n/Zpn/mZn/zJn//8wAAMwAM8wAZswAmcwAzMwA/8wrAMwrM8wrZswrmcwrzMwr/8xVAMxVM8xVZsxVmcxVzMxV/8yAAMyAM8yAZsyAmcyAzMyA/8yqAMyqM8yqZsyqmcyqzMyq/8zVAMzVM8zVZszVmczVzMzV/8z/AMz/M8z/Zsz/mcz/zMz///8AAP8AM/8AZv8Amf8AzP8A//8rAP8rM/8rZv8rmf8rzP8r//9VAP9VM/9VZv9Vmf9VzP9V//+AAP+AM/+AZv+Amf+AzP+A//+qAP+qM/+qZv+qmf+qzP+q///VAP/VM//VZv/Vmf/VzP/VAP//M///Zv//mf//zP///wAAAAAAAAAAAAAAACH5BAEAAPwALAAAAACoBKgBAAitAPcJHEiwoMGDCBMqXMiwocOHECNKnEixosWLGDNq3Mixo8ePIEOKHEmypMmTKFOqXMmypcuXMGPKnEmzps2bOHPq3Mmzp8+fQIMKHUq0qNGjSJMqXcq0qdOnUKNKnUq1qtWrWLNq3cq1q9evYMOKHUu2rNmzaNOqXcu2rdu3cOPKnUu3rt27ePPq3cu3r9+/gAMLHky4sOHDiBMrXsy4sePHkCNLnky5suXLmDNIa97MubPnz6BDix5NurTp06hTq17NurXr17Bjy55Nu7bt27hz697Nu7fv38CDCx9OvLjx48iTK1/OvLnz59CjS59Ovbr169izOGvfzr279+/gw4sfT768+fPo06tfz769+/fw48ufT7++/fv48+vfz7+///8ABijggAQWaOCBCCaoNeCCDDbo4IMQRijhhBRWaOGFGGao4YYcdujhhyCGKOKIJJZo4okopqjiiiy26OKLMMYo44w0LdZo44045qjjjjz26OOPQAYp5JBEFmnkkUgmqeSSTDbp5JNQRinllFRWaeWVWClmqeWWXHbp5ZdghinmmGSWaeaZaKap5ppstunmm3DGKeecdNZp55145iep55589unnn4AGKuighBZq6KGIJqrooow26uijkEYq6aSUVmrppZgjZqrpppx26umnoIYq6qiklmrqqaimquqqrLbq6quwxirrrLQg1mrrrbjmquuuvPbq66/ABivssMQWa+yxyCar7LLMNusg7LPQRivttNRWa+212Gar7bbcduvtt+CGK+645JZr7rke6Kar7rrstuvuu/DGK++89NZr77345qvvvvz26++/HAAHLPDABBds8MEIJ6zwwgw37PDDEEcs8cQUV2wc8cUYZ6zxxhx37PHHIIcs8sgkl2zyySinrPLKLBq37PLLMMcs88w012zzzTjnrPPOPPfs889ABxkt9NBEF2300UgnrfTSTDft9NNQRy311FRXGW311VhnrfXWXHft9ddghy322GSXbfbZaKcYrfbabLft9ttwxy333HTXbffdeOet9958Fvft99+ABy744IQXbvjhiCeu+OKMN+4X+OOQRy755JRXbvnlmGeu+eacd+7556AWhy766KSXbvrpqKeu+uqst+7667DHLhb77LTXbvvtuOeu++689+7778AHL/zwFMQXb/zxyCev/PLMN+/889BHL/30FNRXb/312Gev/fbcd+/99+CHL/74FOSXb/756Kev/vrst+/++/DHL//8FPTXb//9+Oev//789+///wAMoAAHFUjAAhrwgAhMoAIXyMAGOvCBEIygBBQnSMEKWvCCGMygBjfIwQ568IMgDBWhCEdIwhKa8IQoTKEKV8jCFrrwhTATjKEMZ0jDGtrwhjjMoQ53yMMe+hXwh0AMohCHSMQiGvGISEyiEpfIxCYTOvGJUIyiFKdIxSpa8YpYzKIWtxLIxS568YtgDKMYx0jGMprxjGgTTKMa18jGNrrxjXCMoxznSMc62hLxjnjMox73yMc++vGPgAykIAcSSchCGvKQiEykIhfJyEY68pGQEoykJCdJyUpa8pKYzKQmN8nJThJ68pOgDKUoR0nKUprylKhMpSoSV8nKVrrylbCMpSxnScta2vKWELjMpS53ycte+vKXwAymMIcSScxiGvOYyEymMpfJzGY685nQEIymNKdJzWpa85rYzKY2t8kRzW5685vgDKc4x0nOcprznOgJTKc618lOQQYEADs=');
 
 -- 导出  表 ups_db.job 结构
 CREATE TABLE IF NOT EXISTS `job` (
-  `id` char(32) NOT NULL,
-  `company_id` char(32) NOT NULL,
+  `id` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `company_id` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `name` varchar(50) NOT NULL,
   `salary` varchar(50) NOT NULL,
   `descript` text,
@@ -76,13 +76,13 @@ DELETE FROM `job`;
 
 -- 导出  表 ups_db.job_audit 结构
 CREATE TABLE IF NOT EXISTS `job_audit` (
-  `id` char(32) NOT NULL,
-  `student_id` char(32) NOT NULL,
-  `company_id` char(32) NOT NULL,
-  `job_id` char(32) NOT NULL,
+  `id` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `student_id` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `company_id` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `job_id` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `progress` varchar(10) DEFAULT NULL,
   `feedback` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci COMMENT '企业反馈',
-  `resume` char(32) DEFAULT NULL COMMENT '投送简历',
+  `resume` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT '投送简历',
   `created` year NOT NULL DEFAULT (now()),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
@@ -94,8 +94,8 @@ INSERT INTO `job_audit` (`id`, `student_id`, `company_id`, `job_id`, `progress`,
 
 -- 导出  表 ups_db.notification 结构
 CREATE TABLE IF NOT EXISTS `notification` (
-  `id` char(32) NOT NULL,
-  `role_id` char(32) NOT NULL,
+  `id` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `role_id` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `role` bit(1) NOT NULL,
   `title` varchar(50) NOT NULL DEFAULT '',
   `simple_descript` varchar(128) NOT NULL DEFAULT '',
@@ -109,12 +109,13 @@ DELETE FROM `notification`;
 
 -- 导出  表 ups_db.student 结构
 CREATE TABLE IF NOT EXISTS `student` (
-  `id` char(32) NOT NULL,
+  `id` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `name` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `number` varchar(50) NOT NULL,
   `grade` year NOT NULL DEFAULT '2020',
   `phone` varchar(20) DEFAULT NULL,
   `mail` varchar(40) DEFAULT NULL,
+  `performence` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `is_practice` bit(1) DEFAULT (0) COMMENT '是否处于实习中',
   `practice_cmp` tinyblob COMMENT '历史实习公司',
   `has_vitae` bit(1) NOT NULL DEFAULT (0) COMMENT '是否存在个人简历',
@@ -125,21 +126,16 @@ CREATE TABLE IF NOT EXISTS `student` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- 正在导出表  ups_db.student 的数据：~5 rows (大约)
+-- 正在导出表  ups_db.student 的数据：~1 rows (大约)
 DELETE FROM `student`;
-INSERT INTO `student` (`id`, `name`, `number`, `grade`, `phone`, `mail`, `is_practice`, `practice_cmp`, `has_vitae`, `has_proof`, `score`, `proof`, `vitae`) VALUES
-	('9jux_0ZIK6T9l-Da6mzdi', '张日天', '435235143', '2021', '', '', b'0', NULL, b'0', b'0', -1, _binary 0x5b5d, _binary 0x5b5d),
-	('ev7Jojb7hKTCA14mRUUD5', '张海涛', '214353245', '2020', '', '', b'0', NULL, b'0', b'0', -1, _binary 0x5b5d, _binary 0x5b5d),
-	('JfFngF0jBlj1sItlj175a', '张开眼', '5425424523', '2020', '', '', b'0', NULL, b'0', b'0', -1, _binary 0x5b5d, _binary 0x5b5d),
-	('Q2P_QR3VjRPPe3M2TR6Tr', '章鱼哥', '124143413', '2020', '', '', b'0', NULL, b'0', b'0', -1, _binary 0x5b5d, _binary 0x5b5d),
-	('y4z7CZcMRgWwk_vCevWkL', '张三丰', '20044231', '2020', '10086', '10086@gmail.com', b'0', NULL, b'0', b'0', 20, _binary 0x5b227744704236354d495f3332414355544d6e30556862225d, _binary 0x5b2247746b567563477a5a5875474761355f3672544874225d),
-	('ZlGkiFbF-6SeNtRJhqP2e', '张无敌', '3214342431', '2021', '', '', b'0', NULL, b'0', b'0', -1, _binary 0x5b5d, _binary 0x5b5d);
+INSERT INTO `student` (`id`, `name`, `number`, `grade`, `phone`, `mail`, `performence`, `is_practice`, `practice_cmp`, `has_vitae`, `has_proof`, `score`, `proof`, `vitae`) VALUES
+	('10e87ada-85fe-4310-8b3f-314843978ecd', '叔本华', '20044231', '2020', '', '', NULL, b'0', NULL, b'0', b'0', -1, _binary 0x5b5d, _binary 0x5b5d);
 
 -- 导出  表 ups_db.student_practice_experience 结构
 CREATE TABLE IF NOT EXISTS `student_practice_experience` (
-  `id` char(32) NOT NULL,
-  `company_id` char(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `student_id` char(32) NOT NULL,
+  `id` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `company_id` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `student_id` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `start` date NOT NULL,
   `end` date DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -152,9 +148,9 @@ INSERT INTO `student_practice_experience` (`id`, `company_id`, `student_id`, `st
 
 -- 导出  表 ups_db.student_teacher_map 结构
 CREATE TABLE IF NOT EXISTS `student_teacher_map` (
-  `id` char(32) NOT NULL,
-  `student_id` char(32) NOT NULL,
-  `teacher_id` char(32) NOT NULL,
+  `id` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `student_id` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `teacher_id` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
@@ -165,7 +161,7 @@ INSERT INTO `student_teacher_map` (`id`, `student_id`, `teacher_id`) VALUES
 
 -- 导出  表 ups_db.teacher 结构
 CREATE TABLE IF NOT EXISTS `teacher` (
-  `id` char(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `id` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `name` varchar(50) NOT NULL,
   `number` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `phone` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
@@ -176,15 +172,15 @@ CREATE TABLE IF NOT EXISTS `teacher` (
 -- 正在导出表  ups_db.teacher 的数据：~1 rows (大约)
 DELETE FROM `teacher`;
 INSERT INTO `teacher` (`id`, `name`, `number`, `phone`, `mail`) VALUES
-	('PyH0xBmZz9rXcToF4YShl', '章东来', 'teacher', '18726182212', 't@mail.com');
+	('7f191f2a-2a84-433c-916a-38390ff80244', '鲁志勇', '22903912', '1332089783', 'lulu@gmail.com');
 
 -- 导出  表 ups_db.user 结构
 CREATE TABLE IF NOT EXISTS `user` (
-  `id` char(32) NOT NULL,
+  `id` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `name` varchar(20) NOT NULL,
   `password` varchar(16) NOT NULL,
   `role` bit(2) NOT NULL COMMENT '角色（0-管理员 1-学生 2-教师 3-企业）',
-  `foreign_id` char(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '角色表连结id',
+  `foreign_id` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '角色表连结id',
   CONSTRAINT `role_limit` CHECK ((`role` in (0,1,2,3)))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 

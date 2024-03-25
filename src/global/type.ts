@@ -23,6 +23,7 @@ export interface TableColumn {
   title: string
   dataIndex: string
   key: string,
+  hidden?: boolean
   render?: (...args: any) => ReactNode
 }
 
@@ -54,6 +55,7 @@ export interface Student {
   grade: string // 年级
   phone: string // 联系电话
   mail: string // 联系邮箱
+  performence: string // 专业方向
   is_practice: Uint8Array // 是否处于实习中
   practice_cmp: string[] // 历史实习公司
   has_vitae: Uint8Array // 是否存在个人简历

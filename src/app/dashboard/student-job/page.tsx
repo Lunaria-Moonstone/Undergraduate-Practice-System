@@ -89,7 +89,7 @@ export default function Page() {
   // }]);
   const table_columns: TableColumns = [
     // '编号', '公司名称', '岗位名称', '薪资'
-    { title: '编号', dataIndex: 'id', key: 'id' },
+    { title: '编号', dataIndex: 'id', key: 'id', hidden: true },
     { title: '公司名称', dataIndex: 'company_name', key: 'company_name' },
     { title: '岗位名称', dataIndex: 'name', key: 'name' },
     { title: '薪资', dataIndex: 'salary', key: 'salary' },

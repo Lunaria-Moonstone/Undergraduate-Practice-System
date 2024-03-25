@@ -44,6 +44,13 @@ export default function Navbar(props: any) {
   };
 
   const onClick = (e: any) => {
+    if (e.key === 'logout') {
+      fetch('/authorized/signin/api', {
+        method: 'DELETE',
+      });
+      router.replace('/authorized/signin/');
+      return;
+    }
     router.replace(e.key);
     if (change_path_func) { change_path_func(e.key) }
   }

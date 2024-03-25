@@ -4,6 +4,7 @@ import { ChangeEvent, ChangeEventHandler, Component, ReactNode } from 'react';
 import { Table as AntdTable, Space } from 'antd';
 
 import './table.component.css';
+import { TableColumns, TableDataSource } from '@/global/type';
 
 export interface TableLineAction {
   type: 'danger' | 'warning' | 'primary' | 'success',
@@ -27,8 +28,10 @@ export type TableLineActions = Array<TableLineAction>;
 
 interface TableProps {
   // dataSource 中的字段名是columns中的dataIndex
-  columns: Array<{ title: string, dataIndex: string, key: string, render?: (...args: any) => ReactNode }>
-  dataSource: Array<{ [key: string]: string | number | undefined }>
+  // columns: Array<{ title: string, dataIndex: string, key: string, hidden?: boolean, render?: (...args: any) => ReactNode }>
+  columns: TableColumns
+  // dataSource: Array<{ [key: string]: string | number | undefined }>
+  dataSource: TableDataSource
   // actions?: TableLineActions
   check_change_function?: (id_list: string[]) => void
 }

@@ -50,7 +50,7 @@ export default function Page() {
   // ]);
   const table_columns: TableColumns = [
     // '编号', '教师姓名', '工号', '联系电话', '联系邮箱'
-    { title: '编号', dataIndex: 'id', key: 'id' },
+    { title: '编号', dataIndex: 'id', key: 'id', hidden: true },
     { title: '教师姓名', dataIndex: 'name', key: 'name' },
     { title: '工号', dataIndex: 'number', key: 'number' },
     { title: '联系电话', dataIndex: 'phone', key: 'phone' },

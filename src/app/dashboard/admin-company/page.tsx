@@ -77,7 +77,7 @@ export default function Page() {
   // ]);
   const [table_columns, setTableColumns] = useState<TableColumns>([
     // '编号', '企业名称', '联系电话', '联系邮箱'
-    { title: '编号', dataIndex: 'id', key: 'id' },
+    { title: '编号', dataIndex: 'id', key: 'id', hidden: true },
     { title: '企业名称', dataIndex: 'name', key: 'name' },
     { title: '联系电话', dataIndex: 'phone', key: 'phone' },
     { title: '联系邮箱', dataIndex: 'mail', key: 'mail' },
