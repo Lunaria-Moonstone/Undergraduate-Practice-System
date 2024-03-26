@@ -9,10 +9,11 @@ import Alert from '@/components/alert/alert.component';
 import { FormItems, TableColumns, TableDataSource } from '@/global/type';
 import Form from '@/components/form/form.component';
 import { ArrayBuffer2Base64 } from '@/utils/input';
-import { Button, Space } from 'antd';
+import { Button, Space, message } from 'antd';
 
 export default function Page() {
 
+  const [messageApi, contextHolder] = message.useMessage();
   const [modalStates, setModalStates] = useState<{ [key: string]: boolean }>({
     addModalShown: false,
     delModalShown: false,
@@ -34,18 +35,18 @@ export default function Page() {
     ),
     children,
   });
-  const [alertShown, setAlertShown] = useState<boolean>(false);
-  const [alertMessage, setAlertMessage] = useState<string>('');
-  const [alertType, setAlertType] = useState<'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark'>('info');
-  const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
-    setAlertMessage(message);
-    setAlertType(type);
-    setAlertShown(true);
-  }
-  const alertClear = () => {
-    setAlertMessage("");
-    setAlertShown(false);
-  }
+  // const [alertShown, setAlertShown] = useState<boolean>(false);
+  // const [alertMessage, setAlertMessage] = useState<string>('');
+  // const [alertType, setAlertType] = useState<'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark'>('info');
+  // const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
+  //   setAlertMessage(message);
+  //   setAlertType(type);
+  //   setAlertShown(true);
+  // }
+  // const alertClear = () => {
+  //   setAlertMessage("");
+  //   setAlertShown(false);
+  // }
   // const { resume, practice_document } = server.fetchAnnex()
   // const [history_resume, history_practice_document] = server.fetchAnnexHistory();
 
@@ -67,7 +68,8 @@ export default function Page() {
   const annexShown = (id: string) => {
     const target = annex_list_ref.current.filter(x => x.id === id);
     if (target.length === 0) {
-      alert('目标材料不存在', 'danger');
+      // alert('目标材料不存在', 'danger');
+      messageApi.error('目标材料不存在');
       return;
     }
     setAnnexInfo("data:application/pdf;base64," + Buffer.from(target[0].base64code).toString());
@@ -84,21 +86,25 @@ export default function Page() {
   const saveAdd = async () => {
     if (now_annex === null) {
       toggleModal('add');
-      alert('材料不能为空', 'danger');
+      // alert('材料不能为空', 'danger');
+      messageApi.error('材料不能为空');
       return;
     }
     server.uploadAnnex(now_type === 'r' ? 'resume' : 'practice-document', ArrayBuffer2Base64(await now_annex.arrayBuffer()))
       .then(res => {
         if (res['ok']) {
           toggleModal('add');
-          location.reload();
+          // location.reload();
+          fetchAnnex();
         } else {
-          alert('上传失败，后台错误', 'danger');
+          // alert('上传失败，后台错误', 'danger');
+          messageApi.error('上传失败，后台错误');
           console.error('上传失败', res['error']);
         }
       })
       .catch(err => {
-        alert('上传失败，后台错误', 'danger');
+        // alert('上传失败，后台错误', 'danger');
+        messageApi.error('上传失败，后台错误');
         console.error(err);
       })
   };
@@ -116,7 +122,8 @@ export default function Page() {
   const delAnnex = () => {
     if (!del_target) {
       toggleModal('del');
-      alert("删除编号为空", 'danger');
+      // alert("删除编号为空", 'danger');
+      messageApi.error("删除编号为空");
       return;
     }
     const id = del_target;
@@ -128,13 +135,15 @@ export default function Page() {
         } else {
           toggleModal('del');
           console.log(res['error']);
-          alert("后台错误，删除失败", 'danger');
+          // alert("后台错误，删除失败", 'danger');
+          messageApi.error("后台错误，删除失败");
         }
       })
       .catch(err => {
         toggleModal('del');
         console.error(err);
-        alert("后台错误，删除失败", 'danger');
+        // alert("后台错误，删除失败", 'danger');
+        messageApi.error("后台错误，删除失败");
       })
   }
 
@@ -223,50 +232,56 @@ export default function Page() {
   }, [annex_list]);
 
   useEffect(() => {
-    server.fetchAnnex()
-      .then(res => {
-        console.log(res);
-        if (res['ok']) {
-          let proof_list: { id: string, base64code: string, created: string }[] = res['results']['proof']['results'];
-          let _resume_list: { id: string, base64code: string, created: string }[] = res['results']['vitae']['results'];
-          let proof_shown: string
-          if (proof_list.length !== 0) {
-            // proof_shown = "data:image/jpeg;base64," + Buffer.from(proof_list[proof_list.length - 1].base64code).toString();
-            proof_shown = "data:application/pdf;base64," + Buffer.from(proof_list[proof_list.length - 1].base64code).toString();
-            setPracticeDocument(proof_shown);
-          } else setPracticeDocument('x');
-          let resume_shown: string;
-          if (_resume_list.length !== 0) {
-            // resume_shown = "data:image/png;base64," + Buffer.from(_resume_list[_resume_list.length - 1].base64code).toString();
-            resume_shown = "data:application/pdf;base64," + Buffer.from(_resume_list[_resume_list.length - 1].base64code).toString();
-            setResume(resume_shown);
-          } else setResume('x');
-          // setHistoryPracticeDocumentTableBody(
-          //   proof_list.map(x => [x.id, x.created])
-          // );
-          // setHistoryResumeTableBody(
-          //   _resume_list.map(x => [x.id, x.created])
-          // );
-          setHistoryPracticeTableDataSource(proof_list.map(x => { return { id: x.id, created: x.created } }));
-          setHistoryResumeTableDataSource(_resume_list.map(x => { return { id: x.id, created: x.created } }));
-          setResumeList(_resume_list);
-          setPracticeDocumentList(proof_list);
-          const _annex_list = new Array<{ id: string, base64code: string, created: string }>().concat(_resume_list, proof_list);
-          console.log('_annex_list: ', _annex_list);
-          setAnnexList(_annex_list);
-        } else {
-          alert('后台拉取信息失败', 'danger');
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        alert('后台拉取信息失败', 'danger')
-      });
+    fetchAnnex();
   }, []);
   
+  const fetchAnnex = () => {
+    server.fetchAnnex()
+    .then(res => {
+      console.log(res);
+      if (res['ok']) {
+        let proof_list: { id: string, base64code: string, created: string }[] = res['results']['proof']['results'];
+        let _resume_list: { id: string, base64code: string, created: string }[] = res['results']['vitae']['results'];
+        let proof_shown: string
+        if (proof_list.length !== 0) {
+          // proof_shown = "data:image/jpeg;base64," + Buffer.from(proof_list[proof_list.length - 1].base64code).toString();
+          proof_shown = "data:application/pdf;base64," + Buffer.from(proof_list[proof_list.length - 1].base64code).toString();
+          setPracticeDocument(proof_shown);
+        } else setPracticeDocument('x');
+        let resume_shown: string;
+        if (_resume_list.length !== 0) {
+          // resume_shown = "data:image/png;base64," + Buffer.from(_resume_list[_resume_list.length - 1].base64code).toString();
+          resume_shown = "data:application/pdf;base64," + Buffer.from(_resume_list[_resume_list.length - 1].base64code).toString();
+          setResume(resume_shown);
+        } else setResume('x');
+        // setHistoryPracticeDocumentTableBody(
+        //   proof_list.map(x => [x.id, x.created])
+        // );
+        // setHistoryResumeTableBody(
+        //   _resume_list.map(x => [x.id, x.created])
+        // );
+        setHistoryPracticeTableDataSource(proof_list.map(x => { return { id: x.id, created: x.created } }));
+        setHistoryResumeTableDataSource(_resume_list.map(x => { return { id: x.id, created: x.created } }));
+        setResumeList(_resume_list);
+        setPracticeDocumentList(proof_list);
+        const _annex_list = new Array<{ id: string, base64code: string, created: string }>().concat(_resume_list, proof_list);
+        console.log('_annex_list: ', _annex_list);
+        setAnnexList(_annex_list);
+      } else {
+        // alert('后台拉取信息失败', 'danger');
+        messageApi.error('后台拉取信息失败');
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      // alert('后台拉取信息失败', 'danger')
+      messageApi.error('后台拉取信息失败');
+    });
+  }
 
   return (
     <>
+    {contextHolder}
       <div className="dashboard-base-panel" style={{ height: '100vh', display: 'flex' }}>
         {/* 抬头 */}
         <div className="dashboard-model-title" >
@@ -339,7 +354,7 @@ export default function Page() {
         <button className='btn btn-danger' onClick={() => delAnnex()}>确认</button>
       ))} />
 
-      <Alert shown={alertShown} message={alertMessage} close_function={() => alertClear()} type={alertType} />
+      {/* <Alert shown={alertShown} message={alertMessage} close_function={() => alertClear()} type={alertType} /> */}
     </>
   )
 }

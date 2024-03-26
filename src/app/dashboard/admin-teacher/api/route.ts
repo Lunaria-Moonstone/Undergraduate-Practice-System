@@ -1,4 +1,4 @@
-import { insertSafty } from "@/utils/db";
+import { executeQuery, insertSafty } from "@/utils/db";
 import { RouterFactory } from "@/utils/factory";
 // import { nanoid } from "nanoid";
 import { NextRequest, NextResponse } from "next/server";
@@ -6,8 +6,37 @@ import uuid from 'node-uuid';
 
 const router = new RouterFactory('teacher');
 
-export async function GET() {
-  return await router.GET('*', );
+export async function GET(request: NextRequest) {
+  // return await router.GET('*', );
+  let results: unknown;
+  let query = request.nextUrl.searchParams;
+  try {
+    if (query.has('keyword')) {
+      let keyword = query.get('keyword');
+      results = await executeQuery({
+        query: `
+        SELECT * FROM teacher WHERE name LIKE ? OR number LIKE ?
+        `,
+        values: ['%' + keyword + '%', '%' + keyword + '%']
+      });
+    } else {
+      results = await executeQuery({
+        query: `
+        SELECT * FROM teacher
+        `,
+        values: []
+      });
+    }
+  } catch (error) {
+    results = error;
+  } finally {
+    const blob = new Blob([JSON.stringify(results, null, 2)], {
+      type: 'application/json',
+    });
+    return new Response(blob, {
+      status: 200,
+    });
+  }
 }
 
 export async function POST(request: NextRequest) {

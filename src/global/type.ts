@@ -30,7 +30,7 @@ export interface TableColumn {
 export type NavItems = Array<NavItem>;
 export type FormItems = Array<FormItem>;
 export type TableColumns = Array<TableColumn>;
-export type TableDataSource = Array<{ [key: string]: string | number | undefined }>
+export type TableDataSource = Array<{ [key: string]: React.Key | string | number | undefined }>
 
 /**
  * 后台处理类型

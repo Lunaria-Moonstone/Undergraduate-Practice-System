@@ -32,11 +32,13 @@ export default function Page() {
     id: `modal-${modalName}`,
     shown: modalStates[`${modalName}ModalShown`],
     close_function: () => toggleModal(`${modalName}ModalShown`),
+    hide_close_btn: true,
     modal_title: title,
     modal_btns: (
       <>
         {buttons}
-        <button className='btn btn-secondary' onClick={() => toggleModal(modalName)}>关闭</button>
+        {/* <button className='btn btn-secondary' onClick={() => toggleModal(modalName)}>关闭</button> */}
+        <Button onClick={() => toggleModal(modalName)}>关闭</Button>
       </>
     ),
     children,
@@ -134,6 +136,7 @@ export default function Page() {
         // setTableBody(res.map(x => [x.id, x.student_name, x.job_name, x.progress]));
         setTableDataSource(res.map(x => {
           return {
+            key: x.id as React.Key,
             id: x.id,
             student_name: x.student_name,
             job_name: x.job_name,

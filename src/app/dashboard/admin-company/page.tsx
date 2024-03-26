@@ -124,6 +124,7 @@ export default function Page() {
         // setTableBody(res.map(x => [x.id, x.name, x.phone, x.mail]));
         setTableDataSource(res.map(x => {
           return {
+            key: x.id as React.Key,
             id: x.id,
             name: x.name,
             phone: x.phone,

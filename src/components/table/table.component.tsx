@@ -36,7 +36,9 @@ interface TableProps {
   check_change_function?: (id_list: string[]) => void
 }
 
-interface TableState { }
+interface TableState {
+  selectedRowKeys: React.Key[]
+}
 
 export default class Table extends Component<TableProps, TableState> {
   // table_id: string;
@@ -54,10 +56,12 @@ export default class Table extends Component<TableProps, TableState> {
   // max_item: number;
 
   constructor(props: TableProps) {
-    
+
     super(props);
 
-    
+    this.state = {
+      selectedRowKeys: []
+    }
     // this.table_id = props.table_id;
     // this.table_head = props.table_head;
     // this.table_body = props.table_body;
@@ -203,6 +207,13 @@ export default class Table extends Component<TableProps, TableState> {
   //   this.submitChange();
   // }
 
+  // onSelectChange (newSelectedRowKeys: React.Key[]) {
+  //   console.log('selectedRowKeys changed: ', newSelectedRowKeys);
+  //   this.setState({
+  //     selectedRowKeys: newSelectedRowKeys,
+  //   })
+  // };
+
   render(): ReactNode {
     return (
       <>
@@ -230,16 +241,28 @@ export default class Table extends Component<TableProps, TableState> {
           </div>
         </div> */}
         <div className='table-main'>
-          <AntdTable 
+          <AntdTable
             dataSource={this.props.dataSource}
             columns={this.props.columns}
             style={{ height: '100%', maxHeight: '100%', minHeight: '100%', minWidth: '100%' }}
             // scroll={{ y: '100%' }}
-            rowSelection={ this.props.check_change_function ? { type: 'checkbox', onChange: (selectedRowKeys, selectedRows) => {
+            // rowSelection={ this.props.check_change_function ? { type: 'checkbox', onChange: (selectedRowKeys, selectedRows) => {
+            //   if (this.props.check_change_function) {
+            //     this.props.check_change_function(selectedRows.map(x => x.id as string));
+            //   }
+            // }} : undefined }
+            // rowSelection={{
+            //   selectedRowKeys: this.state.selectedRowKeys, type: 'checkbox', onChange: (selectedRowKeys, selectedRows) => {
+            //     console.log(selectedRowKeys, selectedRows)
+            //     this.setState({ selectedRowKeys });
+            //   }
+            // }}
+            rowSelection={{ selectedRowKeys: this.state.selectedRowKeys, onChange: (currSelectedRowKeys) => {
+              this.setState({ selectedRowKeys: currSelectedRowKeys })
               if (this.props.check_change_function) {
-                this.props.check_change_function(selectedRows.map(x => x.id as string));
+                this.props.check_change_function(currSelectedRowKeys.map(x => x.toString()));
               }
-            }} : undefined }
+            }}}
           />
         </div>
       </>

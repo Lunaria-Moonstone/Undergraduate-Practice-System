@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 
 import { Students, FormItems, TableColumns, TableDataSource } from '@/global/type';
 import server from './admin-student.api';
@@ -10,8 +10,9 @@ import Modal from '@/components/modal/modal.component';
 import Form from '@/components/form/form.component';
 import Table, { TableLineActions } from '@/components/table/table.component';
 import Alert from '@/components/alert/alert.component';
-import { Button, Input, Space, message } from 'antd';
+import { Button, Input, Space, Upload, message } from 'antd';
 import Search from 'antd/es/transfer/search';
+import { UploadOutlined } from '@ant-design/icons';
 
 export default function Page() {
 
@@ -21,6 +22,7 @@ export default function Page() {
   const [addModalShown, setAddModalShown] = useState(false);
   const [deleteModalShown, setDeleteModalShown] = useState(false);
   const [exportModalShown, setExportModalShown] = useState(false);
+  const [importModalShown, setImportModalShown] = useState(false);
   // const [alertShown, setAlertShown] = useState<boolean>(false);
   // const [alertMessage, setAlertMessage] = useState<string>('');
   // const [alertType, setAlertType] = useState<'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark'>('info');
@@ -34,6 +36,7 @@ export default function Page() {
   //   setAlertShown(false);
   // }
 
+  const [search_keyword, setSearchKeyword] = useState<string>('');
   const [add_form_error_msg, setAddFormErrorMsg] = useState('');
   const [edit_form_error_msg, setEditFormErrorMsg] = useState('');
   const [del_targets, setDelTargets] = useState<string | string[]>();
@@ -106,6 +109,7 @@ export default function Page() {
         // ]));
         setTableDataSource(res.map(x => {
           return {
+            key: x.id as React.Key,
             id: x.id,
             name: x.name,
             number: x.number,
@@ -146,11 +150,11 @@ export default function Page() {
         // alert("添加失败, 后台错误", 'danger');
         messageApi.error('添加失败，后台错误')
       })
-  }
+  };
   const delMutiple = () => {
     setDelTargets(checked_id_list);
     setDeleteModalShown(true);
-  }
+  };
   const delConfirm = async () => {
     if (!del_targets || typeof del_targets === 'object' && del_targets.length === 0) {
       setDeleteModalShown(false);
@@ -188,6 +192,31 @@ export default function Page() {
           setDelTargets(undefined);
         })
     }
+  };
+  const search = (keyword: string) => {
+    server.searchStudent(keyword)
+      .then(res => {
+        setTableDataSource(res.map(x => {
+          return {
+            id: x.id,
+            name: x.name,
+            number: x.number,
+            grade: x.grade,
+            phone: x.phone,
+            mail: x.mail,
+            performence: x.performence,
+            has_vitae: Buffer.from(x.has_vitae)[0] ? '有' : '无',
+            has_proof: Buffer.from(x.has_proof)[0] ? '有' : '无',
+            score: x.score !== undefined && x.score !== -1 ? x.score : '未录入实习成绩'
+          }
+        }))
+      })
+      .catch(_ => {
+        messageApi.error('搜索失败，后台出错')
+      })
+  };
+  const importConfirm = async () => {
+
   }
 
   return (
@@ -204,8 +233,8 @@ export default function Page() {
           <div className="dashboard-model-buttons">
             <Button type='primary' onClick={() => setAddModalShown(true)}>新增</Button>
             <Button onClick={() => delMutiple()} danger>删除</Button>
-            <Button onClick={() => { }}>导入</Button>
-            <Button onClick={() => { setExportModalShown(true) }}>导出</Button>
+            <Button onClick={() => setImportModalShown(true)}>导入</Button>
+            {/* <Button onClick={() => { setExportModalShown(true) }}>导出</Button> */}
             {/* <button className="btn btn-secondary">导入</button>
             <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button> */}
           </div>
@@ -213,8 +242,8 @@ export default function Page() {
             {/* <Search placeholder="搜索"  /> */}
             <Space>
               <Space.Compact>
-                <Input placeholder="输入关键字" />
-                <Button type="primary">搜索</Button>
+                <Input placeholder="输入关键字" onChange={(e) => setSearchKeyword(e.currentTarget.value)} />
+                <Button type="primary" onClick={() => search(search_keyword)}>搜索</Button>
               </Space.Compact>
             </Space>
           </div>
@@ -259,6 +288,16 @@ export default function Page() {
         </>
       }>
         是否将选定内容导出至外部
+      </Modal>
+
+      <Modal shown={importModalShown} modal_title='导入文件' close_function={() => setImportModalShown(false)} modal_btns={
+        <Button type='primary' onClick={() => importConfirm()}>确定</Button>
+      }>
+        <Upload name='file' action='/dashboard/import-excel' headers={{
+          role: 'students'
+        }}>
+          <Button icon={<UploadOutlined />}>点击上传</Button>
+        </Upload>
       </Modal>
 
       {/* <Alert shown={alertShown} message={alertMessage} close_function={() => alertClear()} type={alertType} /> */}

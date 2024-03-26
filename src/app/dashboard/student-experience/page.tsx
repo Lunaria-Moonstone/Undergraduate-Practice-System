@@ -10,12 +10,13 @@ import Table, { TableLineActions } from '@/components/table/table.component';
 import './student-experience.part.css';
 import Alert from '@/components/alert/alert.component';
 import { formInput } from '@/utils/input';
-import { Button, Input, Space } from 'antd';
+import { Button, Input, Space, message } from 'antd';
 
 export default function Page() {
 
   let checked_id_list: string[] = [];
 
+  const [messageApi, contextHolder] = message.useMessage();
   const [modalStates, setModalStates] = useState<{ [key: string]: boolean }>({
     addModalShown: false,
     delModalShown: false,
@@ -38,20 +39,20 @@ export default function Page() {
     children,
   });
 
-  const [alertState, setAlertState] = useState<{ alertShown: boolean, alertMessage: string, alertType: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark' }>({
-    alertShown: false,
-    alertMessage: '',
-    alertType: 'info'
-  });
-  const alertProps = () => ({
-    shown: alertState['alertShown'],
-    type: alertState['alertType'],
-    message: alertState['alertMessage'],
-    close_function: () => setAlertState({ alertShown: false, alertMessage: '', alertType: 'info' })
-  });
-  const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
-    setAlertState({ alertShown: true, alertMessage: message, alertType: type });
-  };
+  // const [alertState, setAlertState] = useState<{ alertShown: boolean, alertMessage: string, alertType: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark' }>({
+  //   alertShown: false,
+  //   alertMessage: '',
+  //   alertType: 'info'
+  // });
+  // const alertProps = () => ({
+  //   shown: alertState['alertShown'],
+  //   type: alertState['alertType'],
+  //   message: alertState['alertMessage'],
+  //   close_function: () => setAlertState({ alertShown: false, alertMessage: '', alertType: 'info' })
+  // });
+  // const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
+  //   setAlertState({ alertShown: true, alertMessage: message, alertType: type });
+  // };
 
 
   // const experiencies: StudentPracticeExperiencies = server.fetchExperience();
@@ -104,6 +105,24 @@ export default function Page() {
   // });
 
   useEffect(() => {
+    fetchExperience();
+    server.fetchCompanies()
+      .then(res => {
+        if (res) {
+          setCompanyOpts(res.map(x => { return { label: x.name, value: x.id } }))
+        } else {
+          // alert('后台拉取信息错误', 'danger');
+          messageApi.error('后台拉取信息错误');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        // alert('后台拉取信息错误', 'danger');
+        messageApi.error('后台拉取信息错误');
+      });
+  }, []);
+
+  const fetchExperience = () => {
     server.fetchExperience()
       .then(res => {
         if (res) {
@@ -118,27 +137,16 @@ export default function Page() {
             }
           }))
         } else {
-          alert('后台拉取信息错误', 'danger');
+          // alert('后台拉取信息错误', 'danger');
+          messageApi.error('后台拉取信息错误');
         }
       })
       .catch(err => {
         console.error(err);
-        alert('后台拉取信息错误', 'danger');
+        // alert('后台拉取信息错误', 'danger');
+        messageApi.error('后台拉取信息错误');
       });
-    server.fetchCompanies()
-      .then(res => {
-        if (res) {
-          setCompanyOpts(res.map(x => { return { label: x.name, value: x.id } }))
-        } else {
-          alert('后台拉取信息错误', 'danger');
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        alert('后台拉取信息错误', 'danger');
-      });
-  }, []);
-
+  }
   const checkChangeRecall = (id_list: string[]) => {
     // setCheckedIdList(id_list);
     checked_id_list = id_list;
@@ -160,15 +168,18 @@ export default function Page() {
         console.log(res);
         if (res) {
           toggleModal('add');
-          location.reload();
+          // location.reload();
+          fetchExperience();
         } else {
           toggleModal('add');
-          alert('后台出错，添加失败', 'danger');
+          // alert('后台出错，添加失败', 'danger');
+          messageApi.error('后台出错，添加失败');
         }
       })
       .catch(err => {
         toggleModal('add');
-        alert('后台出错，添加失败', 'danger');
+        // alert('后台出错，添加失败', 'danger');
+        messageApi.error('后台出错，添加失败');
       });
   };
   const delChecked = async () => {
@@ -179,7 +190,8 @@ export default function Page() {
   const delConfirm = async () => {
     if (!del_target || (typeof del_target === 'object' && del_target.length === 0)) {
       toggleModal('del');
-      alert('删除编号为空', 'danger');
+      // alert('删除编号为空', 'danger');
+      messageApi.error('删除编号为空');
       return;
     }
     if (typeof del_target === 'string') {
@@ -190,13 +202,15 @@ export default function Page() {
             location.reload();
           } else {
             toggleModal('del');
-            alert('后台出错，删除失败', 'danger');
+            // alert('后台出错，删除失败', 'danger');
+            messageApi.error('后台出错，删除失败')
             return;
           }
         })
         .catch(err => {
           toggleModal('del');
-          alert('后台出错，删除失败', 'danger');
+          // alert('后台出错，删除失败', 'danger');
+          messageApi.error('后台出错，删除失败')
           return;
         })
     } else {
@@ -214,6 +228,7 @@ export default function Page() {
 
   return (
     <>
+    {contextHolder}
       <div className="dashboard-base-panel">
         <div className="dashboard-model-title">
           <h2>实习经历一览</h2>
@@ -305,7 +320,7 @@ export default function Page() {
         是否将选定内容导出至外部
       </Modal> */}
 
-      <Alert {...alertProps()} />
+      {/* <Alert {...alertProps()} /> */}
     </>
   )
 }

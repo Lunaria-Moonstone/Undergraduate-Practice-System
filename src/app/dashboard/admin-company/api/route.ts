@@ -8,12 +8,21 @@ import axios from 'axios';
 export async function GET(request: NextRequest) {
   let result: unknown;
   let query = request.nextUrl.searchParams;
-  let id = query.get('id');
+  // let id = query.get('id');
   try {
-    if (id)
-      result = await select({ field: '*', table: 'company', where: { id }, order: { name: {} } });
-    else 
-      result = await select({ field: '*', table: 'company', where: {  }, order: { name: {} } });
+    // if (id)
+    //   result = await select({ field: '*', table: 'company', where: { id }, order: { name: {} } });
+    // else 
+    //   result = await select({ field: '*', table: 'company', where: {  }, order: { name: {} } });
+    let param_list = [];
+    if (query.has('id')) param_list.push(query.get('id'));
+    if (query.has('keyword')) param_list.push(`%${query.get('keyword')}%`);
+    result = await executeQuery({
+      query: `
+        SELECT * FROM company WHERE 1=1 ${query.has('id') ? 'AND id=? ' : ''} ${query.has('keyword') ? ' AND name LIKE ? ' : ''}
+      `,
+      values: param_list
+    })
   } catch (error) {
     result = error;
   } finally {

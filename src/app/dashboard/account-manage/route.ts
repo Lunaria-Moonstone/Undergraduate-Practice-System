@@ -39,16 +39,18 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   let results: unknown;
   let query = request.nextUrl.searchParams;
-  let id = query.get('id');
-  if (id === null) return new NextResponse(new Blob([JSON.stringify({ ok: false, error: 'id should not be empty'})]));
+  // let id = query.get('id');
+  let foreign_id = query.get('foreign_id');
+  let role = query.get('role');
+  if (foreign_id === null || role === null) return new NextResponse(new Blob([JSON.stringify({ ok: false, error: 'required field should not be empty'})]));
 
   try {
     results = await executeQuery({
       query: `
         DELETE FROM \`user\`
-        WHERE id=?
+        WHERE foreign_id=? AND role=?
       `,
-      values: [id]
+      values: [foreign_id, Number(role)]
     });
   } catch (err: unknown) {
     results = err;

@@ -52,5 +52,13 @@ export default {
       data: data
     });
     return results.data['ok'];
+  },
+  async searchTeacher(keyword: string): Promise<Teachers> {
+    let teachers: Teachers = (await axios({
+      url: require_route,
+      method: 'get',
+      params: { keyword }
+    })).data['results'] as Teachers;
+    return teachers;
   }
 }
