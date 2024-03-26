@@ -42,6 +42,9 @@ export default {
       method: 'delete',
       params: { id }
     });
+    if (results.data['ok']) {
+      AccountServer.delAccount(1, id);
+    }
     return results.data['ok'];
   }, 
   async updateStudent(id: string, data: { [key: string]: string }): Promise<boolean> {

@@ -119,6 +119,10 @@ export default function Page() {
   //     });
   // }, []);
   useEffect(() => {
+    fetchCompanies();
+  }, [refresh]);
+
+  const fetchCompanies = () => {
     server.fetchCompanies()
       .then(res => {
         // setTableBody(res.map(x => [x.id, x.name, x.phone, x.mail]));
@@ -132,8 +136,7 @@ export default function Page() {
           }
         }))
       });
-  }, [refresh]);
-
+  };
   const add_form_items: FormItems = [
     { label: '企业名称', type: 'input' },
     { label: '联系电话', type: 'input' },
@@ -201,7 +204,8 @@ export default function Page() {
           // setRefresh((val) => !val);
           setAddModalShown(false);
           setTimeout(() => {
-            location.reload();
+            // location.reload();
+            fetchCompanies();
           }, 2000);
         } else {
           setAddFormErrorMsg('出现错误');

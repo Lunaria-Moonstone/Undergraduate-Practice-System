@@ -37,6 +37,9 @@ export default {
       method: 'delete',
       params: { id }
     });
+    if (results.data['ok']) {
+      AccountServer.delAccount(3, id);
+    }
     return results.data['ok'];
   }, 
   async updateCompany(id: string, data: { [key: string]: string }): Promise<boolean> {

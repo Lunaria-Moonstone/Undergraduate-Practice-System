@@ -10,5 +10,14 @@ export default {
     }).catch(err => {
       console.error('addAccount error: ', err);
     });
+  },
+  delAccount(role: number, foreign_id: string) {
+    axios({
+      url: '/dashboard/account-manage/',
+      method: 'delete',
+      data: { role, foreign_id },
+    }).catch(err => {
+      console.error('delAccount error: ', err);
+    })
   }
 }

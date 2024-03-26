@@ -172,11 +172,14 @@ export default function Page() {
             messageApi.error(del_target + " 删除失败")
           });
       }
-      location.reload();
+      // location.reload();
+      fetchStudents();
     } else {
       server.delStudent(del_targets)
         .then(res => {
-          if (res) location.reload();
+          if (res) 
+            // location.reload();
+            fetchStudents();
           else {
             setDeleteModalShown(false);
             // alert('删除失败，后台出错', "danger");
