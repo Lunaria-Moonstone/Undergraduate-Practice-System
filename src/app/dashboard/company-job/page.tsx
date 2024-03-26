@@ -11,7 +11,7 @@ import Form from "@/components/form/form.component";
 import './company-job.part.css';
 import Alert from "@/components/alert/alert.component";
 import { formInput } from "@/utils/input";
-import { Button, Input, Space } from "antd";
+import { Button, Input, Space, message } from "antd";
 
 export default function Page() {
 
@@ -24,11 +24,13 @@ export default function Page() {
   const [add_form_error_msg, setAddFormErrorMsg] = useState('');
   const [del_target, setDelTarget] = useState<string | string[]>();
 
+  const [messageApi, contextHolder] = message.useMessage();
   const [modalStates, setModalStates] = useState<{ [key: string]: boolean }>({
     addModalShown: false,
     delModalShown: false,
     infoModalShown: false,
     editModalShown: false,
+    exportModalShown: false,
   });
   const toggleModal = (modalName: string) => {
     setModalStates(prev => ({ ...prev, [`${modalName}ModalShown`]: !prev[`${modalName}ModalShown`] }));
@@ -36,31 +38,33 @@ export default function Page() {
   const modalProps = (modalName: string, title: string, children: React.ReactNode, buttons?: React.ReactNode) => ({
     id: `modal-${modalName}`,
     shown: modalStates[`${modalName}ModalShown`],
+    hide_close_btn: true,
     close_function: () => toggleModal(`${modalName}ModalShown`),
     modal_title: title,
     modal_btns: (
       <>
         {buttons}
-        <button className='btn btn-secondary' onClick={() => toggleModal(modalName)}>关闭</button>
+        {/* <button className='btn btn-secondary' onClick={() => toggleModal(modalName)}>关闭</button> */}
+        <Button onClick={() => toggleModal(modalName)}>关闭</Button>
       </>
     ),
     children,
   });
 
-  const [alertState, setAlertState] = useState<{ alertShown: boolean, alertMessage: string, alertType: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark' }>({
-    alertShown: false,
-    alertMessage: '',
-    alertType: 'info'
-  });
-  const alertProps = () => ({
-    shown: alertState['alertShown'],
-    type: alertState['alertType'],
-    message: alertState['alertMessage'],
-    close_function: () => setAlertState({ alertShown: false, alertMessage: '', alertType: 'info' })
-  });
-  const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
-    setAlertState({ alertShown: true, alertMessage: message, alertType: type });
-  };
+  // const [alertState, setAlertState] = useState<{ alertShown: boolean, alertMessage: string, alertType: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark' }>({
+  //   alertShown: false,
+  //   alertMessage: '',
+  //   alertType: 'info'
+  // });
+  // const alertProps = () => ({
+  //   shown: alertState['alertShown'],
+  //   type: alertState['alertType'],
+  //   message: alertState['alertMessage'],
+  //   close_function: () => setAlertState({ alertShown: false, alertMessage: '', alertType: 'info' })
+  // });
+  // const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
+  //   setAlertState({ alertShown: true, alertMessage: message, alertType: type });
+  // };
 
   const formAddItems: FormItems = [
     { label: '岗位名称', type: 'input' },
@@ -136,28 +140,39 @@ export default function Page() {
             () => {
               let tmp_list = job_list_ref.current.filter(x => x.id === record.id);
               if (tmp_list.length === 0) {
-                alert('岗位不存在，联系后台管理员', "danger");
+                // alert('岗位不存在，联系后台管理员', "danger");
+                messageApi.error('岗位不存在，联系后台管理员');
               }
+              toggleModal('info')
               const target = tmp_list[0];
               // (document.getElementById("job-info-id") as HTMLInputElement).value = target.id;
-              (document.getElementById("job-info-title") as HTMLElement).innerText = target.name;
-              (document.getElementById("job-info-salary") as HTMLElement).innerText = target.salary;
-              (document.getElementById("job-info-descript") as HTMLElement).innerText = target.descript;
-              toggleModal('info')
+              setTimeout(() => {
+                if (document.getElementById("job-info-title") !== undefined) {
+                  (document.getElementById("job-info-title") as HTMLElement).innerText = target.name;
+                  (document.getElementById("job-info-salary") as HTMLElement).innerText = target.salary;
+                  (document.getElementById("job-info-descript") as HTMLElement).innerText = target.descript;
+                }
+              }, 1000);
+              // console.log(target);
             }
           }>详细</Button>
           <Button type="link" onClick={
             () => {
               let tmp_list = job_list_ref.current.filter(x => x.id === record.id);
               if (tmp_list.length === 0) {
-                alert('岗位不存在，联系后台管理员', "danger");
+                // alert('岗位不存在，联系后台管理员', "danger");
+                messageApi.error('岗位不存在，联系后台管理员');
               }
-              const target = tmp_list[0];
-              (document.getElementById("job-edit-id") as HTMLInputElement).value = target.id;
-              (document.getElementById("job-edit-title") as HTMLInputElement).value = target.name;
-              (document.getElementById("job-edit-salary") as HTMLInputElement).value = target.salary;
-              (document.getElementById("job-edit-descript") as HTMLInputElement).value = target.descript;
               toggleModal('edit')
+              const target = tmp_list[0];
+              setTimeout(() => {
+                if (document.getElementById("job-edit-id") !== undefined) {
+                  (document.getElementById("job-edit-id") as HTMLInputElement).value = target.id;
+                  (document.getElementById("job-edit-title") as HTMLInputElement).value = target.name;
+                  (document.getElementById("job-edit-salary") as HTMLInputElement).value = target.salary;
+                  (document.getElementById("job-edit-descript") as HTMLInputElement).value = target.descript;    
+                }
+              }, 1000);
             }
           }>修改</Button>
         </Space>
@@ -170,6 +185,10 @@ export default function Page() {
     job_list_ref.current = job_list;
   }, [job_list])
   useEffect(() => {
+    fetchLocateJobs();
+  }, []);
+
+  const fetchLocateJobs = () => {
     server.fetchJobs()
       .then(res => {
         if (res) {
@@ -184,13 +203,14 @@ export default function Page() {
           setJobList(res);
         }
         else
-          alert('后台错误，获取岗位信息失败', 'danger');
+          // alert('后台错误，获取岗位信息失败', 'danger');
+          messageApi.error('后台错误，获取岗位信息失败');
       })
       .catch(err => {
-        alert('后台错误，获取岗位信息失败', 'danger');
+        // alert('后台错误，获取岗位信息失败', 'danger');
+        messageApi.error('后台错误，获取岗位信息失败');
       })
-  }, []);
-
+  }
   const checkChangeRecall = (id_list: string[]) => {
     checked_id_list = id_list;
   };
@@ -207,16 +227,19 @@ export default function Page() {
       .then(res => {
         console.log(res);
         if (res) {
-          location.reload();
+          // location.reload();
+          fetchLocateJobs();
         } else {
           toggleModal('add');
-          alert('后台错误', "danger");
+          // alert('后台错误', "danger");
+          messageApi.error('后台错误');
         }
       })
       .catch(err => {
         console.error(err);
         toggleModal('add');
-        alert('后台错误', "danger");
+        // alert('后台错误', "danger");
+        messageApi.error('后台错误');
       })
   };
   const delMark = () => {
@@ -226,7 +249,8 @@ export default function Page() {
   const delConfirm = async () => {
     if (!del_target || (typeof del_target === 'object' && del_target.length === 0)) {
       toggleModal('del');
-      alert('删除编号为空', "danger");
+      // alert('删除编号为空', "danger");
+      messageApi.error('删除编号为空');
       console.error('删除编号为空')
       return;
     }
@@ -237,18 +261,21 @@ export default function Page() {
             location.reload();
           else {
             toggleModal('del');
-            alert('后台错误删除失败', "danger");
+            // alert('后台错误删除失败', "danger");
+            messageApi.error('后台错误删除失败');
           }
         })
         .catch(err => {
           toggleModal('del');
-          alert('后台错误删除失败', "danger");
+          // alert('后台错误删除失败', "danger");
+          messageApi.error('后台错误删除失败');
         })
     } else {
       for (let target of del_target) {
         await server.delJob(target)
           .catch(err => {
-            alert(target + " 删除失败", "danger");
+            // alert(target + " 删除失败", "danger");
+            messageApi.error(target + " 删除失败");
           });
       }
       location.reload();
@@ -269,18 +296,21 @@ export default function Page() {
           location.reload();
         } else {
           toggleModal('add');
-          alert('后台错误', "danger");
+          // alert('后台错误', "danger");
+          messageApi.error('后台错误');
         }
       })
       .catch(err => {
         console.error(err);
         toggleModal('add');
-        alert('后台错误', "danger");
+        // alert('后台错误', "danger");
+        messageApi.error('后台错误');
       })
   }
 
   return (
     <>
+      {contextHolder}
       <div className="dashboard-base-panel">
         {/* 抬头 */}
         <div className="dashboard-model-title">
@@ -325,7 +355,8 @@ export default function Page() {
           </div>
         </>
       ), (
-        <button className="btn btn-primary" onClick={saveAdd}>确认</button>
+        // <button className="btn btn-primary" onClick={saveAdd}>确认</button>
+        <Button type="primary" onClick={saveAdd}>确认</Button>
       ))} />
 
       {/* 岗位信息 */}
@@ -351,7 +382,8 @@ export default function Page() {
       <Modal {...modalProps('del', '删除确认', (
         <p>删除内容后无法恢复，是否继续</p>
       ), (
-        <button className="btn btn-danger" onClick={delConfirm}>确认</button>
+        // <button className="btn btn-danger" onClick={delConfirm}>确认</button>
+        <Button type="primary" danger onClick={delConfirm}>确认</Button>
       ))} />
 
       <Modal {...modalProps('edit', '修改', (
@@ -370,23 +402,20 @@ export default function Page() {
           </div>
           <div className="mb-3">
             <label className="form-label">描述</label>
-            <input className="form-control" placeholder="描述" type="textarea" id="job-edit-descript"  />
+            <input className="form-control" placeholder="描述" type="textarea" id="job-edit-descript" />
           </div>
         </form>
       ), (
-        <button className="btn btn-primary" onClick={saveEdit}>确认</button>
+        // <button className="btn btn-primary" onClick={saveEdit}>确认</button>
+        <Button type="primary" onClick={saveEdit}>确认</Button>
       ))} />
 
       {/* 岗位导出设置 */}
-      {/* <Modal id="modal-export" shown={exportModalShown} close_function={() => setExportModalShown(false)} modal_title="是否确认导出" modal_btns={
-        <>
-          <button className="btn btn-secondary" onClick={() => setExportModalShown(false)}>关闭</button>
-        </>
-      }>
-        是否将选定内容导出至外部
-      </Modal> */}
+      <Modal {...modalProps('export', '导出确认', (
+        <p>是否将选定内容导出至外部</p>
+      ))} />
 
-      <Alert {...alertProps()} />
+      {/* <Alert {...alertProps()} /> */}
     </>
   )
 }

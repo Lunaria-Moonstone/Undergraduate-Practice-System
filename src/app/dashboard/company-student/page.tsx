@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import server from './company-student.api';
 import Modal from "@/components/modal/modal.component";
 import './company-student.part.css'
-import { Button, Space } from "antd";
+import { Button, Space, message } from "antd";
 
 export default function Page() {
 
@@ -20,6 +20,7 @@ export default function Page() {
   // });
   // const student: StudentWithJob = server.fetchStudent();
 
+  const [messageApi, contextHolder] = message.useMessage();
   const [modalStates, setModalStates] = useState<{ [key: string]: boolean }>({
     infoModalShown: false,
     feedbackModalShown: false,
@@ -41,20 +42,20 @@ export default function Page() {
     children,
   });
 
-  const [alertState, setAlertState] = useState<{ alertShown: boolean, alertMessage: string, alertType: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark' }>({
-    alertShown: false,
-    alertMessage: '',
-    alertType: 'info'
-  });
-  const alertProps = () => ({
-    shown: alertState['alertShown'],
-    type: alertState['alertType'],
-    message: alertState['alertMessage'],
-    close_function: () => setAlertState({ alertShown: false, alertMessage: '', alertType: 'info' })
-  });
-  const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
-    setAlertState({ alertShown: true, alertMessage: message, alertType: type });
-  };
+  // const [alertState, setAlertState] = useState<{ alertShown: boolean, alertMessage: string, alertType: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark' }>({
+  //   alertShown: false,
+  //   alertMessage: '',
+  //   alertType: 'info'
+  // });
+  // const alertProps = () => ({
+  //   shown: alertState['alertShown'],
+  //   type: alertState['alertType'],
+  //   message: alertState['alertMessage'],
+  //   close_function: () => setAlertState({ alertShown: false, alertMessage: '', alertType: 'info' })
+  // });
+  // const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
+  //   setAlertState({ alertShown: true, alertMessage: message, alertType: type });
+  // };
 
   // const add_form_items: FormItems = [
   //   { label: '' }
@@ -100,7 +101,8 @@ export default function Page() {
             () => {
               const tmp_list = job_audit_list_ref.current.filter(x => x.id === record.id);
               if (tmp_list.length === 0) {
-                alert('请求不存在，联系后台管理员', "danger");
+                // alert('请求不存在，联系后台管理员', "danger");
+                messageApi.error('请求不存在，联系后台管理员');
               }
               const target = tmp_list[0];
               setResume("data:application/pdf;base64," + Buffer.from(target.resume as Buffer).toString());
@@ -123,6 +125,10 @@ export default function Page() {
     console.log('update Ref')
   }, [job_audit_list])
   useEffect(() => {
+    fetchStudents();
+  }, []);
+
+  const fetchStudents = () => {
     server.fetchStudents()
       .then(res => {
         // setTableBody(res.map(x => [x.id, x.student_name, x.job_name, x.progress]));
@@ -136,8 +142,7 @@ export default function Page() {
         }));
         setJobAuditList(res);
       })
-  }, []);
-
+  }
   const openUpdateModal = () => {
     toggleModal('info');
     toggleModal('feedback');
@@ -148,27 +153,32 @@ export default function Page() {
 
     if (!update_target) {
       toggleModal('feedback');
-      alert('编号为空', "danger");
+      // alert('编号为空', "danger");
+      messageApi.error("编号为空");
       return;
     }
 
     server.updateStudent(update_target, progress, message)
       .then(res => {
         if (res) {
-          location.reload();
+          // location.reload();
+          fetchStudents();
         } else {
           toggleModal('feedback');
-          alert('后台错误，更新失败', "danger");
+          // alert('后台错误，更新失败', "danger");
+          messageApi.error("后台错误，更新失败");
         }
       })
       .catch(err => {
         toggleModal('feedback');
-        alert('后台错误，更新失败', "danger");
+        // alert('后台错误，更新失败', "danger");
+        messageApi.error("后台错误，更新失败");
       })
   };
 
   return (
     <>
+    {contextHolder}
       <div className="dashboard-base-panel">
         <div className="dashboard-model-title">
           <h2>应聘人员一览</h2>

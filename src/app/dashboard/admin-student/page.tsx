@@ -77,6 +77,22 @@ export default function Page() {
   // ]);
 
   useEffect(() => {
+    fetchStudents();
+  }, []);
+
+  const add_form_items: FormItems = [
+    { label: '学生姓名', type: 'input' },
+    { label: '学生学号', type: 'input' },
+    {
+      label: '年级', type: 'select', selectOpt: [
+        { label: '2020级', value: '2020' },
+        { label: '2021级', value: '2021' },
+        { label: '2022级', value: '2022' },
+        { label: '2023级', value: '2023' },
+      ]
+    },
+  ];
+  const fetchStudents = () => {
     server.fetchStudents()
       .then(res => {
         // setTableBody(res.map(x => [
@@ -104,20 +120,7 @@ export default function Page() {
         }));
       })
       .catch();
-  }, []);
-
-  const add_form_items: FormItems = [
-    { label: '学生姓名', type: 'input' },
-    { label: '学生学号', type: 'input' },
-    {
-      label: '年级', type: 'select', selectOpt: [
-        { label: '2020级', value: '2020' },
-        { label: '2021级', value: '2021' },
-        { label: '2022级', value: '2022' },
-        { label: '2023级', value: '2023' },
-      ]
-    },
-  ]
+  };
   const saveAdd = () => {
     let form_value: Array<string | number | boolean | undefined> = formInput(document.getElementById('add-form') as HTMLElement);
     let data = { name: form_value[0] as string, number: form_value[1] as string, grade: form_value[2] as string }
@@ -130,7 +133,8 @@ export default function Page() {
         console.log(res)
         if (res) {
           setAddModalShown(false);
-          location.reload();
+          fetchStudents();
+          // location.reload();
         } else {
           setAddModalShown(false);
           // alert("添加失败, 后台错误", 'danger');
@@ -188,7 +192,7 @@ export default function Page() {
 
   return (
     <>
-      { contextHolder }
+      {contextHolder}
       <div className="dashboard-base-panel">
         {/* 抬头 */}
         <div className="dashboard-model-title">
@@ -200,8 +204,8 @@ export default function Page() {
           <div className="dashboard-model-buttons">
             <Button type='primary' onClick={() => setAddModalShown(true)}>新增</Button>
             <Button onClick={() => delMutiple()} danger>删除</Button>
-            <Button onClick={() => {}}>导入</Button>
-            <Button onClick={() => {setExportModalShown(true)}}>导出</Button>
+            <Button onClick={() => { }}>导入</Button>
+            <Button onClick={() => { setExportModalShown(true) }}>导出</Button>
             {/* <button className="btn btn-secondary">导入</button>
             <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button> */}
           </div>
@@ -256,8 +260,6 @@ export default function Page() {
       }>
         是否将选定内容导出至外部
       </Modal>
-
-      
 
       {/* <Alert shown={alertShown} message={alertMessage} close_function={() => alertClear()} type={alertType} /> */}
     </>

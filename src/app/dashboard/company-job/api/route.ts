@@ -1,7 +1,8 @@
 import { RouterFactory } from "@/utils/factory";
-import { nanoid } from "nanoid";
+// import { nanoid } from "nanoid";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import uuid from "node-uuid";
 
 const router = new RouterFactory('job');
 
@@ -29,7 +30,8 @@ export async function POST(request: NextRequest) {
   user = JSON.parse(original_info_from_cookie.value);
 
   let request_body = await (new Response(request.body)).blob();
-  let id = nanoid();
+  // let id = nanoid();
+  let id = uuid.v4();
   let company_id = user.role_id;
   let { name, salary, descript } = JSON.parse((await request_body.text()));
   return await router.POST({ id, company_id, name, salary, descript });

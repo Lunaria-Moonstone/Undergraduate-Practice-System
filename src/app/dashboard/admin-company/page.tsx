@@ -11,7 +11,7 @@ import Table, { TableLineActions } from '@/components/table/table.component';
 import './admin-company.part.css';
 import { useRouter } from 'next/navigation';
 import Alert from '@/components/alert/alert.component';
-import { Button, Input, Space } from 'antd';
+import { Button, Input, Space, message } from 'antd';
 
 export default function Page() {
 
@@ -19,22 +19,23 @@ export default function Page() {
 
   let checked_id_list: string[] = [];
 
+  const [messageApi, contextHolder] = message.useMessage();
   const [addModalShown, setAddModalShown] = useState(false);
   const [editModalShown, setEditModalShown] = useState(false);
   const [deleteModalShown, setDeleteModalShown] = useState(false);
   const [exportModalShown, setExportModalShown] = useState(false);
-  const [alertShown, setAlertShown] = useState<boolean>(false);
-  const [alertMessage, setAlertMessage] = useState<string>('');
-  const [alertType, setAlertType] = useState<'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark'>('info');
-  const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
-    setAlertMessage(message);
-    setAlertType(type);
-    setAlertShown(true);
-  }
-  const alertClear = () => {
-    setAlertMessage("");
-    setAlertShown(false);
-  }
+  // const [alertShown, setAlertShown] = useState<boolean>(false);
+  // const [alertMessage, setAlertMessage] = useState<string>('');
+  // const [alertType, setAlertType] = useState<'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark'>('info');
+  // const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
+  //   setAlertMessage(message);
+  //   setAlertType(type);
+  //   setAlertShown(true);
+  // }
+  // const alertClear = () => {
+  //   setAlertMessage("");
+  //   setAlertShown(false);
+  // }
 
   const [add_form_error_msg, setAddFormErrorMsg] = useState('');
   const [edit_form_error_msg, setEditFormErrorMsg] = useState('');
@@ -100,7 +101,8 @@ export default function Page() {
                 setEditModalShown(true);
               })
               .catch(_ => {
-                alert('获取数据失败', 'danger');
+                // alert('获取数据失败', 'danger');
+                messageApi.error('获取数据失败');
               })
           }} type="link">修改</Button>
         </Space>
@@ -197,12 +199,15 @@ export default function Page() {
         if (res) {
           // setRefresh((val) => !val);
           setAddModalShown(false);
-          location.reload();
+          setTimeout(() => {
+            location.reload();
+          }, 2000);
         } else {
           setAddFormErrorMsg('出现错误');
         }
       })
-      .catch(_ => {
+      .catch(e => {
+        console.error(e)
         setAddFormErrorMsg('出现错误');
       })
       .finally(() => {
@@ -212,7 +217,8 @@ export default function Page() {
   const saveEdit = async () => {
     if (!edit_target) {
       setEditModalShown(false);
-      alert("id不存在", "danger");
+      // alert("id不存在", "danger");
+      messageApi.error('id不存在');
       return;
     }
     let form_value = formInput(document.getElementById('edit-form') as HTMLElement).slice(0, -1);
@@ -225,12 +231,14 @@ export default function Page() {
           location.reload();
         } else {
           setEditModalShown(false);
-          alert("修改失败，后台出错", 'danger');
+          // alert("修改失败，后台出错", 'danger');
+          messageApi.error('修改失败，后台出错');
         }
       })
       .catch(err => {
         setEditModalShown(false);
-        alert("修改失败，后台出错", 'danger');
+        // alert("修改失败，后台出错", 'danger');
+        messageApi.error('修改失败，后台出错');
       })
       .finally(() => {
         setEditTarget(undefined);
@@ -244,7 +252,8 @@ export default function Page() {
   const delConfirm = async () => {
     if (!del_targets || typeof del_targets === 'object' && del_targets.length === 0) {
       setDeleteModalShown(false);
-      alert('删除id列表为空', "danger");
+      // alert('删除id列表为空', "danger");
+      messageApi.error('删除id列表为空');
       return;
     }
     setDeleteModalShown(false);
@@ -253,7 +262,8 @@ export default function Page() {
       for (let del_target of del_targets) {
         await server.delCompany(del_target)
           .catch(err => {
-            alert(del_target + " 删除失败", "danger");
+            // alert(del_target + " 删除失败", "danger");
+            messageApi.error(del_target + " 删除失败");
           });
       }
       location.reload();
@@ -263,12 +273,14 @@ export default function Page() {
           if (res) location.reload();
           else {
             setDeleteModalShown(false);
-            alert('删除失败，后台出错', "danger");
+            // alert('删除失败，后台出错', "danger");
+            messageApi.error('删除失败，后台出错');
           }
         })
         .catch(err => {
           setDeleteModalShown(false);
-          alert('删除失败，后台出错', "danger");
+          // alert('删除失败，后台出错', "danger");
+          messageApi.error('删除失败，后台出错');
         })
         .finally(() => {
           setDelTargets(undefined);
@@ -278,6 +290,7 @@ export default function Page() {
 
   return (
     <>
+      {contextHolder}
       <div className="dashboard-base-panel">
         {/* 抬头 */}
         <div className="dashboard-model-title">
@@ -289,6 +302,8 @@ export default function Page() {
           <div className="dashboard-model-buttons">
             <Button type='primary' onClick={() => setAddModalShown(true)}>新增</Button>
             <Button onClick={() => delMutiple()} danger>删除</Button>
+            <Button >导入</Button>
+            <Button onClick={() => setExportModalShown(true)}>导出</Button>
             {/* <button className="btn btn-secondary">导入</button>
             <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button> */}
           </div>
@@ -308,10 +323,11 @@ export default function Page() {
       </div>
 
       {/* 添加模态框 */}
-      <Modal shown={addModalShown} id='add-modal' modal_title='添加企业' close_function={() => setAddModalShown(false)} modal_btns={
+      <Modal shown={addModalShown} modal_title='添加企业' close_function={() => setAddModalShown(false)} modal_btns={
         <>
-          <button type="button" className="btn btn-primary" onClick={saveAdd}>确认</button>
-          <button type="button" className="btn btn-secondary" onClick={() => setAddModalShown(false)}>关闭</button>
+          {/* <button type="button" className="btn btn-primary" onClick={saveAdd}>确认</button>
+          <button type="button" className="btn btn-secondary" onClick={() => setAddModalShown(false)}>关闭</button> */}
+          <Button type='primary' onClick={saveAdd}>确认</Button>
         </>
       }>
         <Form form_items={add_form_items} form_id="add-form" />
@@ -322,7 +338,7 @@ export default function Page() {
       </Modal>
 
       {/* 修改模态框 */}
-      <Modal id="modal-edit" shown={editModalShown} close_function={() => setEditModalShown(false)} modal_title='修改公司信息' modal_btns={
+      <Modal shown={editModalShown} close_function={() => setEditModalShown(false)} modal_title='修改公司信息' modal_btns={
         <>
           <button className='btn btn-primary' onClick={() => saveEdit()}>确定</button>
           <button className='btn btn-secondary' onClick={() => setEditModalShown(false)}>取消</button>
@@ -336,25 +352,27 @@ export default function Page() {
       </Modal>
 
       {/* 删除确认 */}
-      <Modal id="modal-delete" shown={deleteModalShown} close_function={() => setDeleteModalShown(false)} modal_title="是否确认删除" modal_btns={
+      <Modal shown={deleteModalShown} close_function={() => setDeleteModalShown(false)} modal_title="是否确认删除" modal_btns={
         <>
-          <button className="btn btn-danger" onClick={() => delConfirm()}>确认</button>
-          <button className="btn btn-secondary" onClick={() => setDeleteModalShown(false)}>取消</button>
+          {/* <button className="btn btn-danger" onClick={() => delConfirm()}>确认</button>
+          <button className="btn btn-secondary" onClick={() => setDeleteModalShown(false)}>取消</button> */}
+          <Button type="primary" danger onClick={() => delConfirm()}>确认</Button>
         </>
       }>
         删除内容后无法恢复，是否继续
       </Modal>
 
       {/* 导出设置 */}
-      <Modal id="modal-export" shown={exportModalShown} close_function={() => setExportModalShown(false)} modal_title="是否确认导出" modal_btns={
+      <Modal shown={exportModalShown} close_function={() => setExportModalShown(false)} modal_title="是否确认导出" modal_btns={
         <>
-          <button className="btn btn-secondary" onClick={() => setExportModalShown(false)}>关闭</button>
+          {/* <button className="btn btn-secondary" onClick={() => setExportModalShown(false)}>关闭</button> */}
+          <Button type="primary">确认</Button>
         </>
       }>
         是否将选定内容导出至外部
       </Modal>
 
-      <Alert shown={alertShown} message={alertMessage} close_function={() => alertClear()} type={alertType} />
+      {/* <Alert shown={alertShown} message={alertMessage} close_function={() => alertClear()} type={alertType} /> */}
     </>
   )
 }

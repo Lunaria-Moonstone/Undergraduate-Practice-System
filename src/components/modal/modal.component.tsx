@@ -9,6 +9,7 @@ interface ModalProps {
   // id?: string;
   modal_title?: string;
   modal_btns?: ReactNode;
+  hide_close_btn?: boolean;
 }
 
 export default class Modal extends Component<ModalProps> {
@@ -80,7 +81,7 @@ export default class Modal extends Component<ModalProps> {
         <AntdModal title={this.props.modal_title ?? ''} open={this.props.shown} closable={false}
           footer={
             <>
-              <Button onClick={() => this.props.close_function()}>关闭</Button>
+              { this.props.hide_close_btn ? <></> : <Button onClick={() => this.props.close_function()}>关闭</Button> }
               {this.props.modal_btns}
             </>
           }>{this.props.children}</AntdModal>

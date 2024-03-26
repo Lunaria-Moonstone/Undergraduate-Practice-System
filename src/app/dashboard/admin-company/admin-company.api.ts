@@ -26,6 +26,7 @@ export default {
       method: 'post',
       data
     })).data;
+    console.log(results)
     if (results['ok'])
       AccountServer.addAccount(results['id'], 3, results['id']);
     return results['ok'];

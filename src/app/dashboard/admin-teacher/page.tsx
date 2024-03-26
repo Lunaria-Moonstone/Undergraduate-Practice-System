@@ -9,27 +9,28 @@ import Form from "@/components/form/form.component";
 import { formInput } from "@/utils/input";
 import Table, { TableLineActions } from "@/components/table/table.component";
 import Alert from "@/components/alert/alert.component";
-import { Button, Input, Space } from "antd";
+import { Button, Input, Space, message } from "antd";
 
 export default function Page() {
 
   let checked_id_list: string[] = [];
 
+  const [messageApi, contextHolder] = message.useMessage();
   const [addModalShown, setAddModalShown] = useState(false);
   const [deleteModalShown, setDeleteModalShown] = useState(false);
   const [exportModalShown, setExportModalShown] = useState(false);
-  const [alertShown, setAlertShown] = useState<boolean>(false);
-  const [alertMessage, setAlertMessage] = useState<string>('');
-  const [alertType, setAlertType] = useState<'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark'>('info');
-  const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
-    setAlertMessage(message);
-    setAlertType(type);
-    setAlertShown(true);
-  }
-  const alertClear = () => {
-    setAlertMessage("");
-    setAlertShown(false);
-  }
+  // const [alertShown, setAlertShown] = useState<boolean>(false);
+  // const [alertMessage, setAlertMessage] = useState<string>('');
+  // const [alertType, setAlertType] = useState<'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark'>('info');
+  // const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
+  //   setAlertMessage(message);
+  //   setAlertType(type);
+  //   setAlertShown(true);
+  // }
+  // const alertClear = () => {
+  //   setAlertMessage("");
+  //   setAlertShown(false);
+  // }
 
   const [add_form_error_msg, setAddFormErrorMsg] = useState('');
   const [edit_form_error_msg, setEditFormErrorMsg] = useState('');
@@ -64,7 +65,7 @@ export default function Page() {
     }
   ];
   const [table_data_source, setTableDataSource] = useState<TableDataSource>([]);
-  
+
 
   // const table_head: Array<string> = ['编号', '教师姓名', '工号', '联系电话', '联系邮箱'];
   // const table_body: Array<Array<string | number | undefined>> = teachers.map(x => {
@@ -79,6 +80,10 @@ export default function Page() {
   ];
 
   useEffect(() => {
+    fetchTeachers();
+  }, []);
+
+  const fetchTeachers = () => {
     server.fetchTeachers()
       .then(res => {
         // setTableBody(res.map(x => [x.id, x.name, x.number, x.phone, x.mail]))
@@ -93,8 +98,7 @@ export default function Page() {
         }))
       })
       .catch();
-  }, []);
-
+  }
   const saveAdd = () => {
     let form_value = formInput(document.getElementById('add-form') as HTMLElement);
     let data = { name: form_value[0] as string, number: form_value[1] as string, phone: form_value[2] as string, mail: form_value[3] as string };
@@ -106,15 +110,18 @@ export default function Page() {
       .then(res => {
         if (res) {
           setAddModalShown(false);
-          location.reload();
+          // location.reload();
+          fetchTeachers();
         } else {
           setAddModalShown(false);
-          alert("添加失败, 后台错误", 'danger');
+          // alert("添加失败, 后台错误", 'danger');
+          messageApi.error('添加失败, 后台错误');
         }
       })
       .catch(err => {
         setAddModalShown(false);
-        alert("添加失败, 后台错误", 'danger');
+        // alert("添加失败, 后台错误", 'danger');
+        messageApi.error('添加失败, 后台错误');
       })
   }
   const delMutiple = () => {
@@ -124,17 +131,19 @@ export default function Page() {
   const delConfirm = async () => {
     if (!del_targets || typeof del_targets === 'object' && del_targets.length === 0) {
       setDeleteModalShown(false);
-      alert('删除id列表为空', "danger");
+      // alert('删除id列表为空', "danger");
+      messageApi.error('删除id列表为空');
       return;
     }
     setDeleteModalShown(false);
     // ... delete process
     if (typeof del_targets === 'object') {
-      for ( let del_target of del_targets ) {
+      for (let del_target of del_targets) {
         await server.delTeacher(del_target)
           .catch(err => {
-            alert(del_target + " 删除失败", "danger");
-          }); 
+            // alert(del_target + " 删除失败", "danger");
+            messageApi.error(del_target + " 删除失败");
+          });
       }
       location.reload();
     } else {
@@ -143,12 +152,14 @@ export default function Page() {
           if (res) location.reload();
           else {
             setDeleteModalShown(false);
-            alert('删除失败，后台出错', "danger");
+            // alert('删除失败，后台出错', "danger");
+            messageApi.error('删除失败，后台出错');
           }
         })
         .catch(err => {
           setDeleteModalShown(false);
-          alert('删除失败，后台出错', "danger");
+          // alert('删除失败，后台出错', "danger");
+          messageApi.error('删除失败，后台出错');
         })
         .finally(() => {
           setDelTargets(undefined);
@@ -158,6 +169,7 @@ export default function Page() {
 
   return (
     <>
+      {contextHolder}
       <div className="dashboard-base-panel">
         {/* 抬头 */}
         <div className="dashboard-model-title">
@@ -186,35 +198,38 @@ export default function Page() {
         <Table dataSource={table_data_source} columns={table_columns} check_change_function={(checked_list) => checked_id_list = checked_list} />
       </div>
 
-      <Modal shown={addModalShown} id='add-modal' modal_title='添加教师信息' close_function={() => setAddModalShown(false)} modal_btns={
+      <Modal shown={addModalShown} modal_title='添加教师信息' close_function={() => setAddModalShown(false)} modal_btns={
         <>
-          <button type="button" className="btn btn-primary" onClick={() => saveAdd()}>确认</button>
-          <button type="button" className="btn btn-secondary" onClick={() => setAddModalShown(false)}>关闭</button>
+          {/* <button type="button" className="btn btn-primary" onClick={() => saveAdd()}>确认</button>
+          <button type="button" className="btn btn-secondary" onClick={() => setAddModalShown(false)}>关闭</button> */}
+          <Button type="primary" onClick={() => saveAdd()}>确认</Button>
         </>
       }>
         <Form form_items={add_form_items} form_id="add-form" />
       </Modal>
 
       {/* 删除确认 */}
-      <Modal id="modal-delete" shown={deleteModalShown} close_function={() => setDeleteModalShown(false)} modal_title="是否确认删除" modal_btns={
+      <Modal shown={deleteModalShown} close_function={() => setDeleteModalShown(false)} modal_title="是否确认删除" modal_btns={
         <>
-          <button className="btn btn-danger" onClick={() => delConfirm()}>确认</button>
-          <button className="btn btn-secondary" onClick={() => setDeleteModalShown(false)}>取消</button>
+          {/* <button className="btn btn-danger" onClick={() => delConfirm()}>确认</button>
+          <button className="btn btn-secondary" onClick={() => setDeleteModalShown(false)}>取消</button> */}
+          <Button type="primary" onClick={() => delConfirm()} danger>确认</Button>
         </>
       }>
         删除内容后无法恢复，是否继续
       </Modal>
 
       {/* 导出设置 */}
-      <Modal id="modal-export" shown={exportModalShown} close_function={() => setExportModalShown(false)} modal_title="是否确认导出" modal_btns={
+      <Modal shown={exportModalShown} close_function={() => setExportModalShown(false)} modal_title="是否确认导出" modal_btns={
         <>
-          <button className="btn btn-secondary" onClick={() => setExportModalShown(false)}>关闭</button>
+          {/* <button className="btn btn-secondary" onClick={() => setExportModalShown(false)}>关闭</button> */}
+          <Button type="primary" onClick={() => {}}>确认</Button>
         </>
       }>
         是否将选定内容导出至外部
       </Modal>
 
-      <Alert shown={alertShown} message={alertMessage} close_function={() => alertClear()} type={alertType} />
+      {/* <Alert shown={alertShown} message={alertMessage} close_function={() => alertClear()} type={alertType} /> */}
     </>
   )
 }

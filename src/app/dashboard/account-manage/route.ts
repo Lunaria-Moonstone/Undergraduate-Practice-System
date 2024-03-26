@@ -5,8 +5,9 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
   let results: unknown;
   let param = request.body;
-
+  console.log('start build user')
   let request_body = await (new Response(param)).blob();
+  console.log('request body: ', request_body)
   let { role, role_id, name } = JSON.parse(await request_body.text());
   console.log(typeof role)
   if ([0, 1, 2, 3].findIndex(x => role === x) === -1) {

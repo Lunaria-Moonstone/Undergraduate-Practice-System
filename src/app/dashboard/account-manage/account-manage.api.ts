@@ -7,6 +7,8 @@ export default {
       url: '/dashboard/account-manage/',
       method: 'post',
       data: { id: nanoid(), name: name.length > 20 ? name.slice(0, 20) : name, role, role_id }
+    }).catch(err => {
+      console.error('addAccount error: ', err);
     });
   }
 }
