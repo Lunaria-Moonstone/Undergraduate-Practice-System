@@ -17,8 +17,9 @@ export async function GET(request: NextRequest) {
   try {
     results = await executeQuery({
       query: `
-      SELECT t.*, st.practice_document_model FROM \`student_teacher_map\` st
-      LEFT JOIN \`teacher\` t ON t.id=st.teacher_id
+      SELECT t.*, ah.base64code as practice_document_model FROM \`student_teacher_map\` st
+      LEFT JOIN \`teacher\` t ON t.id=st.teacher_id 
+      LEFT JOIN \`annex_history\` ah ON ah.id=t.practice_document_model
       WHERE student_id=? LIMIT 1
       `,
       values: [user.role_id]

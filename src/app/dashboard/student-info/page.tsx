@@ -9,27 +9,29 @@ import Alert from '@/components/alert/alert.component';
 import { formInput } from '@/utils/input';
 import Select from '@/components/select-with-search/select-with-search.component';
 import { Teacher } from '@/global/type';
+import { Button, message } from 'antd';
 
 export default function Page() {
   const router = useRouter();
 
+  const [messageApi, contextHolder] = message.useMessage();
   const [mounted_teacher, setMountedTeacher] = useState<Teacher>();
   const [successMsgModalShown, setSuccessMsgModalShown] = useState<boolean>(false);
   const [mountModalShown, setMountModalShown] = useState<boolean>(false);
   const [teacher_opts, setTeacherOpts] = useState<{ label: string, value: string | number }[]>([]);
   const [option_selected, setOptionSelected] = useState<string | number>();
-  const [alertShown, setAlertShown] = useState<boolean>(false);
-  const [alertMessage, setAlertMessage] = useState<string>('');
-  const [alertType, setAlertType] = useState<'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark'>('info');
-  const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
-    setAlertMessage(message);
-    setAlertType(type);
-    setAlertShown(true);
-  }
-  const alertClear = () => {
-    setAlertMessage("");
-    setAlertShown(false);
-  }
+  // const [alertShown, setAlertShown] = useState<boolean>(false);
+  // const [alertMessage, setAlertMessage] = useState<string>('');
+  // const [alertType, setAlertType] = useState<'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark'>('info');
+  // const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
+  //   setAlertMessage(message);
+  //   setAlertType(type);
+  //   setAlertShown(true);
+  // }
+  // const alertClear = () => {
+  //   setAlertMessage("");
+  //   setAlertShown(false);
+  // }
 
   useEffect(() => {
     server.fetchName()
@@ -37,11 +39,13 @@ export default function Page() {
         if (res['ok']) {
           (document.getElementById('username-shown') as HTMLInputElement).value = res['results']['name'];
         } else {
-          alert('后台抓取用户名失败', "danger");
+          // alert('后台抓取用户名失败', "danger");
+          messageApi.error('后台抓取用户名失败');
         }
       })
       .catch(err => {
-        alert('后台抓取用户名失败', "danger");
+        // alert('后台抓取用户名失败', "danger");
+        messageApi.error('后台抓取用户名失败');
       });
     server.fetchInfo()
       .then(res => {
@@ -49,11 +53,13 @@ export default function Page() {
           (document.getElementById('user-id-shown') as HTMLInputElement).value = res['results']['id'];
           (document.getElementById('user-grade-shown') as HTMLInputElement).value = res['results']['grade'];
         } else {
-          alert('后台抓取用户名失败', "danger");
+          // alert('后台抓取用户名失败', "danger");
+          messageApi.error('后台抓取用户名失败');
         }
       })
       .catch(err => {
-        alert('后台抓取用户名失败', "danger");
+        // alert('后台抓取用户名失败', "danger");
+        messageApi.error('后台抓取用户名失败');
       });
     server.fetchTeachers()
       .then(res => {
@@ -62,7 +68,8 @@ export default function Page() {
             return {label:x.name, value:x.id}
           }))
         } else {
-          alert('后台抓取用户名失败', "danger");
+          // alert('后台抓取用户名失败', "danger");
+          messageApi.error('后台抓取用户名失败');
         }
       });
     server.fetchStudentMap()
@@ -73,22 +80,26 @@ export default function Page() {
           }
         }
         else {
-          alert('后台抓取绑定教师失败', "danger");
+          // alert('后台抓取绑定教师失败', "danger");
+          messageApi.error('后台抓取绑定教师失败');
         }
       })
       .catch(err => {
-        alert('后台抓取绑定教师失败', "danger");
+        // alert('后台抓取绑定教师失败', "danger");
+        messageApi.error('后台抓取绑定教师失败');
       })
   }, []);
 
   const submitPasswordChange = async () => {
     let form_value = formInput(document.getElementById('form-account') as HTMLFormElement);
     if (form_value.filter(x => (x as string).length === 0).length > 0) {
-      alert('所有必填项不得为空', "danger");
+      // alert('所有必填项不得为空', "danger");
+      messageApi.error('所有必填项不得为空');
       return;
     }
     if (form_value[2] !== form_value[3]) {
-      alert('两次输入的新密码不一致，请检查', "danger");
+      // alert('两次输入的新密码不一致，请检查', "danger");
+      messageApi.error('两次输入的新密码不一致，请检查')
       return ;
     }
     let password = form_value[1];
@@ -98,7 +109,8 @@ export default function Page() {
     if (result['ok']) {
       setSuccessMsgModalShown(true);
     } else {
-      alert('更改失败，原密码错误', "danger");
+      // alert('更改失败，原密码错误', "danger");
+      messageApi.error('更改失败，原密码错误');
     }
   }
   const submitInfoChange = () => {
@@ -115,14 +127,17 @@ export default function Page() {
       .then(res => {
         console.log(res);
         if (res['ok']) {
-          alert('修改成功','success');
+          // alert('修改成功','success');
+          messageApi.success('修改成功');
         } else {
-          alert('后台修改失败', "danger");
+          // alert('后台修改失败', "danger");
+          messageApi.error('后台修改失败');
         }
       })
       .catch(err => {
         console.log(err);
-        alert('后台修改失败', "danger");
+        // alert('后台修改失败', "danger");
+        messageApi.error('后台修改失败');
       });
   }
   const relog = () => {
@@ -133,7 +148,8 @@ export default function Page() {
   const mountTeacher = () => {
     if(!option_selected) {
       setMountModalShown(false);
-      alert('未选中教师', 'danger');
+      // alert('未选中教师', 'danger');
+      messageApi.error('未选中教师');
       return;
     }
 
@@ -143,17 +159,20 @@ export default function Page() {
           location.reload();
         } else {
           setMountModalShown(false);
-          alert('后台错误，绑定失败', 'danger');
+          // alert('后台错误，绑定失败', 'danger');
+          messageApi.error('后台错误，绑定失败');
         }
       })
       .catch(err => {
         setMountModalShown(false);
-        alert('后台错误，绑定失败', 'danger');
+        // alert('后台错误，绑定失败', 'danger');
+        messageApi.error('后台错误，绑定失败');
       })
   }
 
   return (
     <>
+    {contextHolder}
       <div className="dashboard-base-panel">
         {/* 抬头 */}
         <div className="dashboard-model-title">
@@ -247,23 +266,25 @@ export default function Page() {
         </div>
       </div>
 
-      <Modal id='succuss-modal' shown={successMsgModalShown} close_function={() => setSuccessMsgModalShown(false)} modal_btns={
+      <Modal shown={successMsgModalShown} close_function={() => setSuccessMsgModalShown(false)} modal_btns={
         <>
-          <button className="btn btn-primary" onClick={() => relog()}>确认</button>
+          {/* <button className="btn btn-primary" onClick={() => relog()}>确认</button> */}
+          <Button type='primary' onClick={() => relog()}>确认</Button>
         </>
       }>
         您的密码已完成更改，请重新登录
       </Modal>
 
-      <Modal id='mount-modal' shown={mountModalShown} close_function={() => setMountModalShown(false)} modal_title='绑定教师' modal_btns={
+      <Modal shown={mountModalShown} close_function={() => setMountModalShown(false)} modal_title='绑定教师' modal_btns={
         <>
-          <button className="btn btn-primary" onClick={() => mountTeacher()}>确认</button>
+          {/* <button className="btn btn-primary" onClick={() => mountTeacher()}>确认</button> */}
+          <Button type='primary' onClick={() => mountTeacher()}>确认</Button>
         </>
       }>
         <Select options={teacher_opts} placeholder='确认教师' selected={setOptionSelected} />
       </Modal>
 
-      <Alert shown={alertShown} message={alertMessage} close_function={() => alertClear()} type={alertType} />
+      {/* <Alert shown={alertShown} message={alertMessage} close_function={() => alertClear()} type={alertType} /> */}
     </>
   )
 }

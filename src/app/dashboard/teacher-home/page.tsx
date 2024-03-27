@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react';
 
-import { Announcements,  } from '@/global/type';
+import { Announcements, FormItems, } from '@/global/type';
 import server from './teacher-home.api';
 import Modal from '@/components/modal/modal.component';
 import './teacher-home.part.css';
 import { Button, message } from 'antd';
 import Form from '@/components/form/form.component';
+import { formInput } from '@/utils/input';
 
 export default function Page() {
 
@@ -29,8 +30,40 @@ export default function Page() {
 
   const [notifications_body, setNotificationsBody] = useState<React.ReactNode>();
   const [announcements_body, setAnnouncementsBody] = useState<React.ReactNode>();
+  const addFormItems: FormItems = [
+    { label: '标题', type: 'input' },
+    { label: '简述', type: 'input' },
+    { label: '内容', type: 'textarea' },
+  ];
 
-  useEffect(() => {
+  const submitNotification = () => {
+    // const form = document.getElementById('notification-addition-form') as HTMLFormElement;
+    let form_value: Array<string | number | boolean | undefined> = formInput(document.getElementById('form-add') as HTMLFormElement);
+    let data = { 
+      title: form_value[0] as string,
+      simple_descript: form_value[1] as string,
+      descript: form_value[2] as string
+    };
+    if (data.title.length === 0 || data.simple_descript.length === 0 || data.descript.length === 0) {
+      messageApi.error('必填信息不能为空');
+      return;
+    }
+    server.addNotification(data)
+      .then(res => {
+        if (res) {
+          setNotificationAdditionModalShown(false);
+          messageApi.success('发布成功');
+          fetchAnnouncementAndNotification();
+        } else {
+          throw new Error('发布失败');
+        }
+      })
+      .catch(err => {
+        setNotificationAdditionModalShown(false);
+        messageApi.error('发布失败');
+      })
+  };
+  const fetchAnnouncementAndNotification = () => {
     server.fetchNotifications()
       .then(res => {
         setNotificationsBody(
@@ -83,6 +116,10 @@ export default function Page() {
         // alert("后台错误，抓取信息失败", 'danger');
         messageApi.error('后台错误，抓取信息失败')
       });
+  }
+
+  useEffect(() => {
+    fetchAnnouncementAndNotification();
     server.fetchTeacherInfo()
       .then(res => {
         (document.getElementById("teacher-name") as HTMLElement).innerText = res.name;
@@ -91,7 +128,7 @@ export default function Page() {
         (document.getElementById("teacher-mail") as HTMLElement).innerText = res.mail;
       })
       .catch(err => {
-
+        messageApi.error('后台错误，抓取信息失败');
       })
   }, [])
 
@@ -113,7 +150,7 @@ export default function Page() {
 
   return (
     <>
-    {contextHolder}
+      {contextHolder}
       <div className="dashboard-base-panel" style={{ height: '100vh' }}>
         <div className="dashboard-model-title">
           <h2>个人中心</h2>
@@ -151,8 +188,8 @@ export default function Page() {
                 <div className="card-title">通知</div>
               </div>
             </div> */}
-            <div style={{ marginBlockEnd: 'var(--standard-padding-width'}}>
-              <Button type='primary'>发布实习通知</Button>
+            <div style={{ marginBlockEnd: 'var(--standard-padding-width' }}>
+              <Button type='primary' onClick={() => setNotificationAdditionModalShown(true)}>发布实习通知</Button>
             </div>
             <nav>
               <div className="nav nav-tabs" id="nav-tab" role="tablist">
@@ -179,11 +216,11 @@ export default function Page() {
           </div>
         </div>
       </div>
-      
-      <Modal modal_title='发布实习通知' shown={notificationAdditionModalShown} close_function={() => setNotificationAdditionModalShown(false)}> 
-          <div>
-            <Form />
-          </div>
+
+      <Modal modal_title='发布实习通知' shown={notificationAdditionModalShown} close_function={() => setNotificationAdditionModalShown(false)} modal_btns={
+        <Button type='primary' onClick={() => submitNotification()}>提交  </Button>
+      }>
+        <Form form_id="form-add" form_items={addFormItems} />
       </Modal>
     </>
   );

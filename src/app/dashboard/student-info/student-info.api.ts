@@ -46,6 +46,7 @@ export default {
       url: '/dashboard/student-teacher-map/',
       method: 'get',
     })).data;
+    console.log(results)
     // return results['ok'] && results['results'].length !== 0;
     return results['results'];
   },

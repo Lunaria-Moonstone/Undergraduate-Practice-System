@@ -59,5 +59,13 @@ export default {
       params: { keyword }
     })).data['results'] as Students;
     return results;
+  },
+  async uploadAnnex(base64code: string) {
+    let result = (await axios({
+      url: '/dashboard/practice-document-model',
+      method: 'post',
+      data: { base64code }
+    })).data;
+    return result;
   }
 }

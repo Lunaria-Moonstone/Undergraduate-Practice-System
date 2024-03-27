@@ -38,5 +38,14 @@ export default {
       method: 'get',
     })).data['results'][0] as SimpleStudent;
     return item;
+  },
+  async addNotification(data: { [key: string]: string }): Promise<boolean> {
+    const result = (await axios({
+      url: '/dashboard/notification-api',
+      method: 'post',
+      data,
+    }));
+    console.log(result);
+    return result.data['ok'];
   }
 }

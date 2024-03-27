@@ -5,10 +5,12 @@ import { useEffect, useRef, useState } from 'react';
 import Modal from '@/components/modal/modal.component';
 import server from './teacher-student.api';
 import Table, { TableLineActions } from "@/components/table/table.component";
-import { Student, Students, TableColumns, TableDataSource } from '@/global/type';
+import { FormItems, Student, Students, TableColumns, TableDataSource } from '@/global/type';
 import './teacher-student.part.css';
 import Alert from '@/components/alert/alert.component';
 import { Button, Input, Space, message } from 'antd';
+import Form from '@/components/form/form.component';
+import { ArrayBuffer2Base64 } from '@/utils/input';
 
 export default function Page() {
 
@@ -19,6 +21,7 @@ export default function Page() {
 
   const [messageApi, contextHolder] = message.useMessage();
   const [modalStates, setModalStates] = useState<{ [key: string]: boolean }>({
+    addModalShown: false,
     infoModalShown: false,
     practiceRateModalShown: false,
     practiceAnnexModalShown: false,
@@ -30,7 +33,7 @@ export default function Page() {
     id: `modal-${modalName}`,
     shown: modalStates[`${modalName}ModalShown`],
     close_function: () => toggleModal(`${modalName}ModalShown`),
-    hidden_close_btn: true,
+    hide_close_btn: true,
     modal_title: title,
     modal_btns: (
       <>
@@ -58,6 +61,7 @@ export default function Page() {
   // };
 
   const [search_keyword, setSearchKeyword] = useState<string>('');
+  const [now_annex, setNowAnnex] = useState<null | File>(null);
   const [has_proof, setHasProof] = useState<boolean>(false);
   const [proof, setProof] = useState<string>('');
   const [rate_target, setRateTarget] = useState<string>();
@@ -194,6 +198,19 @@ export default function Page() {
     }
   ];
   const [table_data_source, setTableDataSource] = useState<TableDataSource>([]);
+  const addItems: FormItems = [
+    {
+      label: '文件',
+      type: 'file',
+      fileTypeRestricted: ['.pdf'],
+      fileTackleFunction(event) {
+        const files = event.currentTarget.files;
+        if (!files || files.length === 0) return;
+        const file = files[0];
+        setNowAnnex(file);
+      },
+    }
+  ]
 
   useEffect(() => {
     student_list_ref.current = student_list;
@@ -305,7 +322,34 @@ export default function Page() {
           }
         }))
       })
-  }
+  };
+  const fetchPracticeDocumentModel = () => {
+    window.open('/dashboard/practice-document-model');
+  };
+  const saveAdd = async () => {
+    if (now_annex === null) {
+      toggleModal('add');
+      // alert('材料不能为空', 'danger');
+      messageApi.error('材料不能为空');
+      return;
+    }
+    server.uploadAnnex(ArrayBuffer2Base64(await now_annex.arrayBuffer()))
+      .then(res => {
+        if (res['ok']) {
+          toggleModal('add');
+          messageApi.success('上传成功'); 
+        } else {
+          // alert('上传失败，后台错误', 'danger');
+          messageApi.error('上传失败，后台错误');
+          console.error('上传失败', res['error']);
+        }
+      })
+      .catch(err => {
+        // alert('上传失败，后台错误', 'danger');
+        messageApi.error('上传失败，后台错误');
+        console.error(err);
+      })
+  };
 
   // (document.getElementById('practice-score-input') as HTMLInputElement).addEventListener("input", function () {
   //   if (parseInt(this.value) < 0) this.value = "0";
@@ -325,6 +369,8 @@ export default function Page() {
           <div className="dashboard-model-buttons">
             {/* <button className="btn btn-secondary">导入</button>
             <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button> */}
+            <Button onClick={fetchPracticeDocumentModel}>下载材料模板</Button>
+            <Button onClick={() => toggleModal('add')}>上传材料模板</Button>
           </div>
           <div>
             {/* <Search placeholder="搜索"  /> */}
@@ -379,7 +425,8 @@ export default function Page() {
           </div>
         </div>
       ), (
-        <button className='btn btn-primary' onClick={() => openAnnexModal()} disabled={!has_proof}>查看实习材料</button>
+        // <button className='btn btn-primary' onClick={() => openAnnexModal()} disabled={!has_proof}>查看实习材料</button>
+        <Button type='primary' onClick={() => openAnnexModal()} disabled={!has_proof}>查看实习材料</Button>
       ))} />
 
       <Modal {...modalProps('practiceRate', '实习评分', (
@@ -401,6 +448,13 @@ export default function Page() {
           {/* <img alt="" className='card-img-top' /> */}
           <embed src={proof} />
         </div>
+      ))} />
+
+      <Modal {...modalProps('add', '上传材料', (
+        <Form form_items={addItems} form_id="upload-form" />
+      ), (
+        // <button className='btn btn-primary' onClick={() => saveAdd()}>确认</button>
+        <Button type='primary' onClick={() => saveAdd()}>确认</Button>
       ))} />
 
       {/* <Alert {...alertProps()} /> */}
