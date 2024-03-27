@@ -6,22 +6,26 @@ import { Announcements,  } from '@/global/type';
 import server from './teacher-home.api';
 import Modal from '@/components/modal/modal.component';
 import './teacher-home.part.css';
+import { Button, message } from 'antd';
+import Form from '@/components/form/form.component';
 
 export default function Page() {
 
-  const [infoModalShown, setInfoModalShown] = useState(false);
-  const [alertShown, setAlertShown] = useState<boolean>(false);
-  const [alertMessage, setAlertMessage] = useState<string>('');
-  const [alertType, setAlertType] = useState<'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark'>('info');
-  const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
-    setAlertMessage(message);
-    setAlertType(type);
-    setAlertShown(true);
-  }
-  const alertClear = () => {
-    setAlertMessage("");
-    setAlertShown(false);
-  }
+  const [messageApi, contextHolder] = message.useMessage();
+  // const [infoModalShown, setInfoModalShown] = useState(false);
+  const [notificationAdditionModalShown, setNotificationAdditionModalShown] = useState(false);
+  // const [alertShown, setAlertShown] = useState<boolean>(false);
+  // const [alertMessage, setAlertMessage] = useState<string>('');
+  // const [alertType, setAlertType] = useState<'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark'>('info');
+  // const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
+  //   setAlertMessage(message);
+  //   setAlertType(type);
+  //   setAlertShown(true);
+  // }
+  // const alertClear = () => {
+  //   setAlertMessage("");
+  //   setAlertShown(false);
+  // }
 
   const [notifications_body, setNotificationsBody] = useState<React.ReactNode>();
   const [announcements_body, setAnnouncementsBody] = useState<React.ReactNode>();
@@ -41,8 +45,8 @@ export default function Page() {
                     {x.simple_descript}
                   </p>
                   <div className="notification-inline-btns">
-                    <a className='btn btn-primary btn-sm' onClick={() => setInfoModalShown(true)}>详细</a>
-                    <a className='btn btn-secondary btn-sm'>忽略</a>
+                    {/* <a className='btn btn-primary btn-sm' onClick={() => setInfoModalShown(true)}>详细</a> */}
+                    {/* <a className='btn btn-secondary btn-sm'>忽略</a> */}
                   </div>
                 </div>
               </div>
@@ -52,7 +56,8 @@ export default function Page() {
       })
       .catch(err => {
         console.log(err);
-        alert("后台错误，抓取信息失败", 'danger');
+        // alert("后台错误，抓取信息失败", 'danger');
+        messageApi.error('后台错误，抓取信息失败')
       });
     server.fetchAnnouncements()
       .then(res => {
@@ -75,7 +80,8 @@ export default function Page() {
       })
       .catch(err => {
         console.log(err);
-        alert("后台错误，抓取信息失败", 'danger');
+        // alert("后台错误，抓取信息失败", 'danger');
+        messageApi.error('后台错误，抓取信息失败')
       });
     server.fetchTeacherInfo()
       .then(res => {
@@ -107,7 +113,7 @@ export default function Page() {
 
   return (
     <>
-
+    {contextHolder}
       <div className="dashboard-base-panel" style={{ height: '100vh' }}>
         <div className="dashboard-model-title">
           <h2>个人中心</h2>
@@ -145,9 +151,13 @@ export default function Page() {
                 <div className="card-title">通知</div>
               </div>
             </div> */}
+            <div style={{ marginBlockEnd: 'var(--standard-padding-width'}}>
+              <Button type='primary'>发布实习通知</Button>
+            </div>
             <nav>
               <div className="nav nav-tabs" id="nav-tab" role="tablist">
-                <button className="nav-link active" id="announcement-tab" data-bs-toggle="tab" data-bs-target="#announcement" type="button" role="tab" aria-controls="account-msg" aria-selected="false">公告</button>
+                <button className="nav-link active" id="announcement-tab" data-bs-toggle="tab" data-bs-target="#announcement" type="button" role="tab" aria-controls="account-msg" aria-selected="true">公告</button>
+                <button className="nav-link" id="notification-tab" data-bs-toggle="tab" data-bs-target="#notification" type="button" role="tab" aria-controls="account-msg" aria-selected="false">通知</button>
               </div>
             </nav>
             <div className="tab-content student-annex-card-body" id="nav-tabContent" style={{ flex: 1 }}>
@@ -158,10 +168,23 @@ export default function Page() {
                   </div>
                 </div>
               </div>
+              <div className="tab-pane fade show active" id="notification" role="tabpanel" aria-labelledby="notification-tab" style={{ width: '100%', height: '100%' }}>
+                <div className="card" style={{ height: '100%', borderTop: '0', borderTopLeftRadius: '0', borderTopRightRadius: '0' }}>
+                  <div className="card-body notification-cards">
+                    {notifications_body}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+      
+      <Modal modal_title='发布实习通知' shown={notificationAdditionModalShown} close_function={() => setNotificationAdditionModalShown(false)}> 
+          <div>
+            <Form />
+          </div>
+      </Modal>
     </>
   );
 }

@@ -277,6 +277,9 @@ export default function Page() {
       // alert('后台拉取信息失败', 'danger')
       messageApi.error('后台拉取信息失败');
     });
+  };
+  const fetchPracticeDocumentModel = () => {
+    window.open('/dashboard/practice-document-model');
   }
 
   return (
@@ -322,6 +325,7 @@ export default function Page() {
                   <div className="student-annex-card-body-buttons">
                     <a className="btn btn-primary btn-sm" onClick={() => addPracticeDocument()} >上传新材料</a>
                     <a className={"btn btn-danger btn-sm " + (practice_document === 'x' ? " disabled " : "")} onClick={() => delMark(practice_document_list[practice_document_list.length - 1].id)} aria-disabled={practice_document === 'x'}>删除</a>
+                    <a className='btn btn-primary btn-sm' onClick={fetchPracticeDocumentModel}>下载模板</a>
                   </div>
                 </div>
               </div>
@@ -338,7 +342,8 @@ export default function Page() {
       <Modal {...modalProps('add', '上传材料', (
         <Form form_items={addItems} form_id="upload-form" />
       ), (
-        <button className='btn btn-primary' onClick={() => saveAdd()}>确认</button>
+        // <button className='btn btn-primary' onClick={() => saveAdd()}>确认</button>
+        <Button type='primary' onClick={() => saveAdd()}>确认</Button>
       ))} />
 
       <Modal {...modalProps('info', '材料详细', (
@@ -351,7 +356,8 @@ export default function Page() {
       <Modal {...modalProps('del', '删除确认', (
         <p>删除内容后无法恢复，是否继续</p>
       ), (
-        <button className='btn btn-danger' onClick={() => delAnnex()}>确认</button>
+        // <button className='btn btn-danger' onClick={() => delAnnex()}>确认</button>
+        <Button type='primary' danger onClick={() => delAnnex()}>确定</Button>
       ))} />
 
       {/* <Alert shown={alertShown} message={alertMessage} close_function={() => alertClear()} type={alertType} /> */}

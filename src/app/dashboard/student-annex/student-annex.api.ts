@@ -48,4 +48,10 @@ export default {
   //     method: ''
   //   })
   // }
+  // async fetchPracticeDocument() {
+  //   let results = (await axios({
+  //     url: '/dashboard/practice-document-model',
+  //     method: 'get',
+  //   })).data;
+  // }
 }

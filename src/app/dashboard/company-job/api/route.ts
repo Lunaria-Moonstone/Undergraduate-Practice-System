@@ -1,3 +1,4 @@
+import { executeQuery } from "@/utils/db";
 import { RouterFactory } from "@/utils/factory";
 // import { nanoid } from "nanoid";
 import { cookies } from "next/headers";
@@ -6,8 +7,10 @@ import uuid from "node-uuid";
 
 const router = new RouterFactory('job');
 
-export async function GET() {
+export async function GET(reqeust: NextRequest) {
+  let results: unknown;
 
+  let query = reqeust.nextUrl.searchParams;
   let original_info_from_cookie = cookies().get('user');
   let user: { role_id: string, };
   if (!original_info_from_cookie)
@@ -16,7 +19,34 @@ export async function GET() {
     }));
   user = JSON.parse(original_info_from_cookie.value);
 
-  return await router.GET('*', { company_id: user.role_id },)
+  // return await router.GET('*', { company_id: user.role_id },)
+  try {
+    if (query.has('keyword')) {
+      let keyword = query.get('keyword');
+      results = await executeQuery({
+        query: `
+        SELECT * FROM job WHERE company_id = ? AND name LIKE ?;
+        `,
+        values: [user.role_id, `%${keyword}%`]
+      });
+    } else {
+      results = await executeQuery({
+        query: `
+        SELECT * FROM job WHERE company_id = ?;
+        `,
+        values: [user.role_id]
+      })
+    }
+  } catch (error) {
+    results = error;
+  } finally {
+    const blob = new Blob([JSON.stringify(results, null, 2)], {
+      type: 'application/json',
+    });
+    return new Response(blob, {
+      status: 200,
+    });
+  }
 }
 
 export async function POST(request: NextRequest) {

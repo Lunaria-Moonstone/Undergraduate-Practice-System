@@ -79,6 +79,7 @@ export default function Page() {
   // });
   // const job: Job = server.fetchJob();
 
+  const [search_keyword, setSearchKeyword] = useState<string>('');
   const [job_list, setJobList] = useState<Jobs>([]);
   const job_list_ref = useRef(job_list);
   // const [table_head, setTableHead] = useState<string[]>(['编号', '岗位名称', '薪资',]);
@@ -306,6 +307,21 @@ export default function Page() {
         // alert('后台错误', "danger");
         messageApi.error('后台错误');
       })
+  };
+  const search = (keyword: string) => {
+    server.searchJob(keyword)
+      .then(res => {
+        setTableDataSource(res.map(x => {
+          return {
+            id: x.id,
+            name: x.name,
+            salary: x.salary,
+          }
+        }))
+      })
+      .catch(_ => {
+        messageApi.error('后台错误');
+      })
   }
 
   return (
@@ -335,8 +351,8 @@ export default function Page() {
             {/* <Search placeholder="搜索"  /> */}
             <Space>
               <Space.Compact>
-                <Input placeholder="输入关键字" />
-                <Button type="primary">搜索</Button>
+                <Input placeholder="输入关键字" onChange={(e) => setSearchKeyword(e.currentTarget.value)} />
+                <Button type="primary" onClick={() => search(search_keyword)}>搜索</Button>
               </Space.Compact>
             </Space>
           </div>

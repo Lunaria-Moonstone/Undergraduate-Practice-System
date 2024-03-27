@@ -12,12 +12,15 @@ export default {
     });
   },
   delAccount(role: number, foreign_id: string) {
+    console.log('del Account: ', role, foreign_id);
     axios({
       url: '/dashboard/account-manage/',
       method: 'delete',
-      data: { role, foreign_id },
+      params: { role, foreign_id },
     }).catch(err => {
       console.error('delAccount error: ', err);
+    }).then(res => {
+      console.log('delAccount res: ', res);
     })
   }
 }

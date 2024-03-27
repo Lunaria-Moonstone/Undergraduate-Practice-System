@@ -218,9 +218,6 @@ export default function Page() {
         messageApi.error('搜索失败，后台出错')
       })
   };
-  const importConfirm = async () => {
-
-  }
 
   return (
     <>
@@ -237,7 +234,7 @@ export default function Page() {
             <Button type='primary' onClick={() => setAddModalShown(true)}>新增</Button>
             <Button onClick={() => delMutiple()} danger>删除</Button>
             <Button onClick={() => setImportModalShown(true)}>导入</Button>
-            {/* <Button onClick={() => { setExportModalShown(true) }}>导出</Button> */}
+            <Button onClick={() => { setExportModalShown(true) }}>下载导入模板</Button>
             {/* <button className="btn btn-secondary">导入</button>
             <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button> */}
           </div>
@@ -284,20 +281,28 @@ export default function Page() {
       </Modal>
 
       {/* 导出设置 */}
-      <Modal shown={exportModalShown} close_function={() => setExportModalShown(false)} modal_title="是否确认导出" modal_btns={
+      <Modal shown={exportModalShown} close_function={() => setExportModalShown(false)} modal_title="是否确认下载导入模板" modal_btns={
         <>
           {/* <button className="btn btn-secondary" onClick={() => setExportModalShown(false)}>关闭</button> */}
-          <Button type="primary" onClick={() => delConfirm()}>确认</Button>
+          <Button type="primary" onClick={() => window.open(`/dashboard/import-excel?fields=${JSON.stringify(['name','number','grade','phone','mail','performence'])}`)}>确认</Button>
         </>
       }>
-        是否将选定内容导出至外部
+        是否下载导入模板
       </Modal>
 
-      <Modal shown={importModalShown} modal_title='导入文件' close_function={() => setImportModalShown(false)} modal_btns={
-        <Button type='primary' onClick={() => importConfirm()}>确定</Button>
-      }>
+      <Modal shown={importModalShown} modal_title='导入文件' close_function={() => setImportModalShown(false)} >
         <Upload name='file' action='/dashboard/import-excel' headers={{
-          role: 'students'
+          role: 'student'
+        }} method='post' onChange={(info) => {
+          if (info.file.status === 'done') {
+            messageApi.success('导入成功');
+            setImportModalShown(false);
+            fetchStudents();
+          } else if (info.file.status === 'error') {
+            messageApi.error('导入失败');
+          } else if (info.file.status === 'uploading') {
+            messageApi.loading('正在导入');
+          }
         }}>
           <Button icon={<UploadOutlined />}>点击上传</Button>
         </Upload>

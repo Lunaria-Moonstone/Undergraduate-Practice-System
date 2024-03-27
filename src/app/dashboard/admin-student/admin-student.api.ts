@@ -42,7 +42,9 @@ export default {
       method: 'delete',
       params: { id }
     });
+    console.log(results)
     if (results.data['ok']) {
+      // console.log('start del user: ', id)
       AccountServer.delAccount(1, id);
     }
     return results.data['ok'];
@@ -63,5 +65,10 @@ export default {
       params: { keyword }
     })).data['results'] as Students;
     return students;
-  }
+  },
+  // getUploadModel(fields: Array<string>) {
+  //   axios({
+
+  //   })
+  // }
 }

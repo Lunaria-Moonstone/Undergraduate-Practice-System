@@ -8,24 +8,26 @@ import Modal from '@/components/modal/modal.component';
 import Form from '@/components/form/form.component';
 import { formInput } from '@/utils/input';
 import Alert from '@/components/alert/alert.component';
+import { Button, message } from 'antd';
 
 export default function Page() {
 
+  const [messageApi, contextHolder] = message.useMessage();
   const [addModalShown, setAddModalShown] = useState(false);
   const [delModalShown, setDelModalShown] = useState(false);
   const [infoModalShown, setInfoModalShown] = useState(false);
-  const [alertShown, setAlertShown] = useState<boolean>(false);
-  const [alertMessage, setAlertMessage] = useState<string>('');
-  const [alertType, setAlertType] = useState<'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark'>('info');
-  const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
-    setAlertMessage(message);
-    setAlertType(type);
-    setAlertShown(true);
-  }
-  const alertClear = () => {
-    setAlertMessage("");
-    setAlertShown(false);
-  }
+  // const [alertShown, setAlertShown] = useState<boolean>(false);
+  // const [alertMessage, setAlertMessage] = useState<string>('');
+  // const [alertType, setAlertType] = useState<'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark'>('info');
+  // const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
+  //   setAlertMessage(message);
+  //   setAlertType(type);
+  //   setAlertShown(true);
+  // }
+  // const alertClear = () => {
+  //   setAlertMessage("");
+  //   setAlertShown(false);
+  // }
 
   const [add_form_error_msg, setAddFormErrorMsg] = useState('');
   const [announcements_body, setAnnouncementsBody] = useState<React.ReactNode>();
@@ -46,8 +48,8 @@ export default function Page() {
           }
           const showAnnouncement = (id: string) => {
             const title = document.getElementById("info-modal-title") as HTMLHeadingElement;
-          const created = document.getElementById("info-modal-created") as HTMLSpanElement;
-          const descript = document.getElementById("info-modal-descript") as HTMLDivElement;
+            const created = document.getElementById("info-modal-created") as HTMLSpanElement;
+            const descript = document.getElementById("info-modal-descript") as HTMLDivElement;
             server.fetchAnnouncement(id)
               .then(res => {
                 title.innerText = res.title;
@@ -58,11 +60,12 @@ export default function Page() {
               })
               .catch(err => {
                 console.log(err);
-                alert("抓取失败, 后台错误", 'danger');
+                // alert("抓取失败, 后台错误", 'danger');
+                messageApi.error("抓取失败, 后台错误");
               })
           }
           return (
-            <div className='card' key={index} style={{  marginBlockStart: 'var(--standard-padding-width)' }}>
+            <div className='card' key={index} style={{ marginBlockStart: 'var(--standard-padding-width)' }}>
               <div className='card-body'>
                 <h5 className="card-title">
                   {x.title}
@@ -95,18 +98,21 @@ export default function Page() {
           location.reload();
         } else {
           setAddModalShown(false);
-          alert("添加失败, 后台错误", 'danger');
+          // alert("添加失败, 后台错误", 'danger');
+          messageApi.error("添加失败, 后台错误");
         }
       })
       .catch(err => {
         setAddModalShown(false);
-        alert("添加失败, 后台错误", 'danger');
+        // alert("添加失败, 后台错误", 'danger');
+        messageApi.error("添加失败, 后台错误");
       })
   }
   const delConfirm = async () => {
     if (!del_targets || typeof del_targets === 'object' && del_targets.length === 0) {
       setDelModalShown(false);
-      alert('删除id列表为空', "danger");
+      // alert('删除id列表为空', "danger");
+      messageApi.error('删除id列表为空');
       return;
     }
     setDelModalShown(false);
@@ -115,7 +121,8 @@ export default function Page() {
       for (let del_target of del_targets) {
         await server.delAnnouncement(del_target)
           .catch(err => {
-            alert(del_target + " 删除失败", "danger");
+            // alert(del_target + " 删除失败", "danger");
+            messageApi.error(del_target + " 删除失败");
           });
       }
       location.reload();
@@ -125,12 +132,14 @@ export default function Page() {
           if (res) location.reload();
           else {
             setDelModalShown(false);
-            alert('删除失败，后台出错', "danger");
+            // alert('删除失败，后台出错', "danger");
+            messageApi.error('删除失败，后台出错');
           }
         })
         .catch(err => {
           setDelModalShown(false);
-          alert('删除失败，后台出错', "danger");
+          // alert('删除失败，后台出错', "danger");
+          messageApi.error('删除失败，后台出错');
         })
         .finally(() => {
           setDelTargets(undefined);
@@ -140,6 +149,7 @@ export default function Page() {
 
   return (
     <>
+    {contextHolder}
       <div className="dashboard-base-panel" style={{ height: '100vh' }}>
         <div className="dashboard-model-title">
           <h2>个人中心</h2>
@@ -185,18 +195,19 @@ export default function Page() {
       </div>
 
       {/* 添加窗体 */}
-      <Modal id="modal-add" shown={addModalShown} close_function={() => setAddModalShown(false)} modal_title='添加公告' modal_btns={
+      <Modal shown={addModalShown} close_function={() => setAddModalShown(false)} modal_title='添加公告' modal_btns={
         <>
-          <button type="button" className="btn btn-primary" onClick={() => saveAdd()}>确认</button>
-          <button type="button" className="btn btn-secondary" onClick={() => setAddModalShown(false)}>关闭</button>
+          {/* <button type="button" className="btn btn-primary" onClick={() => saveAdd()}>确认</button>
+          <button type="button" className="btn btn-secondary" onClick={() => setAddModalShown(false)}>关闭</button> */}
+          <Button type='primary' onClick={() => saveAdd()}>确认</Button>
         </>
       }>
         <Form form_id="form-add" form_items={addFormItems} />
       </Modal>
 
-      <Modal id="modal-info" shown={infoModalShown} close_function={() => setInfoModalShown(false)} modal_title='公告详细' modal_btns={
+      <Modal shown={infoModalShown} close_function={() => setInfoModalShown(false)} modal_title='公告详细' modal_btns={
         <>
-          <button className='btn btn-secondary' onClick={() => setInfoModalShown(false)}>关闭</button>
+          {/* <button className='btn btn-secondary' onClick={() => setInfoModalShown(false)}>关闭</button> */}
         </>
       }>
         <div>
@@ -214,16 +225,17 @@ export default function Page() {
       </Modal>
 
       {/* 删除确认 */}
-      <Modal id="modal-delete" shown={delModalShown} close_function={() => setDelModalShown(false)} modal_title="是否确认删除" modal_btns={
+      <Modal shown={delModalShown} close_function={() => setDelModalShown(false)} modal_title="是否确认删除" modal_btns={
         <>
-          <button className="btn btn-danger" onClick={() => delConfirm()}>确认</button>
-          <button className="btn btn-secondary" onClick={() => setDelModalShown(false)}>取消</button>
+          {/* <button className="btn btn-danger" onClick={() => delConfirm()}>确认</button>
+          <button className="btn btn-secondary" onClick={() => setDelModalShown(false)}>取消</button> */}
+          <Button type='primary' danger onClick={() => delConfirm()}>确认</Button>
         </>
       }>
         删除内容后无法恢复，是否继续
       </Modal>
 
-      <Alert shown={alertShown} message={alertMessage} close_function={() => alertClear()} type={alertType} />
+      {/* <Alert shown={alertShown} message={alertMessage} close_function={() => alertClear()} type={alertType} /> */}
     </>
   )
 }

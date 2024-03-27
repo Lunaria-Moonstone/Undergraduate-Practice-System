@@ -52,6 +52,7 @@ export async function DELETE(request: NextRequest) {
       `,
       values: [foreign_id, Number(role)]
     });
+    console.log(results)
   } catch (err: unknown) {
     results = err;
   } finally {

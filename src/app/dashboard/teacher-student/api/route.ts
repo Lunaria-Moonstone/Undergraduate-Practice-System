@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 const router = new RouterFactory(
-  '', 
+  '',
   async (teacher_id: string) => {
     let results: unknown;
     let sql = `
@@ -16,7 +16,7 @@ const router = new RouterFactory(
     try {
       const exec_res = await executeQuery({
         query: sql,
-        values: [ teacher_id ]
+        values: [teacher_id]
       });
       results = exec_res;
     } catch (error: unknown) {
@@ -38,8 +38,8 @@ const router = new RouterFactory(
     `;
     try {
       const exec_res = await executeQuery({
-        query: sql, 
-        values: [ id, student_id, teacher_id ]
+        query: sql,
+        values: [id, student_id, teacher_id]
       });
       results = exec_res;
     } catch (error: unknown) {
@@ -60,8 +60,8 @@ const router = new RouterFactory(
     `;
     try {
       const exec_res = await executeQuery({
-        query: sql, 
-        values: [ id ]
+        query: sql,
+        values: [id]
       });
       results = exec_res;
     } catch (error: unknown) {
@@ -78,6 +78,10 @@ const router = new RouterFactory(
 );
 
 export async function GET(request: NextRequest) {
+
+  let results: unknown;
+  let query = request.nextUrl.searchParams;
+
   let original_info_from_cookie = cookies().get('user');
   let user: { role_id: string };
   if (!original_info_from_cookie)
@@ -86,10 +90,37 @@ export async function GET(request: NextRequest) {
     }));
   user = JSON.parse(original_info_from_cookie.value);
 
-  return await router.GET(
-    // @ts-ignore
-    user.role_id, 
-  );
+  try {
+    if (query.has('keyword')) {
+      let keyword = query.get('keyword');
+      results = await executeQuery({
+        query: `
+        SELECT st.* FROM student_teacher_map stm
+        LEFT JOIN student st ON stm.student_id=st.id
+        WHERE stm.teacher_id=? AND st.name LIKE ?
+        `,
+        values: [user.role_id, `%${keyword}%`]
+      });
+    } else {
+      results = await executeQuery({
+        query: `
+        SELECT st.* FROM student_teacher_map stm
+        LEFT JOIN student st ON stm.student_id=st.id
+        WHERE stm.teacher_id=?
+        `,
+        values: [user.role_id]
+      });
+    }
+  } catch (error) {
+    results = error;
+  } finally {
+    const blob = new Blob([JSON.stringify(results, null, 2)], {
+      type: 'application/json',
+    });
+    return new Response(blob, {
+      status: 200,
+    });
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -103,7 +134,7 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   let query = request.nextUrl.searchParams;
   let id = query.get('id');
-  if (id === null) return new NextResponse(new Blob([JSON.stringify({ ok: false, error: 'id should not be empty'})]));
+  if (id === null) return new NextResponse(new Blob([JSON.stringify({ ok: false, error: 'id should not be empty' })]));
   // @ts-ignore
   return await router.DELETE(id);
 }

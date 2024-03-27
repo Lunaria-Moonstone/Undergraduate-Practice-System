@@ -50,5 +50,13 @@ export default {
       data: data
     });
     return results.data['ok'];
+  },
+  async searchCompany(keyword: string) {
+    let companies: Companies = (await axios({
+      url: '/dashboard/admin-company/api/',
+      method: 'get',
+      params: { keyword }
+    })).data['results'] as Companies;
+    return companies;
   }
 }

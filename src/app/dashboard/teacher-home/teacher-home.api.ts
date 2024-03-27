@@ -14,13 +14,14 @@ export default {
       url: '/dashboard/notification-api',
       method: 'get',
     })).data.results as Notifications;
-    console.log(items);
+    // console.log(items);
     return items;
   },
   async fetchNotification(id: string): Promise<Notification> {
     const item: Notification = (await axios({
       url: '/dashboard/notification-api',
       method: 'get',
+      params: { id },
     })).data.results[0] as Notification;
     return item;
   },

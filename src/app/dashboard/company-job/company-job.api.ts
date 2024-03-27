@@ -34,5 +34,13 @@ export default {
       data,
     })).data;
     return results['ok'];
+  },
+  async searchJob(keyword: string): Promise<Jobs> {
+    const items: Jobs = (await axios({
+      url: '/dashboard/company-job/api',
+      method: 'get',
+      params: { keyword },
+    })).data['results'] as Jobs;
+    return items;
   }
 }

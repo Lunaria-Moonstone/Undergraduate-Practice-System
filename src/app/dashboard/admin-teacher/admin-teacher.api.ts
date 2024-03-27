@@ -42,6 +42,10 @@ export default {
       method: 'delete',
       params: { id }
     });
+    if (results.data['ok']) {
+      // 删除账号
+      AccountServer.delAccount(2, id);
+    }
     return results.data['ok'];
   }, 
   async updateTeacher(id: string, data: { [key: string]: string }): Promise<boolean> {

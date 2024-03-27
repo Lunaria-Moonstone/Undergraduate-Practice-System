@@ -149,11 +149,14 @@ export default function Page() {
             messageApi.error(del_target + " 删除失败");
           });
       }
-      location.reload();
+      // location.reload();
+      fetchTeachers();
     } else {
       server.delTeacher(del_targets)
         .then(res => {
-          if (res) location.reload();
+          if (res) 
+            // location.reload();
+            fetchTeachers();
           else {
             setDeleteModalShown(false);
             // alert('删除失败，后台出错', "danger");
@@ -207,6 +210,7 @@ export default function Page() {
             <Button type='primary' onClick={() => setAddModalShown(true)}>新增</Button>
             <Button onClick={() => delMutiple()} danger>删除</Button>
             <Button onClick={() => setImportModalShown(true)}>导入</Button>
+            <Button onClick={() => { setExportModalShown(true) }}>下载导入模板</Button>
             {/* <button className="btn btn-secondary">导入</button>
             <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button> */}
           </div>
@@ -249,7 +253,7 @@ export default function Page() {
       <Modal shown={exportModalShown} close_function={() => setExportModalShown(false)} modal_title="是否确认导出" modal_btns={
         <>
           {/* <button className="btn btn-secondary" onClick={() => setExportModalShown(false)}>关闭</button> */}
-          <Button type="primary" onClick={() => {}}>确认</Button>
+          <Button type="primary" onClick={() => window.open(`/dashboard/import-excel?fields=${JSON.stringify(['name','number','phone','mail'])}`)}>确认</Button>
         </>
       }>
         是否将选定内容导出至外部
@@ -259,7 +263,17 @@ export default function Page() {
         <Button type='primary' onClick={() => importConfirm()}>确定</Button>
       }>
         <Upload name='file' action='/dashboard/import-excel' headers={{
-          role: 'students'
+          role: 'teacher'
+        }} onChange={(info) => {
+          if (info.file.status === 'done') {
+            messageApi.success('导入成功');
+            setImportModalShown(false);
+            fetchTeachers();
+          } else if (info.file.status === 'error') {
+            messageApi.error('导入失败');
+          } else if (info.file.status === 'uploading') {
+            messageApi.loading('正在导入');
+          }
         }}>
           <Button icon={<UploadOutlined />}>点击上传</Button>
         </Upload>

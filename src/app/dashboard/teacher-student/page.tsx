@@ -8,7 +8,7 @@ import Table, { TableLineActions } from "@/components/table/table.component";
 import { Student, Students, TableColumns, TableDataSource } from '@/global/type';
 import './teacher-student.part.css';
 import Alert from '@/components/alert/alert.component';
-import { Button, Space } from 'antd';
+import { Button, Input, Space, message } from 'antd';
 
 export default function Page() {
 
@@ -17,6 +17,7 @@ export default function Page() {
   // const [practiceRateModalShown, setPracticeRateModalShown] = useState(false);
   // const [practiceAnnexModalShown, setPracticeAnnexModalShown] = useState(false);
 
+  const [messageApi, contextHolder] = message.useMessage();
   const [modalStates, setModalStates] = useState<{ [key: string]: boolean }>({
     infoModalShown: false,
     practiceRateModalShown: false,
@@ -29,31 +30,34 @@ export default function Page() {
     id: `modal-${modalName}`,
     shown: modalStates[`${modalName}ModalShown`],
     close_function: () => toggleModal(`${modalName}ModalShown`),
+    hidden_close_btn: true,
     modal_title: title,
     modal_btns: (
       <>
         {buttons}
-        <button className='btn btn-secondary' onClick={() => toggleModal(modalName)}>关闭</button>
+        {/* <button className='btn btn-secondary' onClick={() => toggleModal(modalName)}>关闭</button> */}
+        <Button type="primary" onClick={() => toggleModal(modalName)}>关闭</Button>
       </>
     ),
     children,
   });
 
-  const [alertState, setAlertState] = useState<{ alertShown: boolean, alertMessage: string, alertType: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark' }>({
-    alertShown: false,
-    alertMessage: '',
-    alertType: 'info'
-  });
-  const alertProps = () => ({
-    shown: alertState['alertShown'],
-    type: alertState['alertType'],
-    message: alertState['alertMessage'],
-    close_function: () => setAlertState({ alertShown: false, alertMessage: '', alertType: 'info' })
-  });
-  const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
-    setAlertState({ alertShown: true, alertMessage: message, alertType: type });
-  };
+  // const [alertState, setAlertState] = useState<{ alertShown: boolean, alertMessage: string, alertType: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark' }>({
+  //   alertShown: false,
+  //   alertMessage: '',
+  //   alertType: 'info'
+  // });
+  // const alertProps = () => ({
+  //   shown: alertState['alertShown'],
+  //   type: alertState['alertType'],
+  //   message: alertState['alertMessage'],
+  //   close_function: () => setAlertState({ alertShown: false, alertMessage: '', alertType: 'info' })
+  // });
+  // const alert = (message: string, type: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark') => {
+  //   setAlertState({ alertShown: true, alertMessage: message, alertType: type });
+  // };
 
+  const [search_keyword, setSearchKeyword] = useState<string>('');
   const [has_proof, setHasProof] = useState<boolean>(false);
   const [proof, setProof] = useState<string>('');
   const [rate_target, setRateTarget] = useState<string>();
@@ -128,6 +132,7 @@ export default function Page() {
     { title: '学生姓名', dataIndex: 'name', key: 'name' },
     { title: '学号', dataIndex: 'number', key: 'number' },
     { title: '年级', dataIndex: 'grade', key: 'grade' },
+    { title: '专业方向', dataIndex: 'performence', key: 'performence' },
     { title: '联系电话', dataIndex: 'phone', key: 'phone' },
     { title: '联系邮箱', dataIndex: 'email', key: 'email' },
     { title: '个人简历', dataIndex: 'resume', key: 'resume' },
@@ -140,12 +145,14 @@ export default function Page() {
             <Button type="primary" onClick={() => {
               const tmp_list = student_list_ref.current.filter(x => x.id === record.id);
               if (tmp_list.length === 0) {
-                alert('编号为空', 'danger');
+                // alert('编号为空', 'danger');
+                messageApi.error('编号为空')
                 return;
               }
               const target = tmp_list[0];
               if ((JSON.parse(Buffer.from(target.proof as Uint8Array).toString()) as Array<string>).length === 0) {
-                alert('该学生未上传实习凭证', 'danger');
+                // alert('该学生未上传实习凭证', 'danger');
+                messageApi.error('该学生未上传实习凭证')
                 return;
               }
               setRateTarget(record.id);
@@ -154,29 +161,32 @@ export default function Page() {
             <Button type="primary" onClick={async () => {
               const tmp_list = student_list_ref.current.filter(x => x.id === record.id);
               if (tmp_list.length === 0) {
-                alert('编号为空', 'danger');
+                // alert('编号为空', 'danger');
+                messageApi.error('编号为空')
                 return;
               }
               const target = tmp_list[0];
-              (document.getElementById("student-name") as HTMLElement).innerText = target.name;
-              (document.getElementById("student-number") as HTMLElement).innerText = target.number;
-              (document.getElementById("student-grade") as HTMLElement).innerText = target.grade;
-              (document.getElementById("student-phone") as HTMLElement).innerText = target.phone;
-              (document.getElementById("student-mail") as HTMLElement).innerText = target.mail;
-              let proof_doc_msg = JSON.parse(Buffer.from(target.proof as Uint8Array).toString()) as Array<string>
-              if (proof_doc_msg.length !== 0) {
-                setHasProof(true)
-                let proof_doc_id = proof_doc_msg[proof_doc_msg.length - 1];
-                await server.fetchProof(proof_doc_id)
-                  .then(res => {
-                    if (res) {
-                      setProof(Buffer.from(res[0]['base64code']).toString());
-                    }
-                  })
-              } else {
-                setHasProof(false);
-              }
               toggleModal('info');
+              setTimeout(async () => {
+                (document.getElementById("student-name") as HTMLElement).innerText = target.name;
+                (document.getElementById("student-number") as HTMLElement).innerText = target.number;
+                (document.getElementById("student-grade") as HTMLElement).innerText = target.grade;
+                (document.getElementById("student-phone") as HTMLElement).innerText = target.phone;
+                (document.getElementById("student-mail") as HTMLElement).innerText = target.mail;
+                let proof_doc_msg = JSON.parse(Buffer.from(target.proof as Uint8Array).toString()) as Array<string>
+                if (proof_doc_msg.length !== 0) {
+                  setHasProof(true)
+                  let proof_doc_id = proof_doc_msg[proof_doc_msg.length - 1];
+                  await server.fetchProof(proof_doc_id)
+                    .then(res => {
+                      if (res) {
+                        setProof(Buffer.from(res[0]['base64code']).toString());
+                      }
+                    })
+                } else {
+                  setHasProof(false);
+                }
+              }, 1500);
             }}>详细</Button>
           </Space>
         );
@@ -189,35 +199,7 @@ export default function Page() {
     student_list_ref.current = student_list;
   }, [student_list])
   useEffect(() => {
-    server.fetchStudents()
-      .then(res => {
-        console.log(res);
-        // setTableBody(res.map(x => [
-        //   x.id, x.name, x.number, x.grade, x.phone,
-        //   x.mail,
-        //   // Buffer.from(res[0].is_practice)[0] ? '是' : '否',
-        //   // Buffer.from(res[0].is_practice)[0] ? x.practice_cmp[-1] : '未处于实习状态',
-        //   (JSON.parse(Buffer.from(res[0].vitae as Uint8Array).toString()) as Array<string>).length !== 0 ? '有' : '无',
-        //   (JSON.parse(Buffer.from(res[0].proof as Uint8Array).toString()) as Array<string>).length !== 0 ? '有' : '无',
-        //   x.score !== undefined && x.score !== -1 ? x.score : '未录入实习成绩'
-        // ]));
-        setTableDataSource(res.map(x => {
-          return {
-            id: x.id,
-            name: x.name,
-            number: x.number,
-            grade: x.grade,
-            phone: x.phone,
-            mail: x.mail,
-            // is_practice: Buffer.from(x.is_practice)[0] ? '是' : '否',
-            // practice_cmp: Buffer.from(x.is_practice)[0] ? x.practice_cmp[-1] : '未处于实习状态',
-            vitae: (JSON.parse(Buffer.from(x.vitae as Uint8Array).toString()) as Array<string>).length !== 0 ? '有' : '无',
-            proof: (JSON.parse(Buffer.from(x.proof as Uint8Array).toString()) as Array<string>).length !== 0 ? '有' : '无',
-            score: x.score !== undefined && x.score !== -1 ? x.score : '未录入实习成绩'
-          }
-        }))
-        setStudentList(res);
-      })
+    fetchStudents();
   }, [])
 
   // const table_head = ['编号', '姓名', '学号', '联系电话', '邮箱', '实习状态'];
@@ -236,6 +218,39 @@ export default function Page() {
   // if (student_info.proof) student_annex = "data:image/png;base64," + student_info.proof;
   // else setHasProof(false);
 
+  const fetchStudents = () => {
+    server.fetchStudents()
+      .then(res => {
+        console.log(res);
+        // setTableBody(res.map(x => [
+        //   x.id, x.name, x.number, x.grade, x.phone,
+        //   x.mail,
+        //   // Buffer.from(res[0].is_practice)[0] ? '是' : '否',
+        //   // Buffer.from(res[0].is_practice)[0] ? x.practice_cmp[-1] : '未处于实习状态',
+        //   (JSON.parse(Buffer.from(res[0].vitae as Uint8Array).toString()) as Array<string>).length !== 0 ? '有' : '无',
+        //   (JSON.parse(Buffer.from(res[0].proof as Uint8Array).toString()) as Array<string>).length !== 0 ? '有' : '无',
+        //   x.score !== undefined && x.score !== -1 ? x.score : '未录入实习成绩'
+        // ]));
+        setTableDataSource(res.map(x => {
+          return {
+            key: x.id as React.Key,
+            id: x.id,
+            name: x.name,
+            number: x.number,
+            grade: x.grade,
+            performance: x.performence,
+            phone: x.phone,
+            mail: x.mail,
+            // is_practice: Buffer.from(x.is_practice)[0] ? '是' : '否',
+            // practice_cmp: Buffer.from(x.is_practice)[0] ? x.practice_cmp[-1] : '未处于实习状态',
+            vitae: (JSON.parse(Buffer.from(x.vitae as Uint8Array).toString()) as Array<string>).length !== 0 ? '有' : '无',
+            proof: (JSON.parse(Buffer.from(x.proof as Uint8Array).toString()) as Array<string>).length !== 0 ? '有' : '无',
+            score: x.score !== undefined && x.score !== -1 ? x.score : '未录入实习成绩'
+          }
+        }))
+        setStudentList(res);
+      })
+  };
   const openAnnexModal = () => {
     // setInfoModalShown(false);
     // setPracticeAnnexModalShown(true);
@@ -244,25 +259,51 @@ export default function Page() {
       setProof(proof => "data:application/pdf;base64," + proof);
     }
     toggleModal('practiceAnnex');
-  }
+  };
   const rateConfirm = () => {
     if (!rate_target) {
-      alert('编号为空', 'danger');
+      // alert('编号为空', 'danger');
+      messageApi.error('编号为空')
       return;
     }
     let rate = (document.getElementById('practice-score-input') as HTMLInputElement).value;
     server.submitRate(rate_target, Number(rate))
       .then(res => {
         if (res) {
-          location.reload()
+          // location.reload()
+          fetchStudents();
         } else {
           toggleModal('practiceRate');
-          alert('后台出错，打分失败', 'danger');
+          // alert('后台出错，打分失败', 'danger');
+          messageApi.error('后台出错，打分失败');
         }
       })
       .catch(err => {
         toggleModal('practiceRate');
-        alert('后台出错，打分失败', 'danger');
+        // alert('后台出错，打分失败', 'danger');
+        messageApi.error('后台出错，打分失败');
+      })
+  };
+  const search = (keyword: string) => {
+    server.searchStudent(keyword)
+      .then(res => {
+        setTableDataSource(res.map(x => {
+          return {
+            key: x.id as React.Key,
+            id: x.id,
+            name: x.name,
+            number: x.number,
+            grade: x.grade,
+            performance: x.performence,
+            phone: x.phone,
+            mail: x.mail,
+            // is_practice: Buffer.from(x.is_practice)[0] ? '是' : '否',
+            // practice_cmp: Buffer.from(x.is_practice)[0] ? x.practice_cmp[-1] : '未处于实习状态',
+            vitae: (JSON.parse(Buffer.from(x.vitae as Uint8Array).toString()) as Array<string>).length !== 0 ? '有' : '无',
+            proof: (JSON.parse(Buffer.from(x.proof as Uint8Array).toString()) as Array<string>).length !== 0 ? '有' : '无',
+            score: x.score !== undefined && x.score !== -1 ? x.score : '未录入实习成绩'
+          }
+        }))
       })
   }
 
@@ -274,17 +315,34 @@ export default function Page() {
 
   return (
     <>
+      {contextHolder}
       <div className="dashboard-base-panel">
         <div className="dashboard-model-title">
           <h2>名下学生信息</h2>
           <hr />
         </div>
+        <div className="dashboard-model-buttons-and-search">
+          <div className="dashboard-model-buttons">
+            {/* <button className="btn btn-secondary">导入</button>
+            <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button> */}
+          </div>
+          <div>
+            {/* <Search placeholder="搜索"  /> */}
+            <Space>
+              <Space.Compact>
+                <Input placeholder="输入关键字" onChange={(e) => setSearchKeyword(e.currentTarget.value)} />
+                <Button type="primary" onClick={() => search(search_keyword)}>搜索</Button>
+              </Space.Compact>
+            </Space>
+          </div>
+        </div>
         {/* <div className="dashboard-model-buttons">
           <button className="btn btn-primary"></button>
         </div> */}
+
         <div>
           {/* <Table table_head={table_head} table_body={table_body} table_id="s-table" line_action={table_line_actions} /> */}
-          <Table dataSource={table_data_source} columns={table_columns} /> 
+          <Table dataSource={table_data_source} columns={table_columns} />
         </div>
       </div>
 
@@ -345,7 +403,7 @@ export default function Page() {
         </div>
       ))} />
 
-      <Alert {...alertProps()} />
+      {/* <Alert {...alertProps()} /> */}
     </>
   );
 }

@@ -51,5 +51,13 @@ export default {
       data: { id, rate }
     })).data;
     return results['ok'];
+  },
+  async searchStudent(keyword: string): Promise<Students> {
+    const results: Students = (await axios({
+      url: '/dashboard/teacher-student/api',
+      method: 'get',
+      params: { keyword }
+    })).data['results'] as Students;
+    return results;
   }
 }

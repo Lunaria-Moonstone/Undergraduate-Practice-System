@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
   try {
     results = await executeQuery({
       query: `
-      SELECT t.* FROM \`student_teacher_map\` st
+      SELECT t.*, st.practice_document_model FROM \`student_teacher_map\` st
       LEFT JOIN \`teacher\` t ON t.id=st.teacher_id
       WHERE student_id=? LIMIT 1
       `,

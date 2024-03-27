@@ -37,6 +37,7 @@ export default function Page() {
   //   setAlertShown(false);
   // }
 
+  const [search_keyword, setSearchKeyword] = useState('');
   const [add_form_error_msg, setAddFormErrorMsg] = useState('');
   const [edit_form_error_msg, setEditFormErrorMsg] = useState('');
   const [del_targets, setDelTargets] = useState<string | string[]>();
@@ -291,6 +292,21 @@ export default function Page() {
           setDelTargets(undefined);
         })
     }
+  };
+  const search = (keyword: string) => {
+    server.searchCompany(keyword)
+      .then(res => {
+        setTableDataSource(res.map(x => {
+          return {
+            key: x.id as React.Key,
+            id: x.id,
+            name: x.name,
+            phone: x.phone,
+            mail: x.mail,
+            
+          }
+        }))
+      })
   }
 
   return (
@@ -316,8 +332,8 @@ export default function Page() {
             {/* <Search placeholder="搜索"  /> */}
             <Space>
               <Space.Compact>
-                <Input placeholder="输入关键字" />
-                <Button type="primary">搜索</Button>
+                <Input placeholder="输入关键字" onChange={(e) => setSearchKeyword(e.currentTarget.value)}/>
+                <Button type="primary" onClick={() => search(search_keyword)}>搜索</Button>
               </Space.Compact>
             </Space>
           </div>
