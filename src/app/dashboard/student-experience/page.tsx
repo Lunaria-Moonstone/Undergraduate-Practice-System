@@ -155,7 +155,7 @@ export default function Page() {
   };
   const saveAdd = () => {
     let form_value = formInput(document.getElementById('form-add') as HTMLElement);
-
+    let checked = (document.getElementById('is-ok-check') as HTMLInputElement).checked;
     if (!option_selected) {
       setAddFormErrorMsg('未选中企业');
       return;
@@ -165,22 +165,20 @@ export default function Page() {
       return;
     }
 
-    server.addExperience({ company_id: option_selected as string, start: form_value[0] as string, end: form_value ? form_value[1] as string : undefined })
+    server.addExperience({ company_id: option_selected as string, start: form_value[0] as string, end: form_value ? form_value[1] as string : undefined, checked: checked })
       .then(res => {
-        console.log(res);
+        // console.log(res);
         if (res) {
           toggleModal('add');
           // location.reload();
           fetchExperience();
         } else {
           toggleModal('add');
-          // alert('后台出错，添加失败', 'danger');
           messageApi.error('后台出错，添加失败');
         }
       })
       .catch(err => {
         toggleModal('add');
-        // alert('后台出错，添加失败', 'danger');
         messageApi.error('后台出错，添加失败');
       });
   };
@@ -249,12 +247,12 @@ export default function Page() {
           </div>
           <div>
             {/* <Search placeholder="搜索"  /> */}
-            <Space>
+            {/* <Space>
               <Space.Compact>
                 <Input placeholder="输入关键字" />
                 <Button type="primary">搜索</Button>
               </Space.Compact>
-            </Space>
+            </Space> */}
           </div>
         </div>
         {/* <Table table_id='table' table_head={table_head} table_body={table_body} checkbox={true} line_action={table_line_actions} check_change_function={checkChangeRecall} /> */}
@@ -276,6 +274,10 @@ export default function Page() {
             <div className="mb-3">
               <label className="form-label">离职时间</label>
               <input className="form-control" type="date" defaultValue="1999-01-01" />
+            </div>
+            <div className='mb-3'>
+              <input className='form-check-input' type='checkbox' defaultChecked={false} id='is-ok-check'/>
+              <label className='form-check-label'>专业是否对口</label>
             </div>
           </form>
           <div className='form-error-info'>

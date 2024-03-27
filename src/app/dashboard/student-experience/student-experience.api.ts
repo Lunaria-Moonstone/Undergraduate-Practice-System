@@ -20,6 +20,7 @@ export default {
     company_id: string,
     start: string,
     end?: string,
+    checked?: boolean,
   }): Promise<boolean> {
     const result = (await axios({
       url: '/dashboard/student-experience/api',

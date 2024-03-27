@@ -50,16 +50,15 @@ export async function POST(request: NextRequest) {
 
   let request_body = await (new Response(request.body)).blob();
   let id = nanoid();
-  let { company_id, start, end } = JSON.parse((await request_body.text()));
-  console.log(company_id, start, end);
+  let { company_id, start, end, checked } = JSON.parse((await request_body.text()));
   let student_id = user.role_id;
-  return await router.POST({ id, company_id, student_id, start, end });
+  return await router.POST({ id, company_id, student_id, start, end, is_ok: checked ? 1 : 0 })
 }
 
 export async function DELETE(request: NextRequest) {
   let query = request.nextUrl.searchParams;
   let id = query.get('id');
-  if (id === null) return new NextResponse(new Blob([JSON.stringify({ ok: false, error: 'id should not be empty'})]));
+  if (id === null) return new NextResponse(new Blob([JSON.stringify({ ok: false, error: 'id should not be empty' })]));
   return await router.DELETE({ id });
 }
 

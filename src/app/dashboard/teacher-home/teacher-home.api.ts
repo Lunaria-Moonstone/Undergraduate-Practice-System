@@ -55,5 +55,12 @@ export default {
     })).data['results'][0] as { [key: string]: number };
     console.log(result);
     return String(result['ratio'] * 100) + '%';
+  },
+  async fetchIsOkRate() {
+    const result = (await axios({
+      url: '/dashboard/teacher-home/api/is-ok-rate',
+      method: 'get',
+    })).data['results'][0] as { [key: string]: number };
+    return String(result['ratio'] * 100) + '%';
   }
 }

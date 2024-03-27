@@ -134,6 +134,16 @@ export default function Page() {
       .then(res => {
         (document.getElementById("practice-rate") as HTMLElement).innerText = String(res);
       })
+      .catch(err => {
+        messageApi.error('后台错误，抓取信息失败');
+      });
+    server.fetchIsOkRate()
+      .then(res => {
+        (document.getElementById("is-ok-rate") as HTMLElement).innerText = String(res);
+      })
+      .catch(err => {
+        messageApi.error('后台错误，抓取信息失败');
+      });
   }, [])
 
   // const announcement_items: Announcements = server.fetchAnnouncements();
@@ -186,10 +196,10 @@ export default function Page() {
                     <span>名下学生实习率</span>
                     <p id="practice-rate"></p>
                   </div>
-                  {/* <div>
+                  <div>
                     <span>名下学生专业对口率</span>
-                    <p></p>
-                  </div> */}
+                    <p id="is-ok-rate"></p>
+                  </div>
                 </div>
               </div>
             </div>
