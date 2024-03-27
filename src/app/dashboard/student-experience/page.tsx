@@ -34,7 +34,8 @@ export default function Page() {
     modal_btns: (
       <>
         {buttons}
-        <button className='btn btn-secondary' onClick={() => toggleModal(modalName)}>关闭</button>
+        {/* <button className='btn btn-secondary' onClick={() => toggleModal(modalName)}>关闭</button> */}
+        <Button onClick={() => toggleModal(modalName)}>关闭</Button>
       </>
     ),
     children,
@@ -282,13 +283,15 @@ export default function Page() {
           </div>
         </div>
       ), (
-        <button className='btn btn-primary' onClick={() => { saveAdd() }}>确认</button>
+        // <button className='btn btn-primary' onClick={() => { saveAdd() }}>确认</button>
+        <Button type='primary' onClick={() => saveAdd()}>确认</Button>
       ))} />
 
       <Modal {...modalProps('del', '删除确认', (
         <p>删除内容后无法恢复，是否继续</p>
       ), (
-        <button className='btn btn-danger' onClick={() => delConfirm()}>确认</button>
+        // <button className='btn btn-danger' onClick={() => delConfirm()}>确认</button>
+        <Button type='primary' onClick={() => delConfirm()} >确认</Button>
       ))} />
 
       {/* <Modal shown={infoModalShown} id="modal-info" modal_title='详细' close_function={() => setInfoModalShown(false)} modal_btns={

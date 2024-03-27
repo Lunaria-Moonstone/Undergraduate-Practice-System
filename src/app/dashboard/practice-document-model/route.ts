@@ -55,7 +55,6 @@ export async function GET(request: NextApiRequest, response: NextApiResponse) {
       })
     }
   } catch (err: unknown) {
-    console.log('error', err)
     results = err;
     return new NextResponse(new Blob([JSON.stringify(results, null, 2)], {
       type: 'application/json',

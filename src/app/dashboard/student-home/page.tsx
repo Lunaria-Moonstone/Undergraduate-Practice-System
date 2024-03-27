@@ -79,8 +79,8 @@ export default function Page() {
                     {x.simple_descript}
                   </p>
                   <div className="notification-inline-btns">
-                    <a className='btn btn-primary btn-sm' onClick={() => setInfoModalShown(true)}>详细</a>
-                    <a className='btn btn-secondary btn-sm'>忽略</a>
+                    {/* <a className='btn btn-primary btn-sm' onClick={() => setInfoModalShown(true)}>详细</a> */}
+                    {/* <a className='btn btn-secondary btn-sm'>忽略</a> */}
                   </div>
                 </div>
               </div>
@@ -168,18 +168,18 @@ export default function Page() {
             </div> */}
             <nav>
               <div className="nav nav-tabs" id="nav-tab" role="tablist">
-                {/* <button className="nav-link active" id="notification-tab" data-bs-toggle="tab" data-bs-target="#notification" type="button" role="tab" aria-controls="profile-msg" aria-selected="true">通知</button> */}
-                <button className="nav-link active" id="announcement-tab" data-bs-toggle="tab" data-bs-target="#announcement" type="button" role="tab" aria-controls="account-msg" aria-selected="false">公告</button>
+                <button className="nav-link active" id="notification-tab" data-bs-toggle="tab" data-bs-target="#notification" type="button" role="tab" aria-controls="profile-msg" aria-selected="true">通知</button>
+                <button className="nav-link" id="announcement-tab" data-bs-toggle="tab" data-bs-target="#announcement" type="button" role="tab" aria-controls="account-msg" aria-selected="false">公告</button>
               </div>
             </nav>
             <div className="tab-content student-annex-card-body" id="nav-tabContent" style={{ flex: 1 }}>
-              {/* <div className="tab-pane fade show active" id="notification" role="tabpanel" aria-labelledby="notification-tab" style={{ width: '100%', height: '100%' }}>
+              <div className="tab-pane fade show active" id="notification" role="tabpanel" aria-labelledby="notification-tab" style={{ width: '100%', height: '100%' }}>
                 <div className="card" style={{ height: '100%', borderTop: '0', borderTopLeftRadius: '0', borderTopRightRadius: '0' }}>
                   <div className="card-body notification-cards">
                     {notifications_body}
                   </div>
                 </div>
-              </div> */}
+              </div>
               <div className="tab-pane fade show active" id="announcement" role="tabpanel" aria-labelledby="announcement-tab" style={{ width: '100%', height: '100%' }}>
                 <div className="card" style={{ height: '100%', borderTop: '0', borderTopLeftRadius: '0', borderTopRightRadius: '0' }}>
                   <div className="card-body notification-cards">
@@ -194,7 +194,7 @@ export default function Page() {
 
       <Modal shown={infoModalShown} close_function={() => setInfoModalShown(false)} modal_title='通知详细' modal_btns={
         <>
-          <button type="button" className="btn btn-secondary" onClick={() => setInfoModalShown(false)}>关闭</button>
+          {/* <button type="button" className="btn btn-secondary" onClick={() => setInfoModalShown(false)}>关闭</button> */}
         </>
       }>
         ...

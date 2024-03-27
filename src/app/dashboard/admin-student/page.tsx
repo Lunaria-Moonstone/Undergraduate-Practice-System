@@ -291,7 +291,7 @@ export default function Page() {
       </Modal>
 
       <Modal shown={importModalShown} modal_title='导入文件' close_function={() => setImportModalShown(false)} >
-        <Upload name='file' action='/dashboard/import-excel' headers={{
+        <Upload name='file' action='/dashboard/import-excel' accept='.xlsx' headers={{
           role: 'student'
         }} method='post' onChange={(info) => {
           if (info.file.status === 'done') {

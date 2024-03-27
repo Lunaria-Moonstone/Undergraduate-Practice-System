@@ -47,5 +47,13 @@ export default {
     }));
     console.log(result);
     return result.data['ok'];
+  },
+  async fetchPracticeRate() {
+    const result = (await axios({
+      url: '/dashboard/teacher-home/api/practice-rate',
+      method: 'get',
+    })).data['results'][0] as { [key: string]: number };
+    console.log(result);
+    return String(result['ratio'] * 100) + '%';
   }
 }

@@ -129,6 +129,10 @@ export default function Page() {
       })
       .catch(err => {
         messageApi.error('后台错误，抓取信息失败');
+      });
+    server.fetchPracticeRate()
+      .then(res => {
+        (document.getElementById("practice-rate") as HTMLElement).innerText = String(res);
       })
   }, [])
 
@@ -178,6 +182,14 @@ export default function Page() {
                     <span>联系邮箱</span>
                     <p id="teacher-mail">110@outlook.com</p>
                   </div>
+                  <div>
+                    <span>名下学生实习率</span>
+                    <p id="practice-rate"></p>
+                  </div>
+                  {/* <div>
+                    <span>名下学生专业对口率</span>
+                    <p></p>
+                  </div> */}
                 </div>
               </div>
             </div>
