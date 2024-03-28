@@ -28,11 +28,13 @@ export default function Page() {
     id: `modal-${modalName}`,
     shown: modalStates[`${modalName}ModalShown`],
     close_function: () => toggleModal(`${modalName}ModalShown`),
+    hide_close_btn: true,
     modal_title: title,
     modal_btns: (
       <>
         {buttons}
-        <button className='btn btn-secondary' onClick={() => toggleModal(modalName)}>关闭</button>
+        {/* <button className='btn btn-secondary' onClick={() => toggleModal(modalName)}>关闭</button> */}
+        <Button onClick={() => toggleModal(modalName)}>关闭</Button>
       </>
     ),
     children,
@@ -46,6 +48,7 @@ export default function Page() {
   const alertProps = () => ({
     shown: alertState['alertShown'],
     type: alertState['alertType'],
+    hide_close_btn: true,
     message: alertState['alertMessage'],
     close_function: () => setAlertState({ alertShown: false, alertMessage: '', alertType: 'info' })
   });
@@ -93,6 +96,16 @@ export default function Page() {
     { title: '公司名称', dataIndex: 'company_name', key: 'company_name' },
     { title: '岗位名称', dataIndex: 'name', key: 'name' },
     { title: '薪资', dataIndex: 'salary', key: 'salary' },
+    {
+      title: '操作', dataIndex: 'actions', key: 'actions', render: (_, record) => {
+        return <Space size="middle">
+          <Button type='link' onClick={() => {
+            setSubmitTarget(record.id);
+            toggleModal('submit');
+          }}>投递</Button>
+        </Space>
+      }
+    }
   ];
   const [table_data_source, setTableDataSource] = useState<TableDataSource>([]);
 
@@ -217,13 +230,14 @@ export default function Page() {
             <div className="mb-3">
               <label className="form-label">是否确定向该岗位投递求职意向</label>
               <select id="submit-resume-select" className='form-control'>
-                { resume_list }
+                {resume_list}
               </select>
             </div>
           </form>
         </>
       ), (
-        <button className='btn btn-primary' onClick={() => submitConfirm()}>确认</button>
+        // <button className='btn btn-primary' onClick={() => submitConfirm()}>确认</button>
+        <Button type='primary' onClick={() => submitConfirm()}>确认</Button>
       ))} />
 
       <Modal {...modalProps('info', '岗位信息', (

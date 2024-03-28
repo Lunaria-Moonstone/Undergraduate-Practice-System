@@ -90,16 +90,20 @@ export default function Page() {
           <Button onClick={() => {
             server.fetchCompany(record.id)
               .then(res => {
-                let form_value = document.getElementById('edit-form') as HTMLFormElement;
-                let form_input_list = form_value.children;
-                let company_id = res.id;
-                let company_info = [res.name, res.phone, res.mail]
-                for (let info = 0; info < company_info.length; info += 1) {
-                  let input_item = form_input_list.item(info)?.lastChild as HTMLInputElement;
-                  input_item.value = company_info[info];
-                }
-                setEditTarget(company_id);
                 setEditModalShown(true);
+                setTimeout(() => {
+                  let form_value = document.getElementById('edit-form') as HTMLFormElement;
+                  let form_input_list = form_value.children;
+                  let company_id = res.id;
+                  let company_info = [res.name, res.phone, res.mail]
+                  for (let info = 0; info < company_info.length; info += 1) {
+                    let input_item = form_input_list.item(info)?.lastChild as HTMLInputElement;
+                    input_item.value = company_info[info];
+                  }
+                  setEditTarget(company_id);
+
+                }, 2000);
+
               })
               .catch(_ => {
                 // alert('获取数据失败', 'danger');
@@ -303,7 +307,7 @@ export default function Page() {
             name: x.name,
             phone: x.phone,
             mail: x.mail,
-            
+
           }
         }))
       })
@@ -323,8 +327,8 @@ export default function Page() {
           <div className="dashboard-model-buttons">
             <Button type='primary' onClick={() => setAddModalShown(true)}>新增</Button>
             <Button onClick={() => delMutiple()} danger>删除</Button>
-            <Button >导入</Button>
-            <Button onClick={() => setExportModalShown(true)}>导出</Button>
+            {/* <Button >导入</Button>
+            <Button onClick={() => setExportModalShown(true)}>导出</Button> */}
             {/* <button className="btn btn-secondary">导入</button>
             <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button> */}
           </div>
@@ -332,7 +336,7 @@ export default function Page() {
             {/* <Search placeholder="搜索"  /> */}
             <Space>
               <Space.Compact>
-                <Input placeholder="输入关键字" onChange={(e) => setSearchKeyword(e.currentTarget.value)}/>
+                <Input placeholder="输入关键字" onChange={(e) => setSearchKeyword(e.currentTarget.value)} />
                 <Button type="primary" onClick={() => search(search_keyword)}>搜索</Button>
               </Space.Compact>
             </Space>
@@ -361,8 +365,9 @@ export default function Page() {
       {/* 修改模态框 */}
       <Modal shown={editModalShown} close_function={() => setEditModalShown(false)} modal_title='修改公司信息' modal_btns={
         <>
-          <button className='btn btn-primary' onClick={() => saveEdit()}>确定</button>
-          <button className='btn btn-secondary' onClick={() => setEditModalShown(false)}>取消</button>
+          {/* <button className='btn btn-primary' onClick={() => saveEdit()}>确定</button>
+          <button className='btn btn-secondary' onClick={() => setEditModalShown(false)}>取消</button> */}
+          <Button type='primary' onClick={() => saveAdd()}>确定</Button>
         </>
       }>
         <Form form_items={edit_form_items} form_id="edit-form" />

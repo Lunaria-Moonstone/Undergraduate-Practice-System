@@ -81,6 +81,9 @@ export async function DELETE(request: NextRequest) {
 
   try {
     results = await dropSafty({ table: 'company', where: { id } });
+    await dropSafty({ table: 'job', where: {company_id: id}})
+    await dropSafty({ table: 'job_audit', where: {company_id: id}})
+    await dropSafty({ table: 'user', where: { role: 3, foreign_id: id }})
   } catch (error: unknown) {
     results = error;
   } finally {

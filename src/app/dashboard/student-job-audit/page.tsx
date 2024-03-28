@@ -27,11 +27,13 @@ export default function Page() {
     id: `modal-${modalName}`,
     shown: modalStates[`${modalName}ModalShown`],
     close_function: () => toggleModal(`${modalName}ModalShown`),
+    hide_close_btn: true,
     modal_title: title,
     modal_btns: (
       <>
         {buttons}
-        <button className='btn btn-secondary' onClick={() => toggleModal(modalName)}>关闭</button>
+        {/* <button className='btn btn-secondary' onClick={() => toggleModal(modalName)}>关闭</button> */}
+        <Button onClick={() => toggleModal(modalName)}>关闭</Button>
       </>
     ),
     children,
@@ -112,14 +114,16 @@ export default function Page() {
                 alert('编号不存在', 'danger');
                 return;
               }
-              const target = tmp_list[0];
-              (document.getElementById("job-info-title") as HTMLElement).innerText = target.job_name as string;
-              (document.getElementById("company-info-name") as HTMLElement).innerText = target.company_name as string;
-              (document.getElementById("job-info-salary") as HTMLElement).innerText = target.salary as string;
-              (document.getElementById("job-info-descript") as HTMLElement).innerText = target.descript as string;
-              (document.getElementById("job-audit-progress") as HTMLElement).innerText = target.progress as string;
-              (document.getElementById("company-info-feedback") as HTMLElement).innerText = target.feedback as string;
               toggleModal('info');
+              const target = tmp_list[0];
+              setTimeout(() => {
+                (document.getElementById("job-info-title") as HTMLElement).innerText = target.job_name as string;
+                (document.getElementById("company-info-name") as HTMLElement).innerText = target.company_name as string;
+                (document.getElementById("job-info-salary") as HTMLElement).innerText = target.salary as string;
+                (document.getElementById("job-info-descript") as HTMLElement).innerText = target.descript as string;
+                (document.getElementById("job-audit-progress") as HTMLElement).innerText = target.progress as string;
+                (document.getElementById("company-info-feedback") as HTMLElement).innerText = target.feedback as string;
+              }, 1500);
             }
           }>详细</Button>
         </Space>
@@ -230,7 +234,8 @@ export default function Page() {
       <Modal {...modalProps('cancle', '取消投递', (
         <p>是否批量取消投递</p>
       ), (
-        <button className="btn btn-danger" onClick={cancleConfirm}>确定</button>
+        // <button className="btn btn-danger" onClick={cancleConfirm}>确定</button>
+        <Button type="primary" danger onClick={cancleConfirm}>确定</Button>
       ))} />
 
       <Modal {...modalProps('info', '岗位信息', (
@@ -247,7 +252,7 @@ export default function Page() {
               <div id="job-info-salary"></div>
             </div>
             <div>
-              <div style={{ fontWeight: 'bold'}}>描述</div>
+              <div style={{ fontWeight: 'bold' }}>描述</div>
               <div id="job-info-descript"></div>
             </div>
             <div>
