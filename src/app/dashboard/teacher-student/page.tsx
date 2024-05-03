@@ -29,12 +29,13 @@ export default function Page() {
   const toggleModal = (modalName: string) => {
     setModalStates(prev => ({ ...prev, [`${modalName}ModalShown`]: !prev[`${modalName}ModalShown`] }));
   }
-  const modalProps = (modalName: string, title: string, children: React.ReactNode, buttons?: React.ReactNode) => ({
+  const modalProps = (modalName: string, title: string, children: React.ReactNode, buttons?: React.ReactNode, bodyStyle?: { [key: string]: string }) => ({
     id: `modal-${modalName}`,
     shown: modalStates[`${modalName}ModalShown`],
     close_function: () => toggleModal(`${modalName}ModalShown`),
     hide_close_btn: true,
     modal_title: title,
+    bodyStyle: bodyStyle,
     modal_btns: (
       <>
         {buttons}
@@ -369,7 +370,7 @@ export default function Page() {
           <div className="dashboard-model-buttons">
             {/* <button className="btn btn-secondary">导入</button>
             <button className="btn btn-secondary" onClick={() => setExportModalShown(true)}>导出</button> */}
-            <Button onClick={fetchPracticeDocumentModel}>下载材料模板</Button>
+            {/* <Button onClick={fetchPracticeDocumentModel}>下载材料模板</Button> */}
             <Button onClick={() => toggleModal('add')}>上传材料模板</Button>
           </div>
           <div>
@@ -444,11 +445,11 @@ export default function Page() {
       ))} />
 
       <Modal {...modalProps('practiceAnnex', '实习材料', (
-        <div className='card'>
+        <div className='card' style={{ height: '100%' }}>
           {/* <img alt="" className='card-img-top' /> */}
-          <embed src={proof} />
+          <embed src={proof} height={'100%'} />
         </div>
-      ))} />
+      ), null, { 'height': '600px' })} />
 
       <Modal {...modalProps('add', '上传材料', (
         <Form form_items={addItems} form_id="upload-form" />

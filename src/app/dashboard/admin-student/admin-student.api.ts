@@ -2,6 +2,9 @@ import axios from 'axios';
 
 import { Students, Student } from '@/global/type';
 import AccountServer from '../account-manage/account-manage.api';
+import ExperienceServer from '../student-experience/student-experience.api'
+import TSMapServer from '../teacher-student/teacher-student.api'
+
 
 const require_route = '/dashboard/admin-student/api/';
 
@@ -46,6 +49,8 @@ export default {
     if (results.data['ok']) {
       // console.log('start del user: ', id)
       AccountServer.delAccount(1, id);
+      ExperienceServer.deleteByStudentId(id);
+      TSMapServer.deleteStudentById(id);
     }
     return results.data['ok'];
   }, 
@@ -71,4 +76,5 @@ export default {
 
   //   })
   // }
+  
 }

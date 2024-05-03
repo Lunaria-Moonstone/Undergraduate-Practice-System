@@ -33,5 +33,12 @@ export default {
       params: { id }
     });
     return results.data['ok'];
+  },
+  async fetchIsOkRate() {
+    const result = (await axios({
+      url: '/dashboard/admin-home/api/is-ok-rate',
+      method: 'get',
+    })).data['results'][0] as { [key: string]: number };
+    return String(result['ratio'] * 100) + '%';
   }
 }

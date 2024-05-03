@@ -36,5 +36,13 @@ export default {
       params: { id }
     })).data;
     return result['ok'];
+  },
+  async deleteByStudentId(id: string) {
+    const result = (await axios({
+      url: '/dashboard/student-experience/api/',
+      method: 'patch',
+      params: { id }
+    })).data;
+    return result['ok']
   }
 }

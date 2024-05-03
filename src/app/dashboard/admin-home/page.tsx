@@ -82,6 +82,10 @@ export default function Page() {
           );
         }));
       });
+    server.fetchIsOkRate()
+      .then(res => {
+        document.getElementById('is-ok-rate')!.innerText = String(res);
+      })
   }, []);
 
   const saveAdd = () => {
@@ -176,6 +180,10 @@ export default function Page() {
                   <div>
                     <span>联系邮箱</span>
                     <p>110@outlook.com</p>
+                  </div>
+                  <div>
+                    <span>专业对口率</span>
+                    <p id="is-ok-rate"></p>
                   </div>
                 </div>
               </div>

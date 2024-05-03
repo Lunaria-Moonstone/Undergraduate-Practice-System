@@ -132,11 +132,24 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  let results
   let query = request.nextUrl.searchParams;
   let id = query.get('id');
   if (id === null) return new NextResponse(new Blob([JSON.stringify({ ok: false, error: 'id should not be empty' })]));
   // @ts-ignore
-  return await router.DELETE(id);
+  // return await router.DELETE(id);
+
+  try {
+    results = await executeQuery({
+      query: `
+      DELETE FROM student_teacher_map WHERE student_id=?
+      `,
+      values: [ id ],
+    })
+  } catch (err) {
+    results = err
+  }
+  return results
 }
 
 export async function PATCH(request: NextRequest) {

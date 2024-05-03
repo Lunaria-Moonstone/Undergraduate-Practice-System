@@ -62,6 +62,28 @@ export async function DELETE(request: NextRequest) {
   return await router.DELETE({ id });
 }
 
+export async function PATCH(request: NextRequest) {
+  let results
+
+  let query = request.nextUrl.searchParams;
+  let id = query.get('id');
+  if (id === null) return new NextResponse(new Blob([JSON.stringify({ ok: false, error: 'id should not be empty' })]));
+  // return await router.DELETE({ student_id: id })
+  
+  try {
+    results = await executeQuery({
+      query: `
+      DELETE FROM student_practice_experience WHERE student_id=?
+      `,
+      values: [ id ]
+    })
+  } catch (err: unknown) {
+    results = err;
+  }
+  return new NextResponse(new Blob([JSON.stringify(results, null, 2)], {
+    type: 'application/json',
+  }));
+}
 // export async function PUT(request: NextRequest) {
 //   let query = request.nextUrl.searchParams;
 //   let id = query.get('id');

@@ -67,5 +67,13 @@ export default {
       data: { base64code }
     })).data;
     return result;
+  },
+  async deleteStudentById(id: string) {
+    const results = (await axios({
+      url: '/dashboard/teacher-student/api',
+      method: 'delete',
+      data: { id }
+    })).data;
+    return results['ok'];
   }
 }
