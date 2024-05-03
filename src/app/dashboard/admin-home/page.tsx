@@ -47,16 +47,18 @@ export default function Page() {
             setDelModalShown(true);
           }
           const showAnnouncement = (id: string) => {
-            const title = document.getElementById("info-modal-title") as HTMLHeadingElement;
-            const created = document.getElementById("info-modal-created") as HTMLSpanElement;
-            const descript = document.getElementById("info-modal-descript") as HTMLDivElement;
+
             server.fetchAnnouncement(id)
               .then(res => {
-                title.innerText = res.title;
-                created.innerText = res.created ?? '未知';
-                descript.innerText = res.descript;
-
                 setInfoModalShown(true);
+                setTimeout(() => {
+                  const title = document.getElementById("info-modal-title") as HTMLHeadingElement;
+                  const created = document.getElementById("info-modal-created") as HTMLSpanElement;
+                  const descript = document.getElementById("info-modal-descript") as HTMLDivElement;
+                  title.innerText = res.title;
+                  created.innerText = res.created ?? '未知';
+                  descript.innerText = res.descript;
+                }, 1500);
               })
               .catch(err => {
                 console.log(err);
@@ -153,7 +155,7 @@ export default function Page() {
 
   return (
     <>
-    {contextHolder}
+      {contextHolder}
       <div className="dashboard-base-panel" style={{ height: '100vh' }}>
         <div className="dashboard-model-title">
           <h2>个人中心</h2>

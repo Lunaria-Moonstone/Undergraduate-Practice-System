@@ -106,14 +106,18 @@ export default function Page() {
                 // alert('请求不存在，联系后台管理员', "danger");
                 messageApi.error('请求不存在，联系后台管理员');
               }
-              const target = tmp_list[0];
-              setResume("data:application/pdf;base64," + Buffer.from(target.resume as Buffer).toString());
-              // console.log(resume);
-              (document.getElementById("student-info-name") as HTMLElement).innerText = target.student_name;
-              (document.getElementById("job-info-name") as HTMLElement).innerText = target.job_name;
-              (document.getElementById("student-info-progress") as HTMLElement).innerText = target.progress;
-              setUpdateTarget(record.id);
               toggleModal('info');
+              const target = tmp_list[0];
+              setTimeout(() => {
+                setResume("data:application/pdf;base64," + Buffer.from(target.resume as Buffer).toString());
+                // console.log(resume);
+                (document.getElementById("student-info-name") as HTMLElement).innerText = target.student_name;
+                (document.getElementById("job-info-name") as HTMLElement).innerText = target.job_name;
+                (document.getElementById("student-info-progress") as HTMLElement).innerText = target.progress;
+                setUpdateTarget(record.id);
+
+              }, 1500);
+
             }
           }>详细</Button>
         </Space>
@@ -181,7 +185,7 @@ export default function Page() {
 
   return (
     <>
-    {contextHolder}
+      {contextHolder}
       <div className="dashboard-base-panel">
         <div className="dashboard-model-title">
           <h2>应聘人员一览</h2>
@@ -207,7 +211,7 @@ export default function Page() {
             <div className="card">
               <div className="card-body">
                 {/* <img className="card-head-img" src={"data:image/png;base64," + student.resume} /> */}
-                <embed className="card-head-img" src={resume}/>
+                <embed className="card-head-img" src={resume} />
               </div>
             </div>
             <div className="card" style={{ marginBlockStart: 'var(--standard-padding-width)' }}>
@@ -223,7 +227,8 @@ export default function Page() {
           </div>
         </div>
       ), (
-        <button className="btn btn-primary" onClick={openUpdateModal}>回复</button>
+        // <button className="btn btn-primary" onClick={openUpdateModal}>回复</button>
+        <Button type="primary" onClick={openUpdateModal}>回复</Button>
       ))} />
 
       <Modal {...modalProps('feedback', '回馈', (
@@ -243,7 +248,8 @@ export default function Page() {
           </div>
         </form>
       ), (
-        <button className="btn btn-primary" onClick={saveUpdate}>确认</button>
+        // <button className="btn btn-primary" onClick={saveUpdate}>确认</button>
+        <Button type="primary" onClick={saveUpdate}>确认</Button>
       ))}></Modal>
 
       {/* <Modal id="modal-export" shown={exportModalShown} close_function={() => setExportModalShown(false)} modal_title="导出确认" modal_btns={

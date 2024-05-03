@@ -139,7 +139,7 @@ export default function Page() {
     { title: '年级', dataIndex: 'grade', key: 'grade' },
     { title: '专业方向', dataIndex: 'performence', key: 'performence' },
     { title: '联系电话', dataIndex: 'phone', key: 'phone' },
-    { title: '联系邮箱', dataIndex: 'email', key: 'email' },
+    { title: '联系邮箱', dataIndex: 'mail', key: 'mail' },
     { title: '个人简历', dataIndex: 'resume', key: 'resume' },
     { title: '实习凭证', dataIndex: 'proof', key: 'proof' },
     { title: '实习分数', dataIndex: 'score', key: 'score' },
@@ -256,12 +256,12 @@ export default function Page() {
             name: x.name,
             number: x.number,
             grade: x.grade,
-            performance: x.performence,
+            performence: x.performence,
             phone: x.phone,
             mail: x.mail,
             // is_practice: Buffer.from(x.is_practice)[0] ? '是' : '否',
             // practice_cmp: Buffer.from(x.is_practice)[0] ? x.practice_cmp[-1] : '未处于实习状态',
-            vitae: (JSON.parse(Buffer.from(x.vitae as Uint8Array).toString()) as Array<string>).length !== 0 ? '有' : '无',
+            resume: (JSON.parse(Buffer.from(x.vitae as Uint8Array).toString()) as Array<string>).length !== 0 ? '有' : '无',
             proof: (JSON.parse(Buffer.from(x.proof as Uint8Array).toString()) as Array<string>).length !== 0 ? '有' : '无',
             score: x.score !== undefined && x.score !== -1 ? x.score : '未录入实习成绩'
           }
@@ -305,6 +305,7 @@ export default function Page() {
   const search = (keyword: string) => {
     server.searchStudent(keyword)
       .then(res => {
+        console.info(res)
         setTableDataSource(res.map(x => {
           return {
             key: x.id as React.Key,
@@ -312,7 +313,7 @@ export default function Page() {
             name: x.name,
             number: x.number,
             grade: x.grade,
-            performance: x.performence,
+            performence: x.performence,
             phone: x.phone,
             mail: x.mail,
             // is_practice: Buffer.from(x.is_practice)[0] ? '是' : '否',
